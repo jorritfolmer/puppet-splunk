@@ -1,5 +1,5 @@
 # vim: ts=2 sw=2 et
-class splunk_cluster::deployment-client 
+class splunk_cluster::deployment_client 
 ( 
   $ds = $splunk_cluster::ds
 ){
