@@ -19,5 +19,6 @@ class splunk_cluster::params (
   $kvstoreport = undef
   $tcpout      = undef
   $searchpeers = undef
+  $adminpass   = undef
 }
 
