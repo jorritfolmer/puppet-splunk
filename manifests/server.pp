@@ -17,7 +17,7 @@ class splunk_cluster::server::license (
       lens    => 'Puppet.lns',
       incl    => '/opt/splunk/etc/system/local/server.conf',
       changes => [
-        "set license/master_uri $lm",
+        "set license/master_uri https://$lm",
       ],
     }
   }

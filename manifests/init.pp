@@ -5,8 +5,6 @@ class splunk_cluster (
   $lm           = $splunk_cluster::params::lm,
   $ds           = $splunk_cluster::params::ds,
   $sh           = $splunk_cluster::params::sh,
-  $indexers     = $splunk_cluster::params::indexers,
-  $outputs      = $splunk_cluster::params::outputs,
   $ciphers      = $splunk_cluster::params::ciphers,
   $sslversions  = $splunk_cluster::params::sslversions,
   $dhparamsize  = $splunk_cluster::params::dhparamsize,
@@ -29,6 +27,7 @@ class splunk_cluster (
   include splunk_cluster::splunk_launch
   include splunk_cluster::certs::s2s
   include splunk_cluster::distsearch
+  include splunk_cluster::deploymentclient
 }
 
 # ISSUES

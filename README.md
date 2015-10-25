@@ -1,4 +1,6 @@
-# Puppet module to create a Splunk cluster
+# Puppet module to create Splunk topologies
+
+## Principles
 
 This Puppet module installs and configures Splunk servers with the following principles in mind:
 
@@ -21,7 +23,15 @@ This Puppet module installs and configures Splunk servers with the following pri
 
     Single server? Redundant multi-site clustering? Heavy forwarder in a DMZ?
 
-## Examples
+## Installation
+
+TODO
+
+## Usage
+
+Currently implemented: distributed search.
+TODO: index clustering.
+TODO: search head clustering.
 
 ### Example 1: 
 
@@ -42,6 +52,7 @@ One deployment/license server, one search head, and two indexers:
 ```puppet
 node 'splunk-ds.internal.corp.tld' {
   class { 'splunk_cluster':
+    adminpass    => 'secret',
     httpport     => 8000,
     tcpout       => [
       'splunk-idx1.internal.corp.tld:9997', 
@@ -52,9 +63,11 @@ node 'splunk-ds.internal.corp.tld' {
 
 node 'splunk-sh.internal.corp.tld' {
   class { 'splunk_cluster':
+    adminpass    => 'secret',
     httpport     => 8000,
     kvstoreport  => 8191,
-    lm           => 'https://splunk-ds.internal.corp.tld:8089',
+    lm           => 'splunk-ds.internal.corp.tld:8089',
+    ds           => 'splunk-ds.internal.corp.tld:8089',
     tcpout       => [
       'splunk-idx1.internal.corp.tld:9997', 
       'splunk-idx2.internal.corp.tld:9997',
@@ -68,13 +81,43 @@ node 'splunk-sh.internal.corp.tld' {
 
 node 'splunk-idx1.internal.corp.tld', 'splunk-idx2.internal.corp.tld' {
   class { 'splunk_cluster':
+    adminpass    => 'secret',
     httpport     => 8000,
     inputport    => 9997,
-    lm           => 'https://splunk-ds.internal.corp.tld:8089',
+    lm           => 'splunk-ds.internal.corp.tld:8089',
+    ds           => 'splunk-ds.internal.corp.tld:8089',
   }
 }
 ```
 
+### Example 3: 
+
+One deployment/license server, one search head, and an indexing cluster:
+
+TODO
+
+## Parameters
+
+TODO
+
+```
+  $splunk_home  
+  $splunk_os_user
+  $lm           
+  $ds           
+  $sh           
+  $ciphers      
+  $sslversions  
+  $dhparamsize  
+  $ecdhcurvename 
+  $inputport    
+  $httpport    
+  $kvstoreport
+  $tcpout     
+  $searchpeers 
+  $adminpass     
+  $compatibility TODO
+```
 
 ## Compatibility
 

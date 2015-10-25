@@ -47,23 +47,12 @@ class splunk_cluster::distsearch (
   }
 }
 
-#  if $indexers == undef {
 #    augeas { "/opt/splunk/etc/system/local/distsearch.conf":
 #      require => Class['splunk_cluster::installed']
 #      lens    => 'Puppet.lns',
 #      incl    => "/opt/splunk/etc/system/local/distsearch.conf",
 #      changes => [
-#        "rm distributedSearch",
+#        "set distributedSearch/servers $blah",
 #      ];
 #    }
-#  } else {
-#    augeas { "/opt/splunk/etc/system/local/distsearch.conf":
-#      require => Class['splunk_cluster::installed']
-#      lens    => 'Puppet.lns',
-#      incl    => "/opt/splunk/etc/system/local/distsearch.conf",
-#      changes => [
-#        "set distributedSearch/servers $distributedsearchservers",
-#      ];
-#    }
-#  }
 
