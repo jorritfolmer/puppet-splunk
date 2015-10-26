@@ -52,7 +52,11 @@ One deployment/license server, one search head, and two indexers:
 ```puppet
 node 'splunk-ds.internal.corp.tld' {
   class { 'splunk_cluster':
-    adminpass    => 'secret',
+    admin        => {
+      hash       => '$6$MR9IJFF7RBnVA.k1$/30EBSzy0EJKZ94SjHFIUHjQjO3/P/4tx0JmWCp/En47MJceaXsevhBLE2w/ibjHlAUkD6k0U.PmY/noe9Jok0',
+      fn         => 'Deployment server Administrator',
+      email      => 'changemeagain@example.com',
+    },
     httpport     => 8000,
     tcpout       => [
       'splunk-idx1.internal.corp.tld:9997', 
@@ -63,7 +67,11 @@ node 'splunk-ds.internal.corp.tld' {
 
 node 'splunk-sh.internal.corp.tld' {
   class { 'splunk_cluster':
-    adminpass    => 'secret',
+    admin        => {
+      hash       => '$6$MR9IJFF7RBnVA.k1$/30EBSzy0EJKZ94SjHFIUHjQjO3/P/4tx0JmWCp/En47MJceaXsevhBLE2w/ibjHlAUkD6k0U.PmY/noe9Jok0',
+      fn         => 'Search head Administrator',
+      email      => 'changemeagain@example.com',
+    },
     httpport     => 8000,
     kvstoreport  => 8191,
     lm           => 'splunk-ds.internal.corp.tld:8089',
@@ -81,7 +89,11 @@ node 'splunk-sh.internal.corp.tld' {
 
 node 'splunk-idx1.internal.corp.tld', 'splunk-idx2.internal.corp.tld' {
   class { 'splunk_cluster':
-    adminpass    => 'secret',
+    admin        => {
+      hash       => '$6$MR9IJFF7RBnVA.k1$/30EBSzy0EJKZ94SjHFIUHjQjO3/P/4tx0JmWCp/En47MJceaXsevhBLE2w/ibjHlAUkD6k0U.PmY/noe9Jok0',
+      fn         => 'Indexer Administrator',
+      email      => 'changemeagain@example.com',
+    },
     httpport     => 8000,
     inputport    => 9997,
     lm           => 'splunk-ds.internal.corp.tld:8089',
@@ -115,7 +127,7 @@ TODO
   $kvstoreport
   $tcpout     
   $searchpeers 
-  $adminpass     
+  $admin
   $compatibility TODO
 ```
 
