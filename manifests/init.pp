@@ -14,7 +14,7 @@ class splunk_cluster (
   $kvstoreport       = $splunk_cluster::params::kvstoreport, 
   $tcpout       = $splunk_cluster::params::tcpout,
   $searchpeers = $splunk_cluster::params::searchpeers,
-  $admin = $splunk_cluster::params::searchpeers,
+  $admin = $splunk_cluster::params::admin,
   ) inherits splunk_cluster::params {
 
   include splunk_cluster::installed

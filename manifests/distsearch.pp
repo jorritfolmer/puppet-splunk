@@ -2,10 +2,11 @@
 define addsearchpeers {
   $package = $splunk_cluster::params::package
   $splunk_home = $splunk_cluster::splunk_home
-  $adminpass = $splunk_cluster::adminpass
+  $admin = $splunk_cluster::admin
+  $adminpass = $admin[pass]
   
   if $adminpass == undef {
-    err("adminpass not set")
+    err("Plaintext admin password not set, skipping addition of search peers to search head")
   } else {
     exec { "splunk add search-server $title":
       command => "splunk add search-server -host $title -auth admin:$adminpass -remoteUsername admin -remotePassword $adminpass && touch $splunk_home/etc/auth/distServerKeys/$title.done",

@@ -53,11 +53,14 @@ One deployment/license server, one search head, and two indexers:
 node 'splunk-ds.internal.corp.tld' {
   class { 'splunk_cluster':
     admin        => {
+      # Set the admin password to changemeagain
       hash       => '$6$MR9IJFF7RBnVA.k1$/30EBSzy0EJKZ94SjHFIUHjQjO3/P/4tx0JmWCp/En47MJceaXsevhBLE2w/ibjHlAUkD6k0U.PmY/noe9Jok0',
       fn         => 'Deployment server Administrator',
       email      => 'changemeagain@example.com',
     },
+    # Enable the web server
     httpport     => 8000,
+    # Use the best-practice to forward all local events to the indexers
     tcpout       => [
       'splunk-idx1.internal.corp.tld:9997', 
       'splunk-idx2.internal.corp.tld:9997',
@@ -68,18 +71,23 @@ node 'splunk-ds.internal.corp.tld' {
 node 'splunk-sh.internal.corp.tld' {
   class { 'splunk_cluster':
     admin        => {
+      # In this case, a plaintext password is also needed to join the
+      # searchpeers to this search head
+      pass       => 'changemeagain',
       hash       => '$6$MR9IJFF7RBnVA.k1$/30EBSzy0EJKZ94SjHFIUHjQjO3/P/4tx0JmWCp/En47MJceaXsevhBLE2w/ibjHlAUkD6k0U.PmY/noe9Jok0',
       fn         => 'Search head Administrator',
       email      => 'changemeagain@example.com',
     },
     httpport     => 8000,
     kvstoreport  => 8191,
+    # Use a License Master and Deployment Server
     lm           => 'splunk-ds.internal.corp.tld:8089',
     ds           => 'splunk-ds.internal.corp.tld:8089',
     tcpout       => [
       'splunk-idx1.internal.corp.tld:9997', 
       'splunk-idx2.internal.corp.tld:9997',
     ],
+    # Use these search peers
     searchpeers  => [
       'splunk-idx1.internal.corp.tld:8089', 
       'splunk-idx2.internal.corp.tld:8089',
@@ -94,7 +102,6 @@ node 'splunk-idx1.internal.corp.tld', 'splunk-idx2.internal.corp.tld' {
       fn         => 'Indexer Administrator',
       email      => 'changemeagain@example.com',
     },
-    httpport     => 8000,
     inputport    => 9997,
     lm           => 'splunk-ds.internal.corp.tld:8089',
     ds           => 'splunk-ds.internal.corp.tld:8089',
