@@ -1,21 +1,22 @@
 # vim: ts=2 sw=2 et
-class splunk_cluster::server::license ( 
-  $lm = $splunk_cluster::lm 
+class splunk::server::license ( 
+  $lm = $splunk::lm,
+  $splunk_home = $splunk::splunk_home
 ){
   if $lm == undef {
-    augeas { '/opt/splunk/etc/system/local/server.conf/license':
-      require => Class['splunk_cluster::installed'],
+    augeas { "$splunk_home/etc/system/local/server.conf/license":
+      require => Class['splunk::installed'],
       lens    => 'Puppet.lns',
-      incl    => '/opt/splunk/etc/system/local/server.conf',
+      incl    => "$splunk_home/etc/system/local/server.conf",
       changes => [
         'rm license/master_uri',
       ],
     }
   } else {
-    augeas { '/opt/splunk/etc/system/local/server.conf/license':
-      require => Class['splunk_cluster::installed'],
+    augeas { "$splunk_home/etc/system/local/server.conf/license":
+      require => Class['splunk::installed'],
       lens    => 'Puppet.lns',
-      incl    => '/opt/splunk/etc/system/local/server.conf',
+      incl    => "$splunk_home/etc/system/local/server.conf",
       changes => [
         "set license/master_uri https://$lm",
       ],
@@ -23,19 +24,19 @@ class splunk_cluster::server::license (
   }
 }
 
-class splunk_cluster::server::ssl ( 
-  $ciphersuite = $splunk_cluster::ciphersuite,
-  $sslversions = $splunk_cluster::sslversions,
-  $ecdhcurvename = $splunk_cluster::ecdhcurvename,
-  $splunk_home = $splunk_cluster::splunk_home,
+class splunk::server::ssl ( 
+  $ciphersuite = $splunk::ciphersuite,
+  $sslversions = $splunk::sslversions,
+  $ecdhcurvename = $splunk::ecdhcurvename,
+  $splunk_home = $splunk::splunk_home,
 ){
-  augeas { '/opt/splunk/etc/system/local/server.conf/sslConfig':
+  augeas { "$splunk_home/etc/system/local/server.conf/sslConfig":
     require => [ 
-      Class['splunk_cluster::installed'],
+      Class['splunk::installed'],
       Exec["openssl dhparam"],
     ],
     lens    => 'Puppet.lns',
-    incl    => '/opt/splunk/etc/system/local/server.conf',
+    incl    => "$splunk_home/etc/system/local/server.conf",
     changes => [
       "set sslConfig/enableSplunkdSSL true",
       "set sslConfig/cipherSuite $ciphersuite",
@@ -46,22 +47,25 @@ class splunk_cluster::server::ssl (
   }
 }
 
-class splunk_cluster::server::kvstore ( $kvstoreport = $splunk_cluster::kvstoreport ){
+class splunk::server::kvstore ( 
+  $kvstoreport = $splunk::kvstoreport,
+  $splunk_home = $splunk::splunk_home
+){
   if $kvstoreport == undef {
-    augeas { '/opt/splunk/etc/system/local/server.conf/kvstore':
-      require => Class['splunk_cluster::installed'],
+    augeas { "$splunk_home/etc/system/local/server.conf/kvstore":
+      require => Class['splunk::installed'],
       lens    => 'Puppet.lns',
-      incl    => '/opt/splunk/etc/system/local/server.conf',
+      incl    => "$splunk_home/etc/system/local/server.conf",
       changes => [
         'rm kvstore/port',
         'set kvstore/disabled true',
       ],
     }
   } else {
-    augeas { '/opt/splunk/etc/system/local/server.conf/kvstore':
-      require => Class['splunk_cluster::installed'],
+    augeas { "$splunk_home/etc/system/local/server.conf/kvstore":
+      require => Class['splunk::installed'],
       lens    => 'Puppet.lns',
-      incl    => '/opt/splunk/etc/system/local/server.conf',
+      incl    => "$splunk_home/etc/system/local/server.conf",
       changes => [
         "set kvstore/port $kvstoreport",
         'set kvstore/disabled false',
@@ -70,21 +74,24 @@ class splunk_cluster::server::kvstore ( $kvstoreport = $splunk_cluster::kvstorep
   }
 }
 
-class splunk_cluster::server::clustering ( $mode = undef ){
+class splunk::server::clustering ( 
+  $mode = undef,
+  $splunk_home = $splunk::splunk_home
+){
   if $mode == undef {
-    augeas { '/opt/splunk/etc/system/local/server.conf/clustering':
-      require => Class['splunk_cluster::installed'],
+    augeas { "$splunk_home/etc/system/local/server.conf/clustering":
+      require => Class['splunk::installed'],
       lens    => 'Puppet.lns',
-      incl    => '/opt/splunk/etc/system/local/server.conf',
+      incl    => "$splunk_home/etc/system/local/server.conf",
       changes => [
         'rm clustering/mode',
       ],
     }
   } else {
-    augeas { '/opt/splunk/etc/system/local/server.conf/clustering':
-      require => Class['splunk_cluster::installed'],
+    augeas { "$splunk_home/etc/system/local/server.conf/clustering":
+      require => Class['splunk::installed'],
       lens    => 'Puppet.lns',
-      incl    => '/opt/splunk/etc/system/local/server.conf',
+      incl    => "$splunk_home/etc/system/local/server.conf",
       changes => [
         "set clustering/mode $mode",
       ],

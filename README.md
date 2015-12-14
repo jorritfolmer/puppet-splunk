@@ -38,11 +38,24 @@ TODO: search head clustering.
 A single standalone Splunk instance that you can use to index and search, for example with the trial license:
 
 ```puppet
-  class { 'splunk_cluster':
+node 'splunk-server.internal.corp.tld' {
+  class { 'splunk':
     httpport     => 8000,
     kvstoreport  => 8191,
     inputport    => 9997,
   }
+}
+```
+
+Configuring a server with Splunk universal forwarder using the above server as deployment server:
+
+```puppet
+node 'some-server.internal.corp.tld' {
+  class { 'splunk':
+    type => 'uf',
+    ds   => 'splunk-server.internal.corp.tld:8089',
+  }
+}
 ```
 
 ### Example 2: 
@@ -51,7 +64,7 @@ One deployment/license server, one search head, and two indexers:
 
 ```puppet
 node 'splunk-ds.internal.corp.tld' {
-  class { 'splunk_cluster':
+  class { 'splunk':
     admin        => {
       # Set the admin password to changemeagain
       hash       => '$6$MR9IJFF7RBnVA.k1$/30EBSzy0EJKZ94SjHFIUHjQjO3/P/4tx0JmWCp/En47MJceaXsevhBLE2w/ibjHlAUkD6k0U.PmY/noe9Jok0',
@@ -69,7 +82,7 @@ node 'splunk-ds.internal.corp.tld' {
 }
 
 node 'splunk-sh.internal.corp.tld' {
-  class { 'splunk_cluster':
+  class { 'splunk':
     admin        => {
       # In this case, a plaintext password is also needed to join the
       # searchpeers to this search head
@@ -96,7 +109,7 @@ node 'splunk-sh.internal.corp.tld' {
 }
 
 node 'splunk-idx1.internal.corp.tld', 'splunk-idx2.internal.corp.tld' {
-  class { 'splunk_cluster':
+  class { 'splunk':
     admin        => {
       hash       => '$6$MR9IJFF7RBnVA.k1$/30EBSzy0EJKZ94SjHFIUHjQjO3/P/4tx0JmWCp/En47MJceaXsevhBLE2w/ibjHlAUkD6k0U.PmY/noe9Jok0',
       fn         => 'Indexer Administrator',

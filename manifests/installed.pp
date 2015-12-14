@@ -1,15 +1,16 @@
 # vim: ts=2 sw=2 et
-class splunk_cluster::installed ( 
-  $package = $splunk_cluster::package
+class splunk::installed ( 
+  $package = $splunk::package,
+  $splunk_home = $splunk::splunk_home
 ) {
   package { $package:
     ensure => 'installed',
   }
   exec { 'splunk enable boot-start etcetera':
-    command => '/opt/splunk/bin/splunk enable boot-start -user splunk --accept-license --answer-yes --no-prompt',
-    path    => ['/opt/splunk/bin', '/bin', '/sbin', '/usr/bin', '/usr/sbin'],
+    command => "$splunk_home/bin/splunk enable boot-start -user splunk --accept-license --answer-yes --no-prompt",
+    path    => ["$splunk_home/bin", '/bin', '/sbin', '/usr/bin', '/usr/sbin'],
     require => Package[$package],
-    creates => '/opt/splunk/etc/system/local/server.conf',
+    creates => "$splunk_home/etc/system/local/server.conf",
   }
   service { 'splunk':
     enable  => true,

@@ -1,9 +1,9 @@
 # vim: ts=2 sw=2 et
-class splunk_cluster::certs::s2s ( 
-  $dhparamsize = $splunk_cluster::dhparamsize,
-  $package = $splunk_cluster::package,
-  $splunk_os_user = $splunk_cluster::splunk_os_user,
-  $splunk_home = $splunk_cluster::splunk_home,
+class splunk::certs::s2s ( 
+  $dhparamsize = $splunk::dhparamsize,
+  $package = $splunk::package,
+  $splunk_os_user = $splunk::splunk_os_user,
+  $splunk_home = $splunk::splunk_home,
 ){
   file { "$splunk_home/etc/auth/certs":
     ensure  => directory,
@@ -11,7 +11,7 @@ class splunk_cluster::certs::s2s (
     group   => $splunk_os_user,
     mode    => 0700,
     recurse => true,
-    require => Augeas['/opt/splunk/etc/system/local/inputs.conf'],
+    require => Augeas["$splunk_home/etc/system/local/inputs.conf"],
   }
 
   file { "$splunk_home/etc/auth/certs/ca.crt":
@@ -31,7 +31,7 @@ class splunk_cluster::certs::s2s (
       File["$splunk_home/etc/auth/certs"],
     ],
     creates => [ 
-      '/opt/splunk/etc/auth/certs/dhparam.pem',
+      "$splunk_home/etc/auth/certs/dhparam.pem",
     ],
     logoutput => true,
   }
@@ -45,7 +45,7 @@ class splunk_cluster::certs::s2s (
       File["$splunk_home/etc/auth/certs"],
     ],
     creates => [ 
-      '/opt/splunk/etc/auth/certs/s2s.crt',
+      "$splunk_home/etc/auth/certs/s2s.crt",
     ],
   }
 
@@ -57,13 +57,13 @@ class splunk_cluster::certs::s2s (
       Exec['openssl s2s 1'],
     ],
     creates => [ 
-      '/opt/splunk/etc/auth/certs/s2s.pem',
+      "$splunk_home/etc/auth/certs/s2s.pem",
     ],
   }
 
 }
 
-class splunk_cluster::certs::web ( 
+class splunk::certs::web ( 
 ){
 }
 

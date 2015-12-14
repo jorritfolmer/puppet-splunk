@@ -1,9 +1,8 @@
 # vim: ts=2 sw=2 et
-class splunk_cluster::params (
+class splunk::params (
 ) {
-  $splunk_home = '/opt/splunk'
+  $type        = undef
   $splunk_os_user = 'splunk'
-  $package     = 'splunk'
   $lm          = undef
   $ds          = undef
   $sh          = undef

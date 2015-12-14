@@ -1,34 +1,42 @@
 # vim: ts=2 sw=2 et
-class splunk_cluster (
-  $splunk_home  = $splunk_cluster::params::splunk_home,
-  $splunk_os_user   = $splunk_cluster::params::splunk_os_user,
-  $lm           = $splunk_cluster::params::lm,
-  $ds           = $splunk_cluster::params::ds,
-  $sh           = $splunk_cluster::params::sh,
-  $ciphers      = $splunk_cluster::params::ciphers,
-  $sslversions  = $splunk_cluster::params::sslversions,
-  $dhparamsize  = $splunk_cluster::params::dhparamsize,
-  $ecdhcurvename = $splunk_cluster::params::ecdhcurvename,
-  $inputport    = $splunk_cluster::params::inputport,
-  $httpport       = $splunk_cluster::params::httpport, 
-  $kvstoreport       = $splunk_cluster::params::kvstoreport, 
-  $tcpout       = $splunk_cluster::params::tcpout,
-  $searchpeers = $splunk_cluster::params::searchpeers,
-  $admin = $splunk_cluster::params::admin,
-  ) inherits splunk_cluster::params {
+class splunk (
+  $type         = $splunk::params::type,
+  $splunk_os_user   = $splunk::params::splunk_os_user,
+  $lm           = $splunk::params::lm,
+  $ds           = $splunk::params::ds,
+  $sh           = $splunk::params::sh,
+  $ciphers      = $splunk::params::ciphers,
+  $sslversions  = $splunk::params::sslversions,
+  $dhparamsize  = $splunk::params::dhparamsize,
+  $ecdhcurvename = $splunk::params::ecdhcurvename,
+  $inputport    = $splunk::params::inputport,
+  $httpport       = $splunk::params::httpport, 
+  $kvstoreport       = $splunk::params::kvstoreport, 
+  $tcpout       = $splunk::params::tcpout,
+  $searchpeers = $splunk::params::searchpeers,
+  $admin = $splunk::params::admin,
+  ) inherits splunk::params {
 
-  include splunk_cluster::installed
-  include splunk_cluster::inputs
-  include splunk_cluster::outputs
-  include splunk_cluster::web
-  include splunk_cluster::server::ssl
-  include splunk_cluster::server::license
-  include splunk_cluster::server::kvstore
-  include splunk_cluster::splunk_launch
-  include splunk_cluster::certs::s2s
-  include splunk_cluster::distsearch
-  include splunk_cluster::deploymentclient
-  include splunk_cluster::passwd
+  if $type == 'uf' {
+    $splunk_home = '/opt/splunkforwarder'
+    $package = 'splunkforwarder'
+  } else {
+    $splunk_home = '/opt/splunk'
+    $package = 'splunk'
+  }
+
+  include splunk::installed
+  include splunk::inputs
+  include splunk::outputs
+  include splunk::web
+  include splunk::server::ssl
+  include splunk::server::license
+  include splunk::server::kvstore
+  include splunk::splunk_launch
+  include splunk::certs::s2s
+  include splunk::distsearch
+  include splunk::deploymentclient
+  include splunk::passwd
 }
 
 # ISSUES

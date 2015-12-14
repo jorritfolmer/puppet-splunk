@@ -1,7 +1,7 @@
 # vim: ts=2 sw=2 et
-class splunk_cluster::passwd ( 
-  $admin = $splunk_cluster::admin,
-  $splunk_home = $splunk_cluster::splunk_home,
+class splunk::passwd ( 
+  $admin = $splunk::admin,
+  $splunk_home = $splunk::splunk_home,
 ){
   if $admin != undef {
     $hash  = $admin[hash]

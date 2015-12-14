@@ -1,22 +1,23 @@
 # vim: ts=2 sw=2 et
-class splunk_cluster::deploymentclient 
+class splunk::deploymentclient 
 ( 
-  $ds = $splunk_cluster::ds
+  $ds = $splunk::ds,
+  $splunk_home = $splunk::splunk_home
 ){
   if $ds == undef {
-    augeas { "/opt/splunk/etc/system/local/deploymentclient.conf":
-      require => Class['splunk_cluster::installed'],
+    augeas { "$splunk_home/etc/system/local/deploymentclient.conf":
+      require => Class['splunk::installed'],
       lens    => 'Puppet.lns',
-      incl    => "/opt/splunk/etc/system/local/deploymentclient.conf",
+      incl    => "$splunk_home/etc/system/local/deploymentclient.conf",
       changes => [
         "rm target-broker:deploymentServer"
       ],
     }
   } else {
-    augeas { "/opt/splunk/etc/system/local/deploymentclient.conf":
-      require => Class['splunk_cluster::installed'],
+    augeas { "$splunk_home/etc/system/local/deploymentclient.conf":
+      require => Class['splunk::installed'],
       lens    => 'Puppet.lns',
-      incl    => "/opt/splunk/etc/system/local/deploymentclient.conf",
+      incl    => "$splunk_home/etc/system/local/deploymentclient.conf",
       changes => [
         "set target-broker:deploymentServer/targetUri $ds"
       ],

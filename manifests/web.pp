@@ -1,15 +1,16 @@
 # vim: ts=2 sw=2 et
-class splunk_cluster::web ( 
-  $ciphersuite = $splunk_cluster::ciphersuite,
-  $sslversions = $splunk_cluster::sslversions,
-  $httpport = $splunk_cluster::httpport,
-  $ecdhcurvename = $splunk_cluster::ecdhcurvename,
+class splunk::web ( 
+  $ciphersuite = $splunk::ciphersuite,
+  $sslversions = $splunk::sslversions,
+  $httpport = $splunk::httpport,
+  $ecdhcurvename = $splunk::ecdhcurvename,
+  $splunk_home = $splunk::splunk_home
 ){
   if $httpport == undef {
-    augeas { '/opt/splunk/etc/system/local/web.conf':
-      require => Class['splunk_cluster::installed'],
+    augeas { "$splunk_home/etc/system/local/web.conf":
+      require => Class['splunk::installed'],
       lens    => 'Puppet.lns',
-      incl    => '/opt/splunk/etc/system/local/web.conf',
+      incl    => "$splunk_home/etc/system/local/web.conf",
       changes => [
         "rm settings/httpport",
         "set settings/startwebserver 0",
@@ -20,10 +21,10 @@ class splunk_cluster::web (
       ];
     }
   } else {
-    augeas { '/opt/splunk/etc/system/local/web.conf':
-      require => Class['splunk_cluster::installed'],
+    augeas { "$splunk_home/etc/system/local/web.conf":
+      require => Class['splunk::installed'],
       lens    => 'Puppet.lns',
-      incl    => '/opt/splunk/etc/system/local/web.conf',
+      incl    => "$splunk_home/etc/system/local/web.conf",
       changes => [
         "set settings/httpport $httpport",
         "set settings/startwebserver 1",

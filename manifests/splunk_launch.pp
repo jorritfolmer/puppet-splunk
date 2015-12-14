@@ -1,21 +1,22 @@
 # vim: ts=2 sw=2 et
-class splunk_cluster::splunk_launch ( 
-  $splunk_os_user = $splunk_cluster::splunk_os_user
+class splunk::splunk_launch ( 
+  $splunk_os_user = $splunk::splunk_os_user,
+  $splunk_home = $splunk::splunk_home
 ){
   if $splunk_os_user == undef {
-    augeas { '/opt/splunk/etc/splunk-launch.conf':
-      require => Class['splunk_cluster::installed'],
+    augeas { "$splunk_home/etc/splunk-launch.conf":
+      require => Class['splunk::installed'],
       lens    => 'ShellVars.lns',
-      incl    => '/opt/splunk/etc/splunk-launch.conf',
+      incl    => "$splunk_home/etc/splunk-launch.conf",
       changes => [
         'rm SPLUNK_OS_USER',
       ];
     }
   } else {
-    augeas { '/opt/splunk/etc/splunk-launch.conf':
-      require => Class['splunk_cluster::installed'],
+    augeas { "$splunk_home/etc/splunk-launch.conf":
+      require => Class['splunk::installed'],
       lens    => 'ShellVars.lns',
-      incl    => '/opt/splunk/etc/splunk-launch.conf',
+      incl    => "$splunk_home/etc/splunk-launch.conf",
       changes => [
         "set SPLUNK_OS_USER $splunk_os_user",
       ];
