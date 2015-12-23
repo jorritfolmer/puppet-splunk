@@ -30,20 +30,38 @@ class splunk::server::ssl (
   $ecdhcurvename = $splunk::ecdhcurvename,
   $splunk_home = $splunk::splunk_home,
 ){
-  augeas { "$splunk_home/etc/system/local/server.conf/sslConfig":
-    require => [ 
-      Class['splunk::installed'],
-      Exec["openssl dhparam"],
-    ],
-    lens    => 'Puppet.lns',
-    incl    => "$splunk_home/etc/system/local/server.conf",
-    changes => [
-      "set sslConfig/enableSplunkdSSL true",
-      "set sslConfig/cipherSuite $ciphersuite",
-      "set sslConfig/sslVersions $sslversions",
-      "set sslConfig/dhFile $splunk_home/etc/auth/certs/dhparam.pem",
-      "set sslConfig/ecdhCurveName $ecdhcurvename",
-    ],
+  if $ecdhcurvename == undef {
+    augeas { "$splunk_home/etc/system/local/server.conf/sslConfig":
+      require => [ 
+        Class['splunk::installed'],
+        Exec["openssl dhparam"],
+      ],
+      lens    => 'Puppet.lns',
+      incl    => "$splunk_home/etc/system/local/server.conf",
+      changes => [
+        "set sslConfig/enableSplunkdSSL true",
+        "set sslConfig/cipherSuite $ciphersuite",
+        "set sslConfig/sslVersions $sslversions",
+        "set sslConfig/dhFile $splunk_home/etc/auth/certs/dhparam.pem",
+        "rm sslConfig/ecdhCurveName",
+      ],
+    }
+  } else {
+    augeas { "$splunk_home/etc/system/local/server.conf/sslConfig":
+      require => [ 
+        Class['splunk::installed'],
+        Exec["openssl dhparam"],
+      ],
+      lens    => 'Puppet.lns',
+      incl    => "$splunk_home/etc/system/local/server.conf",
+      changes => [
+        "set sslConfig/enableSplunkdSSL true",
+        "set sslConfig/cipherSuite $ciphersuite",
+        "set sslConfig/sslVersions $sslversions",
+        "set sslConfig/dhFile $splunk_home/etc/auth/certs/dhparam.pem",
+        "set sslConfig/ecdhCurveName $ecdhcurvename",
+      ],
+    }
   }
 }
 

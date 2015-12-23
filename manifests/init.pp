@@ -5,10 +5,15 @@ class splunk (
   $lm           = $splunk::params::lm,
   $ds           = $splunk::params::ds,
   $sh           = $splunk::params::sh,
-  $ciphers      = $splunk::params::ciphers,
-  $sslversions  = $splunk::params::sslversions,
-  $dhparamsize  = $splunk::params::dhparamsize,
-  $ecdhcurvename = $splunk::params::ecdhcurvename,
+  $sslcompatibility = $splunk::params::sslcompatibility,
+  $ciphersuite_modern  = $splunk::params::ciphersuite_modern,
+  $sslversions_modern  = $splunk::params::sslversions_modern,
+  $dhparamsize_modern  = $splunk::params::dhparamsize_modern,
+  $ecdhcurvename_modern = $splunk::params::ecdhcurvename_modern,
+  $ciphersuite_intermediate  = $splunk::params::ciphersuite_intermediate,
+  $sslversions_intermediate  = $splunk::params::sslversions_intermediate,
+  $dhparamsize_intermediate  = $splunk::params::dhparamsize_intermediate,
+  $ecdhcurvename_intermediate = $splunk::params::ecdhcurvename_intermediate,
   $inputport    = $splunk::params::inputport,
   $httpport       = $splunk::params::httpport, 
   $kvstoreport       = $splunk::params::kvstoreport, 
@@ -23,6 +28,19 @@ class splunk (
   } else {
     $splunk_home = '/opt/splunk'
     $package = 'splunk'
+  }
+
+  case $sslcompatibility {
+    'modern':            {
+      $ciphersuite   = $ciphersuite_modern
+      $sslversions   = $sslversions_modern
+      $dhparamsize   = $dhparamsize_modern
+      $ecdhcurvename = $ecdhcurvename_modern }
+    'intermediate':      {
+      $ciphersuite   = $ciphersuite_intermediate
+      $sslversions   = $sslversions_intermediate
+      $dhparamsize   = $dhparamsize_intermediate
+      $ecdhcurvename = undef }
   }
 
   include splunk::installed

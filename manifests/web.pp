@@ -21,19 +21,36 @@ class splunk::web (
       ];
     }
   } else {
-    augeas { "$splunk_home/etc/system/local/web.conf":
-      require => Class['splunk::installed'],
-      lens    => 'Puppet.lns',
-      incl    => "$splunk_home/etc/system/local/web.conf",
-      changes => [
-        "set settings/httpport $httpport",
-        "set settings/startwebserver 1",
-        "set settings/enableSplunkWebSSL true",
-        "set settings/sslVersions $sslversions",
-        "set settings/cipherSuite $ciphersuite",
-        "set settings/ecdhCurveName $ecdhcurvename",
-        "set settings/dhFile $splunk_home/etc/auth/certs/dhparam.pem",
-      ];
+    if $ecdhcurvename == undef {
+      augeas { "$splunk_home/etc/system/local/web.conf":
+        require => Class['splunk::installed'],
+        lens    => 'Puppet.lns',
+        incl    => "$splunk_home/etc/system/local/web.conf",
+        changes => [
+          "set settings/httpport $httpport",
+          "set settings/startwebserver 1",
+          "set settings/enableSplunkWebSSL true",
+          "set settings/sslVersions $sslversions",
+          "set settings/cipherSuite $ciphersuite",
+          "rm settings/ecdhCurveName",
+          "set settings/dhFile $splunk_home/etc/auth/certs/dhparam.pem",
+        ];
+      }
+    } else {
+      augeas { "$splunk_home/etc/system/local/web.conf":
+        require => Class['splunk::installed'],
+        lens    => 'Puppet.lns',
+        incl    => "$splunk_home/etc/system/local/web.conf",
+        changes => [
+          "set settings/httpport $httpport",
+          "set settings/startwebserver 1",
+          "set settings/enableSplunkWebSSL true",
+          "set settings/sslVersions $sslversions",
+          "set settings/cipherSuite $ciphersuite",
+          "set settings/ecdhCurveName $ecdhcurvename",
+          "set settings/dhFile $splunk_home/etc/auth/certs/dhparam.pem",
+        ];
+      }
     }
   }
 }

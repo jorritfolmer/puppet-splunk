@@ -133,25 +133,26 @@ TODO
 TODO
 
 ```
-  $splunk_home  
+  $splunk_home
   $splunk_os_user
-  $lm           
-  $ds           
-  $sh           
-  $ciphers      
-  $sslversions  
-  $dhparamsize  
-  $ecdhcurvename 
-  $inputport    
-  $httpport    
+  $lm
+  $ds
+  $sh
+  $ciphersuite
+  $sslversions
+  $dhparamsize
+  $ecdhcurvename
+  $inputport
+  $httpport
   $kvstoreport
-  $tcpout     
-  $searchpeers 
+  $tcpout
+  $searchpeers
   $admin
-  $compatibility TODO
+  $sslcompatibility
 ```
 
 ## Compatibility
 
 Requires Splunk and Splunkforwarders >= 6.2.0.
-However, if you still have versions < 6.2, pass `compatibility => 'intermediate'`
+However, if you still have versions < 6.2 , pass `sslcompatibility => 'intermediate'`
+If you have version >= 6.2.0 servers but with stock settings, also pass `sslcompatibility => 'intermediate'` in the universal forwarder declaration, otherwise the SSL connections to the deploymentserver will fail.
