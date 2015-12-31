@@ -20,6 +20,7 @@ class splunk (
   $tcpout       = $splunk::params::tcpout,
   $searchpeers = $splunk::params::searchpeers,
   $admin = $splunk::params::admin,
+  $clustering   = $splunk::params::clustering,
   ) inherits splunk::params {
 
   if $type == 'uf' {
@@ -41,6 +42,11 @@ class splunk (
       $sslversions   = $sslversions_intermediate
       $dhparamsize   = $dhparamsize_intermediate
       $ecdhcurvename = undef }
+    default: {
+      $ciphersuite   = undef
+      $sslversions   = undef
+      $dhparamsize   = undef
+      $ecdhcurvename = undef }
   }
 
   include splunk::installed
@@ -50,6 +56,7 @@ class splunk (
   include splunk::server::ssl
   include splunk::server::license
   include splunk::server::kvstore
+  include splunk::server::clustering
   include splunk::splunk_launch
   include splunk::certs::s2s
   include splunk::distsearch

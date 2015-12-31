@@ -34,6 +34,7 @@ class splunk::certs::s2s (
       "$splunk_home/etc/auth/certs/dhparam.pem",
     ],
     logoutput => true,
+    timeout   => 900,
   }
 
 
@@ -47,6 +48,7 @@ class splunk::certs::s2s (
     creates => [ 
       "$splunk_home/etc/auth/certs/s2s.crt",
     ],
+    timeout   => 900,
   }
 
   exec { 'openssl s2s 2':
@@ -59,6 +61,7 @@ class splunk::certs::s2s (
     creates => [ 
       "$splunk_home/etc/auth/certs/s2s.pem",
     ],
+    timeout   => 900,
   }
 
 }

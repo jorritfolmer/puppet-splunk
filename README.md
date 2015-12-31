@@ -2,7 +2,7 @@
 
 ## Principles
 
-This Puppet module installs and configures Splunk servers with the following principles in mind:
+This Puppet module installs and configures Splunk servers and Splunk universal forwarders with the following principles in mind:
 
 1. Splunk above Puppet
 
@@ -29,13 +29,16 @@ TODO
 
 ## Usage
 
-Currently implemented: distributed search.
-TODO: index clustering.
-TODO: search head clustering.
+Currently implemented: 
+
+- Distributed search,
+- index clustering,
+
+TODO: search head clustering
 
 ### Example 1: 
 
-A single standalone Splunk instance that you can use to index and search, for example with the trial license:
+Define a single standalone Splunk instance that you can use to index and search, for example with the trial license:
 
 ```puppet
 node 'splunk-server.internal.corp.tld' {
@@ -47,7 +50,9 @@ node 'splunk-server.internal.corp.tld' {
 }
 ```
 
-Configuring a server with Splunk universal forwarder using the above server as deployment server:
+### Example 2: 
+
+Define another instance with Splunk universal forwarder. Following principle 1, it connects to the Splunk instance above, where apps, inputs and outputs can be managed and deployed through Forwarder Management.
 
 ```puppet
 node 'some-server.internal.corp.tld' {
@@ -58,7 +63,7 @@ node 'some-server.internal.corp.tld' {
 }
 ```
 
-### Example 2: 
+### Example 3: 
 
 One deployment/license server, one search head, and two indexers:
 
@@ -96,15 +101,13 @@ node 'splunk-sh.internal.corp.tld' {
     # Use a License Master and Deployment Server
     lm           => 'splunk-ds.internal.corp.tld:8089',
     ds           => 'splunk-ds.internal.corp.tld:8089',
-    tcpout       => [
+    tcpout       => [ 
       'splunk-idx1.internal.corp.tld:9997', 
-      'splunk-idx2.internal.corp.tld:9997',
-    ],
+      'splunk-idx2.internal.corp.tld:9997', ],
     # Use these search peers
-    searchpeers  => [
+    searchpeers  => [ 
       'splunk-idx1.internal.corp.tld:8089', 
-      'splunk-idx2.internal.corp.tld:8089',
-    ],
+      'splunk-idx2.internal.corp.tld:8089', ],
   }
 }
 
@@ -122,11 +125,60 @@ node 'splunk-idx1.internal.corp.tld', 'splunk-idx2.internal.corp.tld' {
 }
 ```
 
-### Example 3: 
+### Example 4: 
 
-One deployment/license server, one search head, and an indexing cluster:
+A Splunk indexer cluster consisting of one deployment/license/searchhead server, a cluster master, and two cluster peers.
 
-TODO
+```puppet
+node 'splunk-sh.internal.corp.tld' {
+  class { 'splunk':
+    admin        => {
+      hash       => '$6$MR9IJFF7RBnVA.k1$/30EBSzy0EJKZ94SjHFIUHjQjO3/P/4tx0JmWCp/En47MJceaXsevhBLE2w/ibjHlAUkD6k0U.PmY/noe9Jok0',
+      fn         => 'Search head Administrator',
+      email      => 'changemeagain@example.com',
+    },
+    httpport     => 8000,
+    kvstoreport  => 8191,
+    tcpout       => [ 'splunk-cidx1.internal.corp.tld:9997', 'splunk-cidx2.internal.corp.tld:9997', ],
+    clustering   => {
+      mode       => 'searchhead',
+      cm         => 'splunk-cm.internal.corp.tld:8089',
+    }
+  }
+}
+
+node 'splunk-cm.internal.corp.tld' {
+  class { 'splunk':
+    admin        => {
+      hash       => '$6$MR9IJFF7RBnVA.k1$/30EBSzy0EJKZ94SjHFIUHjQjO3/P/4tx0JmWCp/En47MJceaXsevhBLE2w/ibjHlAUkD6k0U.PmY/noe9Jok0',
+      fn         => 'Search head Administrator',
+      email      => 'changemeagain@example.com',
+    },
+    httpport     => 8000,
+    tcpout       => [ 'splunk-cidx1.internal.corp.tld:9997', 'splunk-cidx2.internal.corp.tld:9997', ],
+    clustering   => {
+      mode               => 'master',
+      replication_factor => 2,
+      search_factor      => 2,
+    }
+  }
+}
+
+node 'splunk-cidx1.internal.corp.tld', 'splunk-cidx2.internal.corp.tld' {
+  class { 'splunk':
+    admin        => {
+      hash       => '$6$MR9IJFF7RBnVA.k1$/30EBSzy0EJKZ94SjHFIUHjQjO3/P/4tx0JmWCp/En47MJceaXsevhBLE2w/ibjHlAUkD6k0U.PmY/noe9Jok0',
+      fn         => 'Search head Administrator',
+      email      => 'changemeagain@example.com',
+    },
+    httpport     => 8000,
+    clustering   => {
+      mode       => 'slave',
+      cm         => 'splunk-cm.internal.corp.tld:8089',
+    }
+  }
+}
+```
 
 ## Parameters
 
@@ -149,6 +201,7 @@ TODO
   $searchpeers
   $admin
   $sslcompatibility
+  $clustering
 ```
 
 ## Compatibility
@@ -156,3 +209,4 @@ TODO
 Requires Splunk and Splunkforwarders >= 6.2.0.
 However, if you still have versions < 6.2 , pass `sslcompatibility => 'intermediate'`
 If you have version >= 6.2.0 servers but with stock settings, also pass `sslcompatibility => 'intermediate'` in the universal forwarder declaration, otherwise the SSL connections to the deploymentserver will fail.
+

@@ -23,5 +23,6 @@ class splunk::params (
   $tcpout      = undef
   $searchpeers = undef
   $admin       = undef
+  $clustering  = { }
 }
 

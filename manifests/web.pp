@@ -33,7 +33,6 @@ class splunk::web (
           "set settings/sslVersions $sslversions",
           "set settings/cipherSuite $ciphersuite",
           "rm settings/ecdhCurveName",
-          "set settings/dhFile $splunk_home/etc/auth/certs/dhparam.pem",
         ];
       }
     } else {
@@ -48,7 +47,6 @@ class splunk::web (
           "set settings/sslVersions $sslversions",
           "set settings/cipherSuite $ciphersuite",
           "set settings/ecdhCurveName $ecdhcurvename",
-          "set settings/dhFile $splunk_home/etc/auth/certs/dhparam.pem",
         ];
       }
     }
