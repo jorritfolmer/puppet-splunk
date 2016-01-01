@@ -14,14 +14,6 @@ class splunk::certs::s2s (
     require => Augeas["$splunk_home/etc/system/local/inputs.conf"],
   }
 
-  file { "$splunk_home/etc/auth/certs/ca.crt":
-    ensure  => present,
-    owner   => $splunk_os_user,
-    group   => $splunk_os_user,
-    mode    => 0700,
-    require => File["$splunk_home/etc/auth/certs"],
-    source  => "puppet:///ca/ca.crt",
-  }
 
   exec { 'openssl dhparam':
     command => "openssl dhparam -outform PEM -out $splunk_home/etc/auth/certs/dhparam.pem $dhparamsize",
@@ -37,26 +29,24 @@ class splunk::certs::s2s (
     timeout   => 900,
   }
 
-
-  exec { 'openssl s2s 1':
-    command => "openssl req -new -x509 -nodes -newkey rsa:2048 -keyout $splunk_home/etc/auth/certs/s2s.key -out $splunk_home/etc/auth/certs/s2s.crt -days 3650 -subj \"/C=NL/ST=Zuid-Holland/L=Rotterdam/O=Bedrijf/CN=$fqdn\" ",
+  exec { 'openssl s2s ca':
+    command => "cat /etc/puppet/ssl/certs/ca.pem > $splunk_home/etc/auth/certs/ca.crt",
     path    => ['/bin', '/sbin', '/usr/bin', '/usr/sbin'],
     require => [ 
       Package[$package],
-      File["$splunk_home/etc/auth/certs"],
     ],
     creates => [ 
-      "$splunk_home/etc/auth/certs/s2s.crt",
+      "$splunk_home/etc/auth/certs/ca.crt",
     ],
     timeout   => 900,
   }
 
-  exec { 'openssl s2s 2':
-    command => "cat $splunk_home/etc/auth/certs/s2s.key $splunk_home/etc/auth/certs/s2s.crt > $splunk_home/etc/auth/certs/s2s.pem",
+  exec { 'openssl s2s 1':
+    command => "cat /etc/puppet/ssl/private_keys/$fqdn.pem /etc/puppet/ssl/certs/$fqdn.pem > $splunk_home/etc/auth/certs/s2s.pem",
     path    => ['/bin', '/sbin', '/usr/bin', '/usr/sbin'],
     require => [ 
       Package[$package],
-      Exec['openssl s2s 1'],
+      Exec['openssl s2s ca'],
     ],
     creates => [ 
       "$splunk_home/etc/auth/certs/s2s.pem",

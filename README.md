@@ -25,7 +25,10 @@ This Puppet module installs and configures Splunk servers and Splunk universal f
 
 ## Installation
 
-TODO
+To give this module a try, you don't necessarily have to setup a Certiticate Authority for the various SSL certificates that Splunk uses.
+
+1. By default Splunk already uses its own CA (1024 bits) that is used to create and sign the certificate for the 8089/tcp management port and 8000/tcp web interface: /opt/splunk/etc/auth/ca.pem. However, since everyone can grab the key from a Splunk trial download, it's an unlikely candidate for real production use.
+2. Because there is already a Puppet CA in place, this module reuses the client key (4096 bits) and client certificate signed by the Puppet CA.
 
 ## Usage
 
