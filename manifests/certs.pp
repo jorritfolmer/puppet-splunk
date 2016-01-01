@@ -34,6 +34,7 @@ class splunk::certs::s2s (
     path    => ['/bin', '/sbin', '/usr/bin', '/usr/sbin'],
     require => [ 
       Package[$package],
+      File["$splunk_home/etc/auth/certs"],
     ],
     creates => [ 
       "$splunk_home/etc/auth/certs/ca.crt",
