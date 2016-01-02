@@ -45,7 +45,7 @@ class splunk::certs::s2s (
   }
 
   exec { 'openssl s2s 1':
-    command => "cat /etc/puppet/ssl/private_keys/${fqdn}.pem /etc/puppet/ssl/certs/${fqdn}.pem > ${splunk_home}/etc/auth/certs/s2s.pem",
+    command => "cat /etc/puppet/ssl/private_keys/${::fqdn}.pem /etc/puppet/ssl/certs/${::fqdn}.pem > ${splunk_home}/etc/auth/certs/s2s.pem",
     path    => ['/bin', '/sbin', '/usr/bin', '/usr/sbin'],
     require => [
       Class['splunk::installed'],
