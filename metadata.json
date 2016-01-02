@@ -1,0 +1,24 @@
+{
+  "name": "jorritfolmer-splunk",
+  "version": "1.0.0",
+  "author": "Jorrit Folmer",
+  "summary": "Puppet module to manage Splunk topologies",
+  "license": "MIT",
+  "source": "https://github.com/jorritfolmer/puppet-splunk",
+  "issues_url": "https://github.com/jorritfolmer/puppet-splunk/issues",
+  "project_page": "https://github.com/jorritfolmer/puppet-splunk",
+  "dependencies": [
+    {"version_requirement":">= 1.0.0","name":"puppetlabs-stdlib"}
+  ],
+  "operatingsystem_support": [
+    {
+      "operatingsystem":"RedHat",
+      "operatingsystemrelease":[ "6.0", "7.0" ]
+    },
+    {
+      "operatingsystem":"CentOS",
+      "operatingsystemrelease":[ "6.0", "7.0" ]
+    }
+  ]
+}
+

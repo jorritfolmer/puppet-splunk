@@ -1,8 +1,8 @@
 # Puppet module to create Splunk topologies
 
-## Principles
-
 This Puppet module installs and configures Splunk servers and Splunk universal forwarders with the following principles in mind:
+
+## Principles
 
 1. Splunk above Puppet
 
@@ -25,19 +25,18 @@ This Puppet module installs and configures Splunk servers and Splunk universal f
 
 ## Installation
 
+1. SSH to your Puppet master
+2. `cd /etc/puppet/modules`
+3. `git clone https://github.com/jorritfolmer/puppet-splunk.git`
+4  `mv puppet-splunk splunk`
+5. Add the `splunk` class to your nodes in /etc/puppet/manifests/site.pp, see below for examples.
+
+## Usage
+
 To give this module a try, you don't necessarily have to setup a Certiticate Authority for the various SSL certificates that Splunk uses.
 
 1. By default Splunk already uses its own CA (1024 bits) that is used to create and sign the certificate for the 8089/tcp management port and 8000/tcp web interface: /opt/splunk/etc/auth/ca.pem. However, since everyone can grab the key from a Splunk trial download, it's an unlikely candidate for real production use.
 2. Because there is already a Puppet CA in place, this module reuses the client key (4096 bits) and client certificate signed by the Puppet CA.
-
-## Usage
-
-Currently implemented: 
-
-- Distributed search,
-- index clustering,
-
-TODO: search head clustering
 
 ### Example 1: 
 
@@ -76,7 +75,7 @@ node 'splunk-ds.internal.corp.tld' {
     admin        => {
       # Set the admin password to changemeagain
       hash       => '$6$MR9IJFF7RBnVA.k1$/30EBSzy0EJKZ94SjHFIUHjQjO3/P/4tx0JmWCp/En47MJceaXsevhBLE2w/ibjHlAUkD6k0U.PmY/noe9Jok0',
-      fn         => 'Deployment server Administrator',
+      fn         => 'Deployment Server Administrator',
       email      => 'changemeagain@example.com',
     },
     # Enable the web server
@@ -137,7 +136,7 @@ node 'splunk-sh.internal.corp.tld' {
   class { 'splunk':
     admin        => {
       hash       => '$6$MR9IJFF7RBnVA.k1$/30EBSzy0EJKZ94SjHFIUHjQjO3/P/4tx0JmWCp/En47MJceaXsevhBLE2w/ibjHlAUkD6k0U.PmY/noe9Jok0',
-      fn         => 'Search head Administrator',
+      fn         => 'Search Head Administrator',
       email      => 'changemeagain@example.com',
     },
     httpport     => 8000,
@@ -154,7 +153,7 @@ node 'splunk-cm.internal.corp.tld' {
   class { 'splunk':
     admin        => {
       hash       => '$6$MR9IJFF7RBnVA.k1$/30EBSzy0EJKZ94SjHFIUHjQjO3/P/4tx0JmWCp/En47MJceaXsevhBLE2w/ibjHlAUkD6k0U.PmY/noe9Jok0',
-      fn         => 'Search head Administrator',
+      fn         => 'Cluster Master Administrator',
       email      => 'changemeagain@example.com',
     },
     httpport     => 8000,
@@ -171,7 +170,7 @@ node 'splunk-cidx1.internal.corp.tld', 'splunk-cidx2.internal.corp.tld' {
   class { 'splunk':
     admin        => {
       hash       => '$6$MR9IJFF7RBnVA.k1$/30EBSzy0EJKZ94SjHFIUHjQjO3/P/4tx0JmWCp/En47MJceaXsevhBLE2w/ibjHlAUkD6k0U.PmY/noe9Jok0',
-      fn         => 'Search head Administrator',
+      fn         => 'Cluster Peer Administrator',
       email      => 'changemeagain@example.com',
     },
     httpport     => 8000,
