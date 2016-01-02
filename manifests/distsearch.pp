@@ -30,6 +30,9 @@ class splunk::distsearch (
 ){
   if $searchpeers == undef {
     file { "${splunk_home}/etc/system/local/distsearch.conf":
+      require => [
+        Class['splunk::installed'],
+      ],
       ensure  => "absent"
     }
   } else {

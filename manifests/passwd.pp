@@ -9,6 +9,7 @@ class splunk::passwd (
     $fn    = $admin[fn]
     $email = $admin[email]
     file { "$splunk_home/etc/passwd":
+      require => Class['splunk::installed'],
       ensure => present,
       owner  => $splunk_os_user,
       mode   => '0600',

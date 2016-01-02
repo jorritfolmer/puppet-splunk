@@ -11,7 +11,10 @@ class splunk::certs::s2s (
     group   => $splunk_os_user,
     mode    => 0700,
     recurse => true,
-    require => Augeas["$splunk_home/etc/system/local/inputs.conf"],
+    require => [ 
+      Class['splunk::installed'],
+      Class['splunk::inputs'],
+    ],
   }
 
 
@@ -19,7 +22,7 @@ class splunk::certs::s2s (
     command => "openssl dhparam -outform PEM -out $splunk_home/etc/auth/certs/dhparam.pem $dhparamsize",
     path    => ['/bin', '/sbin', '/usr/bin', '/usr/sbin'],
     require => [ 
-      Package[$package],
+      Class['splunk::installed'],
       File["$splunk_home/etc/auth/certs"],
     ],
     creates => [ 
@@ -33,7 +36,7 @@ class splunk::certs::s2s (
     command => "cat /etc/puppet/ssl/certs/ca.pem > $splunk_home/etc/auth/certs/ca.crt",
     path    => ['/bin', '/sbin', '/usr/bin', '/usr/sbin'],
     require => [ 
-      Package[$package],
+      Class['splunk::installed'],
       File["$splunk_home/etc/auth/certs"],
     ],
     creates => [ 
@@ -46,7 +49,7 @@ class splunk::certs::s2s (
     command => "cat /etc/puppet/ssl/private_keys/$fqdn.pem /etc/puppet/ssl/certs/$fqdn.pem > $splunk_home/etc/auth/certs/s2s.pem",
     path    => ['/bin', '/sbin', '/usr/bin', '/usr/sbin'],
     require => [ 
-      Package[$package],
+      Class['splunk::installed'],
       Exec['openssl s2s ca'],
     ],
     creates => [ 

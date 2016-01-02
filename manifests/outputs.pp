@@ -6,10 +6,12 @@ class splunk::outputs (
 ){
   if $tcpout == undef {
     file { "${splunk_home}/etc/system/local/outputs.conf":
+      require => Class['splunk::installed'],
       ensure  => "absent"
     }
   } else {
     file { "${splunk_home}/etc/system/local/outputs.conf":
+      require => Class['splunk::installed'],
       ensure  => "present", 
       owner   => $splunk_os_user,
       group   => $splunk_os_user,
