@@ -1,35 +1,26 @@
 # Puppet module to create Splunk topologies
 
-This Puppet module installs and configures Splunk servers and Splunk universal forwarders with the following principles in mind:
+This Puppet module can be used to create and arrange Splunk instances into simple, distributed or clustered topologies. It does so with the following principles in mind:
 
 ## Principles
 
-1. Splunk above Puppet
-
-    Puppet is only used to configure the running skeleton of a Splunk constellation. It tries to keep away from Splunk administration as much as possible. Why deploy Splunk apps through Puppet if you can use Splunk's multi-platform deployment server?
-
-2. Power to the Splunkers
-
-    A Splunk installation should typically not be administered by the IT or IT-infra teams, since it is often used in an audit context.
-
-3. Secure by default
-    - Splunk runs as user "splunk"
-    - No services are listening by default except the bare minimum (8089/tcp)
-    - TLSv1.1 and TLSv1.2 are enabled by default
-    - Perfect Forward Secrecy (PFS) using Elliptic curve Diffie-Hellman (ECDH)
-    - Ciphers are set to [modern compatibility](https://wiki.mozilla.org/Security/Server_Side_TLS)
-
-4. Supports any topology
-
-    Single server? Redundant multi-site clustering? Heavy forwarder in a DMZ?
+1. **Splunk above Puppet.** Puppet is only used to configure the running skeleton of a Splunk constellation. It tries to keep away from Splunk administration as much as possible. For example, why deploy Splunk apps to forwarders through Puppet if you can use Splunk's multi-platform deployment server?
+2. **Power to the Splunkers.** A Splunk installation should typically not be administered by the IT or IT-infra teams, since it is often used in an audit context.
+3. **Secure by default**.
+  - Splunk runs as user splunk instead of root.
+  - No services are listening by default except the bare minimum (8089/tcp)
+  - TLSv1.1 and TLSv1.2 are enabled by default
+  - Perfect Forward Secrecy (PFS) using Elliptic curve Diffie-Hellman (ECDH)
+  - Ciphers are set to [modern compatibility](https://wiki.mozilla.org/Security/Server_Side_TLS)
+  - Admin password can be set using its SHA512 hash in the Puppet manifests instead of plain-text.
+4. **Supports any topology.** Single server? Redundant multi-site clustering? Heavy forwarder in a DMZ?
 
 ## Installation
 
 1. SSH to your Puppet master
 2. `cd /etc/puppet/modules`
-3. `git clone https://github.com/jorritfolmer/puppet-splunk.git`
-4. `mv puppet-splunk splunk`
-5. Add the `splunk` class to your nodes in /etc/puppet/manifests/site.pp, see below for examples.
+3. `puppet module install jorritfolmer-splunk` or `git clone https://github.com/jorritfolmer/puppet-splunk.git; mv puppet-splunk splunk`
+4. Add the `splunk` class to your nodes in /etc/puppet/manifests/site.pp, see below for examples.
 
 ## Usage
 
@@ -41,6 +32,8 @@ To give this module a try, you don't necessarily have to setup a Certiticate Aut
 ### Example 1: 
 
 Define a single standalone Splunk instance that you can use to index and search, for example with the trial license:
+
+![Example 1](example1.png)
 
 ```puppet
 node 'splunk-server.internal.corp.tld' {
@@ -54,9 +47,19 @@ node 'splunk-server.internal.corp.tld' {
 
 ### Example 2: 
 
-Define another instance with Splunk universal forwarder. Following principle 1, it connects to the Splunk instance above, where apps, inputs and outputs can be managed and deployed through Forwarder Management.
+Extends the example above with a node that will run the Splunk universal forwarder. It uses the first server as Deployment Server (`ds =>`) where apps, inputs and outputs can be managed and deployed through Forwarder Management.
+
+![Example 2](example2.png)
 
 ```puppet
+node 'splunk-server.internal.corp.tld' {
+  class { 'splunk':
+    httpport     => 8000,
+    kvstoreport  => 8191,
+    inputport    => 9997,
+  }
+}
+
 node 'some-server.internal.corp.tld' {
   class { 'splunk':
     type => 'uf',
@@ -68,6 +71,8 @@ node 'some-server.internal.corp.tld' {
 ### Example 3: 
 
 One deployment/license server, one search head, and two indexers:
+
+![Example 3](example3.png)
 
 ```puppet
 node 'splunk-ds.internal.corp.tld' {
@@ -129,7 +134,9 @@ node 'splunk-idx1.internal.corp.tld', 'splunk-idx2.internal.corp.tld' {
 
 ### Example 4: 
 
-A Splunk indexer cluster consisting of one deployment/license/searchhead server, a cluster master, and two cluster peers.
+A Splunk indexer cluster consisting of one deployment/license/searchhead server, a cluster master, and three cluster peers.
+
+![Example 4](example4.png)
 
 ```puppet
 node 'splunk-sh.internal.corp.tld' {
@@ -166,7 +173,9 @@ node 'splunk-cm.internal.corp.tld' {
   }
 }
 
-node 'splunk-cidx1.internal.corp.tld', 'splunk-cidx2.internal.corp.tld' {
+node 'splunk-cidx1.internal.corp.tld', 
+     'splunk-cidx2.internal.corp.tld',
+     'splunk-cidx3.internal.corp.tld' {
   class { 'splunk':
     admin        => {
       hash       => '$6$MR9IJFF7RBnVA.k1$/30EBSzy0EJKZ94SjHFIUHjQjO3/P/4tx0JmWCp/En47MJceaXsevhBLE2w/ibjHlAUkD6k0U.PmY/noe9Jok0',
