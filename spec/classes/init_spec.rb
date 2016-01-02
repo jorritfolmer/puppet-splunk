@@ -1,7 +1,7 @@
 require 'spec_helper'
-describe 'test' do
+describe 'splunk' do
 
   context 'with defaults for all parameters' do
-    it { should contain_class('test') }
+    it { should contain_class('splunk::installed') }
   end
 end

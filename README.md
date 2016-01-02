@@ -28,7 +28,7 @@ This Puppet module installs and configures Splunk servers and Splunk universal f
 1. SSH to your Puppet master
 2. `cd /etc/puppet/modules`
 3. `git clone https://github.com/jorritfolmer/puppet-splunk.git`
-4  `mv puppet-splunk splunk`
+4. `mv puppet-splunk splunk`
 5. Add the `splunk` class to your nodes in /etc/puppet/manifests/site.pp, see below for examples.
 
 ## Usage
