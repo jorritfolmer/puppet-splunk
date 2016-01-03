@@ -46,6 +46,11 @@
 # [*admin*]
 #    Optional. Used to create a local admin user with predefined hash, full
 #    name and email This is a hash with 3 members: hash, fn, email.
+# 
+# [*service]
+#    Optional. Used to manage the running and startup state of the
+#    Splunk/Splunkforwarder service. This is a hash with 2 members: ensure, enable.
+#
 
 class splunk (
   $type         = $splunk::params::type,
@@ -68,6 +73,7 @@ class splunk (
   $searchpeers = $splunk::params::searchpeers,
   $admin = $splunk::params::admin,
   $clustering   = $splunk::params::clustering,
+  $service      = $splunk::params::service,
   ) inherits splunk::params {
 
   if $type == 'uf' {
@@ -109,6 +115,7 @@ class splunk (
   include splunk::distsearch
   include splunk::deploymentclient
   include splunk::passwd
+  include splunk::service
 }
 
 # ISSUES

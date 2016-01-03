@@ -22,5 +22,9 @@ class splunk::params (
   $searchpeers = undef
   $admin       = undef
   $clustering  = { }
+  $service     = { 
+    enable => true,
+    ensure => undef, 
+  }
 }
 

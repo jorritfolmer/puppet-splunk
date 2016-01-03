@@ -15,12 +15,40 @@ This Puppet module can be used to create and arrange Splunk instances into simpl
   - Admin password can be set using its SHA512 hash in the Puppet manifests instead of plain-text.
 4. **Supports any topology.** Single server? Redundant multi-site clustering? Heavy forwarder in a DMZ?
 
+## Prerequisites
+
+1. A running Puppet master
+2. A running yum repository server with splunk and splunkforwarder RPMs
+
+  If you don't already have a local repository server, the quickest way is to install Apache on the Puppet master and have this serve the yum repository.
+
+  1. `yum install httpd`
+  2. `yum install createrepo`
+  3. `mkdir /var/www/html/splunk`
+  4. `cd /var/www/html/splunk`
+  5. download splunk-x.y.x.rpm
+  6. download splunk-forwarder-x.y.x.rpm
+  7. `createrepo .`
+  8. make sure Apache allows directory index listing
+  9. surf to http://your.repo.server/splunk and check if you get a directory listing
+
+  Then add something like to every node definition in site.pp
+
+  ```
+  yumrepo { "splunk":
+    baseurl => "http://your.repo.server/splunk",
+    descr => "Splunk repo",
+    enabled => 1,
+    gpgcheck => 0
+  }
+  ```
+
 ## Installation
 
 1. SSH to your Puppet master
 2. `cd /etc/puppet/modules`
 3. `puppet module install jorritfolmer-splunk` or `git clone https://github.com/jorritfolmer/puppet-splunk.git; mv puppet-splunk splunk`
-4. Add the `splunk` class to your nodes in /etc/puppet/manifests/site.pp, see below for examples.
+4. Create your Splunk topology, see below for examples.
 
 ## Usage
 
@@ -28,6 +56,8 @@ To give this module a try, you don't necessarily have to setup a Certiticate Aut
 
 1. By default Splunk already uses its own CA (1024 bits) that is used to create and sign the certificate for the 8089/tcp management port and 8000/tcp web interface: /opt/splunk/etc/auth/ca.pem. However, since everyone can grab the key from a Splunk trial download, it's an unlikely candidate for real production use.
 2. Because there is already a Puppet CA in place, this module reuses the client key (4096 bits) and client certificate signed by the Puppet CA.
+
+By default, the Splunk module doesn't manage the state of the splunk service, except configure to start Splunk or Splunkforwarder at boot time. However, if you do want Puppet to interfere while performing a cluster rolling restart or an indexer restart, have a look at the `service` parameter. 
 
 ### Example 1: 
 
@@ -193,31 +223,92 @@ node 'splunk-cidx1.internal.corp.tld',
 
 ## Parameters
 
-TODO
+### Main splunk class
 
-```
-  $splunk_home
-  $splunk_os_user
-  $lm
-  $ds
-  $sh
-  $ciphersuite
-  $sslversions
-  $dhparamsize
-  $ecdhcurvename
-  $inputport
-  $httpport
-  $kvstoreport
-  $tcpout
-  $searchpeers
-  $admin
-  $sslcompatibility
-  $clustering
-```
+#### `type`
+
+  Optional. When omitted it installs the Splunk server type.
+  Use `type => "uf"` if you want to have a Splunk Universal Forwarder.
+
+#### `httpport`
+
+  Optional. When omitted, it will not start Splunk web.
+  Set `httpport => 8000` if you do want to have Splunk web available.
+
+#### `kvstoreport`
+
+  Optional. When omitted, it will not start Mongodb.
+  Set `kvstoreport => 8191` if you do want to have KVstore available.
+
+#### `inputport`
+
+  Optional. When omitted, it will not start an Splunk2Splunk listener.
+  Set `kvstoreport => 9997` if you do want to use this instance as an indexer.
+
+#### `tcpout`
+
+  Optional. When omitted, it will not forward events to a Splunk indexer.
+  Set `tcpout => 'splunk-idx1.internal.corp.tld:9997'` if you do want to
+  forward events to a Splunk indexer. 
+
+#### `splunk_os_user`
+
+  Optional. Run the Splunk instance as this user. By default
+  Splunk/Splunkforwarder will run as user "splunk".
+
+#### `splunk_home`
+
+  Optional. Used if you're running Splunk outside of /opt/splunk or
+  /opt/splunkforwarder.
+
+#### `lm`
+
+  Optional. Used to point to a Splunk license manager.
+
+#### `ds`
+
+  Optional. Used to point to a Splunk deployment server
+
+#### `sslcompatibility`
+
+  Optional. Used to configure the SSL compatibility level as defined by
+  Mozilla Labs.  When omitted it will use "modern" compatibility. Set to
+  "intermediate" or "old" if you have older Splunk forwarders or clients
+
+#### `admin`
+
+  Optional. Used to create a local admin user with predefined hash, full
+  name and email This is a hash with 3 members:
+
+  - `hash` (SHA512 hash of the admin password)
+  - `fn`   (Full name)
+  - `email` (Email address)
+
+#### `service`
+
+  Optional. Used to manage the running and startup state of the
+  Splunk/Splunkforwarder service. This is a hash with 2 members: 
+
+  - `ensure`
+  - `enable`
+
+#### `searchpeers`
+
+  Optional. Used to point a Splunk search head to (a) Splunk indexer(s)
+
+#### `clustering`
+
+  Optional. Used to configure Splunk clustering. This is a hash with 4 members:
+
+  - `mode` (can be one of `master`,`searchhead`,`slave`)
+  - `replication_factor`
+  - `search_factor`
+  - `cm` (points to cluster master in case of searchhead or slave)
 
 ## Compatibility
 
 Requires Splunk and Splunkforwarders >= 6.2.0.
-However, if you still have versions < 6.2 , pass `sslcompatibility => 'intermediate'`
-If you have version >= 6.2.0 servers but with stock settings, also pass `sslcompatibility => 'intermediate'` in the universal forwarder declaration, otherwise the SSL connections to the deploymentserver will fail.
+However, if you still have versions < 6.2 , pass `sslcompatibility => 'intermediate'`.
+
+If you have version >= 6.2.0 servers but with stock settings from a previous Splunk installation, also pass `sslcompatibility => 'intermediate'` in the universal forwarder declaration, otherwise the SSL connections to the deploymentserver will fail.
 

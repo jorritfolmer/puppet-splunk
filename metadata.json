@@ -1,6 +1,6 @@
 {
   "name": "jorritfolmer-splunk",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": "Jorrit Folmer",
   "summary": "Puppet module to create and arrange Splunk instances into simple, distributed or clustered topologies",
   "license": "MIT",
