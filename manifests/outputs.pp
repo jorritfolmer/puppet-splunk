@@ -3,6 +3,7 @@ class splunk::outputs (
   $tcpout = $splunk::tcpout,
   $splunk_os_user = $splunk::splunk_os_user,
   $splunk_home    = $splunk::splunk_home,
+  $useACK         = $splunk::useACK,
 ){
   if $tcpout == undef {
     file { "${splunk_home}/etc/system/local/outputs.conf":

@@ -26,5 +26,6 @@ class splunk::params (
     enable => true,
     ensure => undef,
   }
+  $useACK       = false
 }
 

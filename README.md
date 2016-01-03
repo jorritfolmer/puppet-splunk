@@ -282,8 +282,7 @@ node 'splunk-cidx1.internal.corp.tld',
 
 #### `splunk_os_user`
 
-  Optional. Run the Splunk instance as this user. By default
-  Splunk/Splunkforwarder will run as user "splunk".
+  Optional. Run the Splunk instance as this user. Defaults to splunk
 
 #### `splunk_home`
 
@@ -301,7 +300,7 @@ node 'splunk-cidx1.internal.corp.tld',
 #### `sslcompatibility`
 
   Optional. Used to configure the SSL compatibility level as defined by
-  Mozilla Labs.  When omitted it will use "modern" compatibility. Set to
+  Mozilla Labs.  Defaults to "modern" compatibility. Set to
   "intermediate" or "old" if you have older Splunk forwarders or clients
 
 #### `admin`
@@ -318,8 +317,8 @@ node 'splunk-cidx1.internal.corp.tld',
   Optional. Used to manage the running and startup state of the
   Splunk/Splunkforwarder service. This is a hash with 2 members: 
 
-  - `ensure`
-  - `enable`
+  - `ensure` (not enabled by default)
+  - `enable` (defaults to true)
 
 #### `searchpeers`
 
@@ -333,6 +332,11 @@ node 'splunk-cidx1.internal.corp.tld',
   - `replication_factor`
   - `search_factor`
   - `cm` (points to cluster master in case of searchhead or slave)
+
+#### `useACK`
+
+  Optional. Used to request indexer acknowlegement when sending data.
+  Defaults to false.
 
 ## Compatibility
 

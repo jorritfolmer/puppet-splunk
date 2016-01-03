@@ -51,6 +51,9 @@
 #    Optional. Used to manage the running and startup state of the
 #    Splunk/Splunkforwarder service. This is a hash with 2 members: ensure, enable.
 #
+# [*useACK]
+#    Optional. Used to enable indexer acknowledgememt.
+#
 
 class splunk (
   $type         = $splunk::params::type,
@@ -74,6 +77,7 @@ class splunk (
   $admin = $splunk::params::admin,
   $clustering   = $splunk::params::clustering,
   $service      = $splunk::params::service,
+  $useACK       = $splunk::params::useACK,
   ) inherits splunk::params {
 
   if $type == 'uf' {
