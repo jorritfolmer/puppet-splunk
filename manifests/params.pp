@@ -27,5 +27,6 @@ class splunk::params (
     ensure => undef,
   }
   $useACK       = false
+  $ds_intermediate = undef
 }
 

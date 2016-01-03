@@ -1,4 +1,4 @@
-# Puppet module to create Splunk topologies
+# Deploy Splunk into any imaginable topology.
 
 This Puppet module can be used to create and arrange Splunk instances into simple, distributed or clustered topologies. It does so with the following principles in mind:
 
@@ -50,12 +50,12 @@ yumrepo { "splunk":
 If you don't already have a local repository server, the quickest way is to install Apache on the Puppet master and have this serve the APT repository.
 
 1. `apt-get install apache2`
-2. `apt-get install dpkg-dev
+2. `apt-get install dpkg-dev`
 3. `mkdir /var/www/html/splunk`
 4. `cd /var/www/html/splunk`
 5. download splunk-x.y.x.deb
 6. download splunk-forwarder-x.y.x.deb
-7. dpkg-scanpackages . /dev/null |gzip -c > Packages.gz
+7. `dpkg-scanpackages . /dev/null |gzip -c > Packages.gz`
 8. make sure Apache allows directory index listing
 9. surf to http://your.rhel-repo.server/splunk and check if you get a directory listing
 
@@ -338,10 +338,62 @@ node 'splunk-cidx1.internal.corp.tld',
   Optional. Used to request indexer acknowlegement when sending data.
   Defaults to false.
 
+#### `ds_intermediate`
+
+  Optional. Used to configure the deployment server as a deploymentclient.
+  This is useful if you want to retain one central deployment server instead of
+  multiple, for example one for each DMZ.  Defaults to undef.
+
 ## Compatibility
 
 Requires Splunk and Splunkforwarders >= 6.2.0.
 However, if you still have versions < 6.2 , pass `sslcompatibility => 'intermediate'`.
 
 If you have version >= 6.2.0 servers but with stock settings from a previous Splunk installation, also pass `sslcompatibility => 'intermediate'` in the universal forwarder declaration, otherwise the SSL connections to the deploymentserver will fail.
+
+## Changelog
+
+### 1.0.3
+
+- Added `ds_intermediate` parameter to create a deployment server that can deploy apps from an another upstream deployment server.
+
+### 1.0.2
+
+- Added `useACK` parameter to manage indexer acknowledgement
+- Updated README with Debian / Ubuntu prerequisites.
+
+### 1.0.1
+
+- Added `service` parameter to manage start and running state of the Splunk or Splunkforwarder service.
+
+### 1.0.0
+
+Initial release: 
+
+- License master
+- Splunk web
+- Standalone search head
+- KVstore
+- Standalone indexer
+- Deployment server
+- Deployment client
+- Distributed search
+- Forwarding with load-balancing
+- Data input with SSL
+- Index clustering: cluster master
+- Index clustering: cluster peer
+- Index clustering: search head
+
+## Roadmap
+
+- Optionally specify Splunk version to install
+- Search head clustering: search head
+- Search head clustering: deployer
+- Distributed Management Console
+- Data Collection Node
+
+## Out-of-scope
+
+- Search head load-balancing
+- Search head pooling
 
