@@ -5,7 +5,7 @@ class splunk::installed (
   $splunk_os_user = $splunk::splunk_os_user
 ) {
   package { $package:
-    ensure => 'installed',
+    ensure => installed,
   }
   exec { 'splunk enable boot-start etcetera':
     command => "${splunk_home}/bin/splunk enable boot-start -user ${splunk_os_user} --accept-license --answer-yes --no-prompt",

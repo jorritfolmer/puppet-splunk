@@ -18,30 +18,59 @@ This Puppet module can be used to create and arrange Splunk instances into simpl
 ## Prerequisites
 
 1. A running Puppet master
-2. A running yum repository server with splunk and splunkforwarder RPMs
+2. A running repository server with splunk and splunkforwarder packages. See below if you need help setting it up.
 
-  If you don't already have a local repository server, the quickest way is to install Apache on the Puppet master and have this serve the yum repository.
+### Splunk YUM repository (Red Hat based)
 
-  1. `yum install httpd`
-  2. `yum install createrepo`
-  3. `mkdir /var/www/html/splunk`
-  4. `cd /var/www/html/splunk`
-  5. download splunk-x.y.x.rpm
-  6. download splunk-forwarder-x.y.x.rpm
-  7. `createrepo .`
-  8. make sure Apache allows directory index listing
-  9. surf to http://your.repo.server/splunk and check if you get a directory listing
+If you don't already have a local repository server, the quickest way is to install Apache on the Puppet master and have this serve the yum repository.
 
-  Then add something like to every node definition in site.pp
+1. `yum install httpd`
+2. `yum install createrepo`
+3. `mkdir /var/www/html/splunk`
+4. `cd /var/www/html/splunk`
+5. download splunk-x.y.x.rpm
+6. download splunk-forwarder-x.y.x.rpm
+7. `createrepo .`
+8. make sure Apache allows directory index listing
+9. surf to http://your.repo.server/splunk and check if you get a directory listing
 
-  ```
-  yumrepo { "splunk":
-    baseurl => "http://your.repo.server/splunk",
-    descr => "Splunk repo",
-    enabled => 1,
-    gpgcheck => 0
-  }
-  ```
+Then add something like this to every node definition in site.pp, and require it from the splunk class so it it evaluated before the splunk class.
+
+```
+yumrepo { "splunk":
+  baseurl => "http://your.repo.server/splunk",
+  descr => "Splunk repo",
+  enabled => 1,
+  gpgcheck => 0
+}
+```
+
+### Splunk APT repository (Debian/Ubuntu based)
+
+If you don't already have a local repository server, the quickest way is to install Apache on the Puppet master and have this serve the APT repository.
+
+1. `apt-get install apache2`
+2. `apt-get install dpkg-dev
+3. `mkdir /var/www/html/splunk`
+4. `cd /var/www/html/splunk`
+5. download splunk-x.y.x.deb
+6. download splunk-forwarder-x.y.x.deb
+7. dpkg-scanpackages . /dev/null |gzip -c > Packages.gz
+8. make sure Apache allows directory index listing
+9. surf to http://your.rhel-repo.server/splunk and check if you get a directory listing
+
+Then add something like this to every node definition in site.pp, and make sure to require these files from the splunk class so they are evaluated before the splunk class. Because the APT repository above isn't signed, puppet won't be able to install splunk or splunkforwarder, except when setting `APT::Get::AllowUnauthenticated` somewhere in `/etc/apt/apt.conf.d/`. You may have to run apt-get update before the Splunk repository is available in apt-get.
+
+```
+file { "/etc/apt/apt.conf.d/99allowunsigned":
+  ensure => present,
+  content => "APT::Get::AllowUnauthenticated "true";\n",
+}
+file { "/etc/apt/sources.list.d/splunk.list":
+  ensure => present,
+  content => "deb http://your.apt-repo.server/splunk ./\n",
+}
+```
 
 ## Installation
 
