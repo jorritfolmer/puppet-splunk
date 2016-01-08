@@ -10,7 +10,7 @@ class splunk::inputs (
     augeas { "${splunk_home}/etc/system/local/inputs.conf":
       require => Class['splunk::installed'],
       lens    => 'Puppet.lns',
-      incl    => "${splunk_home}/etc/system/local/inputs.ronf",
+      incl    => "${splunk_home}/etc/system/local/inputs.conf",
       changes => [
         'rm splunktcp-ssl:*',
       ];
