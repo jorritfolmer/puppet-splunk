@@ -1,6 +1,6 @@
 {
   "name": "jorritfolmer-splunk",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "author": "Jorrit Folmer",
   "summary": "Deploy Splunk instances into any imaginable topology, distributed or clustered.",
   "license": "MIT",
@@ -16,11 +16,11 @@
     {
       "operatingsystem":"CentOS",
       "operatingsystemrelease":[ "6", "7" ]
-    }
+    },
     {
       "operatingsystem":"Ubuntu",
       "operatingsystemrelease":[ "14.04" ]
-    }
+    },
     {
       "operatingsystem":"Debian",
       "operatingsystemrelease":[ "8" ]
