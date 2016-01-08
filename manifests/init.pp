@@ -73,15 +73,16 @@ class splunk (
   $dhparamsize_intermediate  = $splunk::params::dhparamsize_intermediate,
   $ecdhcurvename_intermediate = $splunk::params::ecdhcurvename_intermediate,
   $inputport    = $splunk::params::inputport,
-  $httpport       = $splunk::params::httpport,
-  $kvstoreport       = $splunk::params::kvstoreport,
+  $httpport     = $splunk::params::httpport,
+  $kvstoreport  = $splunk::params::kvstoreport,
   $tcpout       = $splunk::params::tcpout,
-  $searchpeers = $splunk::params::searchpeers,
-  $admin = $splunk::params::admin,
+  $searchpeers  = $splunk::params::searchpeers,
+  $admin        = $splunk::params::admin,
   $clustering   = $splunk::params::clustering,
   $service      = $splunk::params::service,
   $useACK       = $splunk::params::useACK,
   $ds_intermediate = $splunk::params::ds_intemediate,
+  $version      = $splunk::params::version,
   ) inherits splunk::params {
 
   if $type == 'uf' {

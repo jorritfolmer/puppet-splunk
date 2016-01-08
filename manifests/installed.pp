@@ -2,10 +2,17 @@
 class splunk::installed (
   $package = $splunk::package,
   $splunk_home = $splunk::splunk_home,
-  $splunk_os_user = $splunk::splunk_os_user
+  $splunk_os_user = $splunk::splunk_os_user,
+  $version = $splunk::version
 ) {
-  package { $package:
-    ensure => installed,
+  if $version == undef {
+    package { $package:
+      ensure => installed,
+    }
+  } else {
+    package { $package:
+      ensure => "${version}",
+    }
   }
   exec { 'splunk enable boot-start etcetera':
     command => "${splunk_home}/bin/splunk enable boot-start -user ${splunk_os_user} --accept-license --answer-yes --no-prompt",
@@ -13,5 +20,6 @@ class splunk::installed (
     require => Package[$package],
     creates => "${splunk_home}/etc/system/local/server.conf",
   }
-}
+} 
+ 
 

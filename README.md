@@ -309,6 +309,7 @@ node 'splunk-cidx1.internal.corp.tld',
   name and email This is a hash with 3 members:
 
   - `hash` (SHA512 hash of the admin password)
+  - `pass` (Plaintext password, only used for search heads to add search peers in distributed search)
   - `fn`   (Full name)
   - `email` (Email address)
 
@@ -344,6 +345,11 @@ node 'splunk-cidx1.internal.corp.tld',
   This is useful if you want to retain one central deployment server instead of
   multiple, for example one for each DMZ.  Defaults to undef.
 
+#### `version`
+
+  Optional. Specify the SPlunk version to use.
+  For example to install the 6.2.2 version: `verion => '6.2.2-255606'`.
+
 ## Compatibility
 
 Requires Splunk and Splunkforwarders >= 6.2.0.
@@ -352,6 +358,11 @@ However, if you still have versions < 6.2 , pass `sslcompatibility => 'intermedi
 If you have version >= 6.2.0 servers but with stock settings from a previous Splunk installation, also pass `sslcompatibility => 'intermediate'` in the universal forwarder declaration, otherwise the SSL connections to the deploymentserver will fail.
 
 ## Changelog
+
+### 1.0.4
+
+- Optionally specify Splunk version to install
+- Merged PR #1 from @timidri
 
 ### 1.0.3
 
@@ -386,7 +397,6 @@ Initial release:
 
 ## Roadmap
 
-- Optionally specify Splunk version to install
 - Search head clustering: search head
 - Search head clustering: deployer
 - Distributed Management Console
