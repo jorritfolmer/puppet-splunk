@@ -284,6 +284,10 @@ node 'splunk-cidx1.internal.corp.tld',
 
   Optional. Run the Splunk instance as this user. Defaults to splunk
 
+#### `splunk_bindip`
+
+  Optional. Bind to this specific IP instead of 0.0.0.0
+
 #### `splunk_home`
 
   Optional. Used if you're running Splunk outside of /opt/splunk or
@@ -359,6 +363,10 @@ If you have version >= 6.2.0 servers but with stock settings from a previous Spl
 
 ## Changelog
 
+### 1.0.5
+
+- Specify IP to bind to
+
 ### 1.0.4
 
 - Optionally specify Splunk version to install
@@ -397,10 +405,12 @@ Initial release:
 
 ## Roadmap
 
+- Migrate config files into an app instead of using the `system` folder
 - Search head clustering: search head
 - Search head clustering: deployer
 - Distributed Management Console
 - Data Collection Node
+- Add defined type so multiple splunk instances can be deployed on a single system
 
 ## Out-of-scope
 

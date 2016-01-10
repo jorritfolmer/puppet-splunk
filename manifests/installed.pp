@@ -11,7 +11,7 @@ class splunk::installed (
     }
   } else {
     package { $package:
-      ensure => "${version}",
+      ensure => $version,
     }
   }
   exec { 'splunk enable boot-start etcetera':
@@ -20,6 +20,4 @@ class splunk::installed (
     require => Package[$package],
     creates => "${splunk_home}/etc/system/local/server.conf",
   }
-} 
- 
-
+}
