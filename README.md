@@ -1,4 +1,4 @@
-# Deploy Splunk into any imaginable topology.
+# Puppet module to Deploy Splunk into any imaginable topology.
 
 This Puppet module can be used to create and arrange Splunk instances into simple, distributed or clustered topologies. It does so with the following principles in mind:
 
@@ -250,6 +250,65 @@ node 'splunk-cidx1.internal.corp.tld',
 }
 ```
 
+### Example 5
+
+Enabling Single Sign-On through Active Directory Federation Services (ADFS) as an Identity provider, on a search head:
+
+```
+node 'splunk-sh.internal.corp.tld' {
+  class { 'splunk':
+    ...
+    authtype     => 'SAML',
+    idptype      => 'ADFS',
+    idpurl       => 'https://sso.internal.corp.tld/adfs/ls',
+    ...
+  }
+}
+```
+
+And then on the ADFS side:
+
+1. Add a new Relying Party Trust, by importing the XML from `https://splunk-sh.internal.corp.tld/saml/spmetadata`. Since this metadata is kept behind a Splunk login, you'll have to:
+
+    - first browse to https://splunk-sh.internal.corp.tld/account/login?loginType=Splunk
+    - then browse to https://splunk-sh.internal.corp.tld/saml/spmetadata, and copy/paste the SAML metadata XML to the Windows server. 
+    - import the SAML metadata XML from the relying party (Splunk) from a file
+
+1. Add 3 new claim descriptions for:
+
+    - role
+    - realName
+    - mail
+
+   ![ADFS claim descriptions for Splunk](adfs_claim_descriptions.png)
+
+1. Add new claim rules, using the new claim descriptions created above:
+   
+   ![ADFS get attributes claim rule for Splunk](adfs_claim_rules_get_attrs.png)
+
+   ![ADFS map admins claim rule for Splunk](adfs_claim_rule_group_membership_admins.png)
+
+   ![ADFS map users claim rule for Splunk](adfs_claim_rule_group_membership_users.png)
+
+   The rules overview should look something like this:
+
+   ![ADFS show all claim rules for Splunk](adfs_claim_rules.png)
+
+1. import the Splunk Root CA (/opt/splunk/etc/auth/cacert.pem) in the Trusted Root Certificates store of the Windows server,
+1. `Set-ADFSRelyingPartyTrust -TargetIdentifier host10.testlab.local -EncryptionCertificateRevocationCheck none`
+1. `Set-ADFSRelyingPartyTrust -TargetIdentifier host10.testlab.local -SigningCertificateRevocationCheck none`
+1. `Set-ADFSRelyingPartyTrust -TargetIdentifier host10.testlab.local -EncryptClaims $False`
+1. `Set-ADFSRelyingPartyTrust -TargetIdentifier host10.testlab.local -SignedSamlRequestsRequired $False`, otherwise you'll find messages like these in the Windows Eventlog: `System.NotSupportedException: ID6027: Enveloped Signature Transform cannot be the last transform in the chain.`
+
+For some reason the ADFS side doesn't like the AuthnRequests that Splunk sends, so `signAuthnRequest = false` is set in Splunk if you use `idptype => 'ADFS'`.
+And on the ADFS server:
+
+Logout doesn't work by the way, throws this error:
+
+```
+Malformed SAML document(Assertion) received from IDP Please provide a diag for analysis. 
+```
+
 ## Parameters
 
 ### Main splunk class
@@ -354,6 +413,21 @@ node 'splunk-cidx1.internal.corp.tld',
   Optional. Specify the SPlunk version to use.
   For example to install the 6.2.2 version: `verion => '6.2.2-255606'`.
 
+#### `authtype`
+
+  Optional. Specify the authentication to use.
+  Currently supports 'Splunk' (default) and 'SAML'.
+
+#### `idptype`
+
+  Optional. Specifies the SAML identity provider type to use.
+  Currently only supports 'ADFS'.
+
+#### `idpurl`
+
+  Optional. Specifies the base url for the identity provider.
+  For ADFS IdP's this will be something like https://sso.corp.tld/adfs/ls
+
 ## Compatibility
 
 Requires Splunk and Splunkforwarders >= 6.2.0.
@@ -362,6 +436,10 @@ However, if you still have versions < 6.2 , pass `sslcompatibility => 'intermedi
 If you have version >= 6.2.0 servers but with stock settings from a previous Splunk installation, also pass `sslcompatibility => 'intermediate'` in the universal forwarder declaration, otherwise the SSL connections to the deploymentserver will fail.
 
 ## Changelog
+
+### 1.0.6
+
+- Add SAML authentication support through ADFS as IdP
 
 ### 1.0.5
 
@@ -416,4 +494,5 @@ Initial release:
 
 - Search head load-balancing
 - Search head pooling
+- Managing apps or inputs on Splunkforwarders, see principle 1.
 

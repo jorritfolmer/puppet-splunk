@@ -29,7 +29,7 @@ class splunk::inputs (
           "set SSL/serverCert '${splunk_home}/etc/auth/certs/s2s.pem'",
           "set SSL/rootCA '${splunk_home}/etc/auth/certs/ca.crt'",
           "set SSL/dhfile '${splunk_home}/etc/auth/certs/dhparam.pem'",
-          "set SSL/ecdhCurveName ${ecdhcurvename}",
+          'rm SSL/ecdhCurveName',
         ];
       }
     } else {
@@ -45,7 +45,7 @@ class splunk::inputs (
           "set SSL/serverCert '${splunk_home}/etc/auth/certs/s2s.pem'",
           "set SSL/rootCA '${splunk_home}/etc/auth/certs/ca.crt'",
           "set SSL/dhfile '${splunk_home}/etc/auth/certs/dhparam.pem'",
-          'rm SSL/ecdhCurveName',
+          "set SSL/ecdhCurveName ${ecdhcurvename}",
         ];
       }
     }

@@ -84,6 +84,9 @@ class splunk (
   $useACK       = $splunk::params::useACK,
   $ds_intermediate = $splunk::params::ds_intemediate,
   $version      = $splunk::params::version,
+  $authtype     = $splunk::params::authtype,
+  $idptype      = $splunk::params::idptype,
+  $idpurl       = $splunk::params::idpurl,
   ) inherits splunk::params {
 
   if $type == 'uf' {
@@ -126,6 +129,7 @@ class splunk (
   include splunk::deploymentclient
   include splunk::passwd
   include splunk::service
+  include splunk::authentication
 }
 
 # ISSUES

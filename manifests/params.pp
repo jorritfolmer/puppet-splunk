@@ -30,5 +30,8 @@ class splunk::params (
   $useACK      = false
   $ds_intermediate = undef
   $version     = undef
+  $authtype    = 'Splunk'
+  $idptype     = undef
+  $idpurl      = undef
 }
 
