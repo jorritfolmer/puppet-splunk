@@ -87,6 +87,7 @@ class splunk (
   $authtype     = $splunk::params::authtype,
   $idptype      = $splunk::params::idptype,
   $idpurl       = $splunk::params::idpurl,
+  $rolemap_SAML = $splunk::params::rolemap_SAML,
   ) inherits splunk::params {
 
   if $type == 'uf' {

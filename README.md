@@ -252,7 +252,7 @@ node 'splunk-cidx1.internal.corp.tld',
 
 ### Example 5
 
-Enabling Single Sign-On through Active Directory Federation Services (ADFS) as an Identity provider, on a search head:
+Enabling Single Sign-On through Active Directory Federation Services (ADFS) as an Identity provider:
 
 ```
 node 'splunk-sh.internal.corp.tld' {
@@ -266,12 +266,12 @@ node 'splunk-sh.internal.corp.tld' {
 }
 ```
 
-And then on the ADFS side:
+On the ADFS side:
 
 1. Add a new Relying Party Trust, by importing the XML from `https://splunk-sh.internal.corp.tld/saml/spmetadata`. Since this metadata is kept behind a Splunk login, you'll have to:
 
-    - first browse to https://splunk-sh.internal.corp.tld/account/login?loginType=Splunk
-    - then browse to https://splunk-sh.internal.corp.tld/saml/spmetadata, and copy/paste the SAML metadata XML to the Windows server. 
+    - first browse to `https://splunk-sh.internal.corp.tld/account/login?loginType=Splunk`
+    - then browse to `https://splunk-sh.internal.corp.tld/saml/spmetadata`, and copy/paste the SAML metadata XML to the Windows server. 
     - import the SAML metadata XML from the relying party (Splunk) from a file
 
 1. Add 3 new claim descriptions for:
@@ -282,11 +282,15 @@ And then on the ADFS side:
 
    ![ADFS claim descriptions for Splunk](adfs_claim_descriptions.png)
 
-1. Add new claim rules, using the new claim descriptions created above:
+1. Add a new claim rule to map Active Directory attributes to the new claim descriptions created above:
    
    ![ADFS get attributes claim rule for Splunk](adfs_claim_rules_get_attrs.png)
 
+1. Add a new claim rule to map Domain Admins to the `role` claim attribute:
+
    ![ADFS map admins claim rule for Splunk](adfs_claim_rule_group_membership_admins.png)
+
+1. Add a new claim rule to map Domain Users to the `role` claim attribute:
 
    ![ADFS map users claim rule for Splunk](adfs_claim_rule_group_membership_users.png)
 
@@ -301,7 +305,6 @@ And then on the ADFS side:
 1. `Set-ADFSRelyingPartyTrust -TargetIdentifier host10.testlab.local -SignedSamlRequestsRequired $False`, otherwise you'll find messages like these in the Windows Eventlog: `System.NotSupportedException: ID6027: Enveloped Signature Transform cannot be the last transform in the chain.`
 
 For some reason the ADFS side doesn't like the AuthnRequests that Splunk sends, so `signAuthnRequest = false` is set in Splunk if you use `idptype => 'ADFS'`.
-And on the ADFS server:
 
 Logout doesn't work by the way, throws this error:
 

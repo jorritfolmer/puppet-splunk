@@ -5,6 +5,7 @@ class splunk::authentication
   $authType = $splunk::authtype,
   $idptype = $splunk::idptype,
   $idpurl = $splunk::idpurl,
+  $rolemap_SAML = $splunk::rolemap_SAML,
 ){
   case $authType {
     'Splunk':    {
@@ -30,7 +31,11 @@ class splunk::authentication
           $idpCertPath                = "${splunk_home}/etc/auth/idpcert.crt"
           $signAuthnRequest           = false
           $signedAssertion            = true
-          $redirectPort               = $splunk::httpport }
+          $redirectPort               = $splunk::httpport
+          $rolemap_SAML_admin         = $rolemap_SAML[admin]
+          $rolemap_SAML_power         = $rolemap_SAML[power]
+          $rolemap_SAML_user          = $rolemap_SAML[user]
+        }        
         default:    {
           fail 'Unsupported Identity Provider' }
       }
@@ -51,9 +56,11 @@ class splunk::authentication
           "set saml_settings/redirectPort ${redirectPort}",
           "set saml_settings/signAuthnRequest ${signAuthnRequest}",
           "set saml_settings/signedAssertion ${signedAssertion}",
+          "set rolemap_SAML/admin '${rolemap_SAML_admin}'",
+          "set rolemap_SAML/power '${rolemap_SAML_power}'",
+          "set rolemap_SAML/user '${rolemap_SAML_user}'",
         ],
       }
     }
   }
 }
-

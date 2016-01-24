@@ -33,5 +33,6 @@ class splunk::params (
   $authtype    = 'Splunk'
   $idptype     = undef
   $idpurl      = undef
+  $rolemap_SAML = { 'admin' => 'Domain Admins', 'power' => 'Power Users', 'user' => 'Domain Users'}
 }
 
