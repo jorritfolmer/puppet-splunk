@@ -1,4 +1,4 @@
-# Puppet module to Deploy Splunk into any imaginable topology.
+# Puppet module to deploy Splunk into any imaginable topology.
 
 [![Travis CI build status](https://travis-ci.org/jorritfolmer/puppet-splunk.svg?branch=master)](https://travis-ci.org/jorritfolmer/puppet-splunk)
 
