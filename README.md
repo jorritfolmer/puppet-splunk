@@ -431,6 +431,19 @@ Malformed SAML document(Assertion) received from IDP Please provide a diag for a
   Optional. Specifies the base url for the identity provider.
   For ADFS IdP's this will be something like https://sso.corp.tld/adfs/ls
 
+#### `rolemap_SAML`
+
+  Optional. Specifies the role mapping for SAML.
+  Defaults to:
+
+  ```
+  { 
+    'admin' => 'Domain Admins', 
+    'power' => 'Power Users', 
+    'user'  => 'Domain Users',
+  }
+  ```
+
 ## Compatibility
 
 Requires Splunk and Splunkforwarders >= 6.2.0.

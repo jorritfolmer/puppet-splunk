@@ -50,6 +50,7 @@ DEPENDENCIES
   metadata-json-lint
   puppet (= 3.7.5)
   puppet-lint (>= 0.3.2)
+  puppet-syntax
   puppetlabs_spec_helper (>= 0.1.0)
   rspec (~> 2.0)
 

@@ -29,13 +29,19 @@ class splunk::authentication
           $idpSLOUrl                  = "${idpurl}?wa=wsignout1.0"
           $idpSSOUrl                  = $idpurl
           $idpCertPath                = "${splunk_home}/etc/auth/idpcert.crt"
+          # sending signed AuthnRequests from Splunk to ADFS needs to be
+          # disabled, otherwise the EventLog will greet you with erorrs like
+          # ID6027: Enveloped Signature Transform cannot be the last transform
+          # in the chain.
           $signAuthnRequest           = false
+          # luckily, Splunk is able to process incoming signed assertions,
+          # through, on the ADFS side claim encryption needs to be disabled
           $signedAssertion            = true
           $redirectPort               = $splunk::httpport
           $rolemap_SAML_admin         = $rolemap_SAML[admin]
           $rolemap_SAML_power         = $rolemap_SAML[power]
           $rolemap_SAML_user          = $rolemap_SAML[user]
-        }        
+        }
         default:    {
           fail 'Unsupported Identity Provider' }
       }
