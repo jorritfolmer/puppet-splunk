@@ -5,7 +5,7 @@ class splunk::authentication
   $authType = $splunk::authtype,
   $idptype = $splunk::idptype,
   $idpurl = $splunk::idpurl,
-  $rolemap_SAML = $splunk::rolemap_SAML,
+  $rolemap_SAML = $splunk::rolemap_SAML
 ){
   case $authType {
     'Splunk':    {

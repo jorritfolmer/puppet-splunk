@@ -4,7 +4,7 @@ class splunk::server::ssl (
   $ciphersuite = $splunk::ciphersuite,
   $sslversions = $splunk::sslversions,
   $ecdhcurvename = $splunk::ecdhcurvename,
-  $splunk_home = $splunk::splunk_home,
+  $splunk_home = $splunk::splunk_home
 ){
   if $ecdhcurvename == undef {
     augeas { "${splunk_home}/etc/system/local/server.conf/sslConfig":

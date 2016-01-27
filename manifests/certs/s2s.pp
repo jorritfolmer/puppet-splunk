@@ -3,7 +3,7 @@ class splunk::certs::s2s (
   $dhparamsize = $splunk::dhparamsize,
   $package = $splunk::package,
   $splunk_os_user = $splunk::splunk_os_user,
-  $splunk_home = $splunk::splunk_home,
+  $splunk_home = $splunk::splunk_home
 ){
   file { "${splunk_home}/etc/auth/certs":
     ensure  => directory,

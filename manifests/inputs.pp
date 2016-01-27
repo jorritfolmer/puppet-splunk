@@ -4,7 +4,7 @@ class splunk::inputs (
   $ciphersuite = $splunk::ciphersuite,
   $sslversions = $splunk::sslversions,
   $ecdhcurvename = $splunk::ecdhcurvename,
-  $splunk_home = $splunk::splunk_home,
+  $splunk_home = $splunk::splunk_home
 ){
   if $inputport == undef {
     augeas { "${splunk_home}/etc/system/local/inputs.conf":
