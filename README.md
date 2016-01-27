@@ -1,5 +1,7 @@
 # Puppet module to Deploy Splunk into any imaginable topology.
 
+[![Travis CI build status](https://travis-ci.org/jorritfolmer/puppet-splunk.svg?branch=master)](https://travis-ci.org/jorritfolmer/puppet-splunk)
+
 This Puppet module can be used to create and arrange Splunk instances into simple, distributed or clustered topologies. It does so with the following principles in mind:
 
 ## Principles
@@ -511,4 +513,4 @@ Initial release:
 - Search head load-balancing
 - Search head pooling
 - Managing apps or inputs on Splunkforwarders, see principle 1.
-
+ 
