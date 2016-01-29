@@ -29,4 +29,29 @@ describe 'splunk' do
       should contain_package('splunkforwarder')
     end
   end
+
+  context 'with tcpout as string' do
+    let(:params) { 
+      {
+        :tcpout => 'splunk-idx.internal.corp.tld',
+        :admin => { 'hash' => 'zzzz', 'fn' => 'yyyy', 'email' => 'wwww', },
+      }
+    }
+    it { should contain_class('splunk::installed') }
+    it { should contain_package('splunk') }
+    it { should contain_file('/opt/splunk/etc/system/local/outputs.conf') }
+  end
+
+  context 'with tcpout as array' do
+    let(:params) { 
+      {
+        :tcpout => [ 'splunk-idx1.internal.corp.tld:9997', 'splunk-idx2.internal.corp.tld:9997',],
+        :admin => { 'hash' => 'zzzz', 'fn' => 'yyyy', 'email' => 'wwww', },
+      }
+    }
+    it { should contain_class('splunk::installed') }
+    it { should contain_package('splunk') }
+    it { should contain_file('/opt/splunk/etc/system/local/outputs.conf') }
+  end
+
 end
