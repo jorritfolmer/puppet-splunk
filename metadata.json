@@ -1,6 +1,6 @@
 {
   "name": "jorritfolmer-splunk",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "author": "Jorrit Folmer",
   "summary": "Deploy Splunk instances into any imaginable topology, distributed or clustered.",
   "license": "MIT",
@@ -29,11 +29,11 @@
   "requirements": [
     {
       "name": "pe",
-      "version_requirement": ">= 2.7 < 2015.3.0"
+      "version_requirement": ">= 2.7 <= 2015.3.0"
     },
     {
       "name": "puppet",
-      "version_requirement": ">= 2.7.1 < 5.0.0"
+      "version_requirement": ">= 2.7.1 <= 4.3.2"
     }
   ],
   "tags": ["splunk", "splunkforwarder"]
