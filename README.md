@@ -301,8 +301,8 @@ On the ADFS side:
    ![ADFS show all claim rules for Splunk](adfs_claim_rules.png)
 
 1. import the Splunk Root CA (/opt/splunk/etc/auth/cacert.pem) in the Trusted Root Certificates store of the Windows server,
-1. `Set-ADFSRelyingPartyTrust -TargetIdentifier host10.testlab.local -EncryptionCertificateRevocationCheck none`
-1. `Set-ADFSRelyingPartyTrust -TargetIdentifier host10.testlab.local -SigningCertificateRevocationCheck none`
+1. If you're using your own certificates: `Set-ADFSRelyingPartyTrust -TargetIdentifier host10.testlab.local -EncryptionCertificateRevocationCheck none`
+1. If you're using your own certificates: `Set-ADFSRelyingPartyTrust -TargetIdentifier host10.testlab.local -SigningCertificateRevocationCheck none`
 1. `Set-ADFSRelyingPartyTrust -TargetIdentifier host10.testlab.local -EncryptClaims $False`
 1. `Set-ADFSRelyingPartyTrust -TargetIdentifier host10.testlab.local -SignedSamlRequestsRequired $False`, otherwise you'll find messages like these in the Windows Eventlog: `System.NotSupportedException: ID6027: Enveloped Signature Transform cannot be the last transform in the chain.`
 
