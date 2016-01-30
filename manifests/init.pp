@@ -87,7 +87,8 @@ class splunk (
   $authtype     = $splunk::params::authtype,
   $idptype      = $splunk::params::idptype,
   $idpurl       = $splunk::params::idpurl,
-  $rolemap_SAML = $splunk::params::rolemap_SAML
+  $rolemap_SAML = $splunk::params::rolemap_SAML,
+  $dontruncmds  = $splunk::params::dontruncmds
   ) inherits splunk::params {
 
   if $type == 'uf' {
@@ -119,18 +120,18 @@ class splunk (
   include splunk::installed
   include splunk::inputs
   include splunk::outputs
+  include splunk::certs::s2s
   include splunk::web
   include splunk::server::ssl
   include splunk::server::license
   include splunk::server::kvstore
   include splunk::server::clustering
   include splunk::splunk_launch
-  include splunk::certs::s2s
-  include splunk::distsearch
   include splunk::deploymentclient
+  include splunk::distsearch
   include splunk::passwd
-  include splunk::service
   include splunk::authentication
+  include splunk::service
 
   # make sure classes are properly ordered and contained
   anchor { 'splunk_first': } ->
@@ -144,11 +145,12 @@ class splunk (
   Class['splunk::server::kvstore'] ->
   Class['splunk::server::clustering'] ->
   Class['splunk::splunk_launch'] ->
-  Class['splunk::distsearch'] ->
   Class['splunk::deploymentclient'] ->
+  Class['splunk::distsearch'] ->
   Class['splunk::passwd'] ->
   Class['splunk::authentication'] ->
   Class['splunk::service'] ->
+  splunk::addsearchpeers { $searchpeers: }
   anchor { 'splunk_last': }
 
 }

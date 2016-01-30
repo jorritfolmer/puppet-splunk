@@ -20,7 +20,8 @@ class splunk::params (
   $httpport     = undef
   $kvstoreport = undef
   $tcpout      = undef
-  $searchpeers = undef
+  # set to some string instead of undef to prevent 'Missing title' errors in Puppet 4.x
+  $searchpeers = 'empty'
   $admin       = undef
   $clustering  = { }
   $service     = {
@@ -34,5 +35,6 @@ class splunk::params (
   $idptype     = undef
   $idpurl      = undef
   $rolemap_SAML = { 'admin' => 'Domain Admins', 'power' => 'Power Users', 'user' => 'Domain Users'}
+  $dontruncmds = false
 }
 

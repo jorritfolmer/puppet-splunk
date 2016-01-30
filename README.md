@@ -157,8 +157,9 @@ node 'splunk-ds.internal.corp.tld' {
 node 'splunk-sh.internal.corp.tld' {
   class { 'splunk':
     admin        => {
-      # In this case, a plaintext password is also needed to join the
-      # searchpeers to this search head
+      # A plaintext password needed to be able to add search peers,
+      # so also make sure the indexer you're pointing to is running,
+      # you can remove this if everything is up and running:
       pass       => 'changemeagain',
       hash       => '$6$MR9IJFF7RBnVA.k1$/30EBSzy0EJKZ94SjHFIUHjQjO3/P/4tx0JmWCp/En47MJceaXsevhBLE2w/ibjHlAUkD6k0U.PmY/noe9Jok0',
       fn         => 'Search head Administrator',
@@ -176,6 +177,12 @@ node 'splunk-sh.internal.corp.tld' {
     searchpeers  => [ 
       'splunk-idx1.internal.corp.tld:8089', 
       'splunk-idx2.internal.corp.tld:8089', ],
+    # splunk must be running to be able add search peers, 
+    # you can remove this if everything is up and running:
+    service      => {
+      ensure     => running,
+      enable     => true,
+    }
   }
 }
 
@@ -189,6 +196,12 @@ node 'splunk-idx1.internal.corp.tld', 'splunk-idx2.internal.corp.tld' {
     inputport    => 9997,
     lm           => 'splunk-ds.internal.corp.tld:8089',
     ds           => 'splunk-ds.internal.corp.tld:8089',
+    # splunk must be running for it to be added as search peer,
+    # you can remove this if everything is up and running
+    service      => {
+      ensure     => running,
+      enable     => true,
+    }
   }
 }
 ```

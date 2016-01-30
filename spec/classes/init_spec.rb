@@ -54,4 +54,28 @@ describe 'splunk' do
     it { should contain_file('/opt/splunk/etc/system/local/outputs.conf') }
   end
 
+  context 'with searchpeers as array' do
+    let(:params) { 
+      {
+        :searchpeers => [ 'splunk-idx1.internal.corp.tld:9997', 'splunk-idx2.internal.corp.tld:9997',],
+        :admin => { 'hash' => 'zzzz', 'fn' => 'yyyy', 'email' => 'wwww', },
+        :dontruncmds => true,
+      }
+    }
+    it { should contain_class('splunk::installed') }
+    it { should contain_package('splunk') }
+  end
+
+  context 'with searchpeers as string' do
+    let(:params) { 
+      {
+        :searchpeers => 'splunk-idx1.internal.corp.tld:9997',
+        :admin => { 'hash' => 'zzzz', 'fn' => 'yyyy', 'email' => 'wwww', },
+        :dontruncmds => true,
+      }
+    }
+    it { should contain_class('splunk::installed') }
+    it { should contain_package('splunk') }
+  end
+
 end

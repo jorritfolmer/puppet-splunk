@@ -4,6 +4,8 @@ class splunk::service (
   $splunk_home = $splunk::splunk_home,
   $service = $splunk::service
 ) {
+  notice("enable => ${service}[enable]")
+  notice("ensure => ${service}[ensure]")
   if $service[ensure] == undef {
     service { 'splunk':
       enable  => $service[enable],
