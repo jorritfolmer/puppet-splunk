@@ -8,7 +8,6 @@ class splunk::web (
 ){
   if $httpport == undef {
     augeas { "${splunk_home}/etc/system/local/web.conf":
-      require => Class['splunk::installed'],
       lens    => 'Puppet.lns',
       incl    => "${splunk_home}/etc/system/local/web.conf",
       changes => [
@@ -23,7 +22,6 @@ class splunk::web (
   } else {
     if $ecdhcurvename == undef {
       augeas { "${splunk_home}/etc/system/local/web.conf":
-        require => Class['splunk::installed'],
         lens    => 'Puppet.lns',
         incl    => "${splunk_home}/etc/system/local/web.conf",
         changes => [
@@ -37,7 +35,6 @@ class splunk::web (
       }
     } else {
       augeas { "${splunk_home}/etc/system/local/web.conf":
-        require => Class['splunk::installed'],
         lens    => 'Puppet.lns',
         incl    => "${splunk_home}/etc/system/local/web.conf",
         changes => [

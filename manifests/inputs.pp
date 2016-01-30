@@ -8,7 +8,6 @@ class splunk::inputs (
 ){
   if $inputport == undef {
     augeas { "${splunk_home}/etc/system/local/inputs.conf":
-      require => Class['splunk::installed'],
       lens    => 'Puppet.lns',
       incl    => "${splunk_home}/etc/system/local/inputs.conf",
       changes => [
@@ -18,7 +17,6 @@ class splunk::inputs (
   } else {
     if $ecdhcurvename == undef {
       augeas { "${splunk_home}/etc/system/local/inputs.conf":
-        require => Class['splunk::installed'],
         lens    => 'Puppet.lns',
         incl    => "${splunk_home}/etc/system/local/inputs.conf",
         changes => [
@@ -34,7 +32,6 @@ class splunk::inputs (
       }
     } else {
       augeas { "${splunk_home}/etc/system/local/inputs.conf":
-        require => Class['splunk::installed'],
         lens    => 'Puppet.lns',
         incl    => "${splunk_home}/etc/system/local/inputs.conf",
         changes => [

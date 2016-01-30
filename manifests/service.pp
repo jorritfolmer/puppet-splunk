@@ -7,20 +7,11 @@ class splunk::service (
   if $service[ensure] == undef {
     service { 'splunk':
       enable  => $service[enable],
-      require => [
-        Class['splunk::installed'],
-        Class['splunk::server::ssl'],
-      ],
     }
   } else {
     service { 'splunk':
-      ensure  => $service[ensure],
-      enable  => $service[enable],
-      require => [
-        Class['splunk::installed'],
-        Class['splunk::server::ssl'],
-        Class['splunk::passwd'],
-      ],
+      ensure => $service[ensure],
+      enable => $service[enable],
     }
   }
 }

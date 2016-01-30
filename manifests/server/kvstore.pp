@@ -6,7 +6,6 @@ class splunk::server::kvstore (
 ){
   if $kvstoreport == undef {
     augeas { "${splunk_home}/etc/system/local/server.conf/kvstore":
-      require => Class['splunk::installed'],
       lens    => 'Puppet.lns',
       incl    => "${splunk_home}/etc/system/local/server.conf",
       changes => [
@@ -16,7 +15,6 @@ class splunk::server::kvstore (
     }
   } else {
     augeas { "${splunk_home}/etc/system/local/server.conf/kvstore":
-      require => Class['splunk::installed'],
       lens    => 'Puppet.lns',
       incl    => "${splunk_home}/etc/system/local/server.conf",
       changes => [

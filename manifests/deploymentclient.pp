@@ -7,7 +7,6 @@ class splunk::deploymentclient
 ){
   if $ds == undef {
     augeas { "${splunk_home}/etc/system/local/deploymentclient.conf deploymentServer":
-      require => Class['splunk::installed'],
       lens    => 'Puppet.lns',
       incl    => "${splunk_home}/etc/system/local/deploymentclient.conf",
       changes => [
@@ -16,7 +15,6 @@ class splunk::deploymentclient
     }
   } else {
     augeas { "${splunk_home}/etc/system/local/deploymentclient.conf deploymentServer":
-      require => Class['splunk::installed'],
       lens    => 'Puppet.lns',
       incl    => "${splunk_home}/etc/system/local/deploymentclient.conf",
       changes => [
@@ -27,7 +25,6 @@ class splunk::deploymentclient
   }
   if $ds_intermediate == undef {
     augeas { "${splunk_home}/etc/system/local/deploymentclient.conf repositoryLocation":
-      require => Class['splunk::installed'],
       lens    => 'Puppet.lns',
       incl    => "${splunk_home}/etc/system/local/deploymentclient.conf",
       changes => [
@@ -38,7 +35,6 @@ class splunk::deploymentclient
     }
   } else {
     augeas { "${splunk_home}/etc/system/local/deploymentclient.conf repositoryLocation":
-      require => Class['splunk::installed'],
       lens    => 'Puppet.lns',
       incl    => "${splunk_home}/etc/system/local/deploymentclient.conf",
       changes => [

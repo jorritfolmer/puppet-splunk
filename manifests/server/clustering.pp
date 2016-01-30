@@ -11,7 +11,6 @@ class splunk::server::clustering (
       $search_factor = $clustering[search_factor]
       $pass4SymmKey = $clustering[pass4SymmKey]
       augeas { "${splunk_home}/etc/system/local/server.conf/clustering":
-        require => Class['splunk::installed'],
         lens    => 'Puppet.lns',
         incl    => "${splunk_home}/etc/system/local/server.conf",
         changes => [
@@ -28,7 +27,6 @@ class splunk::server::clustering (
       $cm = $clustering[cm]
       $pass4SymmKey = $clustering[pass4SymmKey]
       augeas { "${splunk_home}/etc/system/local/server.conf/clustering":
-        require => Class['splunk::installed'],
         lens    => 'Puppet.lns',
         incl    => "${splunk_home}/etc/system/local/server.conf",
         changes => [
@@ -36,26 +34,23 @@ class splunk::server::clustering (
           "set clustering/master_uri https://${cm}",
           "set clustering/#comment 'replication_port is set in ${splunk_home}/etc/apps/zz_replication_port/default/server.conf'",
         ],
-      }
+      } ->
       file { [ "${splunk_home}/etc/apps/zz_replication_port", "${splunk_home}/etc/apps/zz_replication_port/default" ]:
-        ensure  => directory,
-        mode    => '0700',
-        owner   => $splunk_os_user,
-        require => Augeas["${splunk_home}/etc/system/local/server.conf/clustering"],
-      }
+        ensure => directory,
+        mode   => '0700',
+        owner  => $splunk_os_user,
+      } ->
       file { "${splunk_home}/etc/apps/zz_replication_port/default/server.conf":
         ensure  => present,
         mode    => '0700',
         owner   => $splunk_os_user,
         content => "[replication_port://9887]\n",
-        require => File["${splunk_home}/etc/apps/zz_replication_port/default"],
       }
     }
     'searchhead': {
       $cm = $clustering[cm]
       $pass4SymmKey = $clustering[pass4SymmKey]
       augeas { "${splunk_home}/etc/system/local/server.conf/clustering":
-        require => Class['splunk::installed'],
         lens    => 'Puppet.lns',
         incl    => "${splunk_home}/etc/system/local/server.conf",
         changes => [
@@ -69,7 +64,6 @@ class splunk::server::clustering (
     }
     default: {
       augeas { "${splunk_home}/etc/system/local/server.conf/clustering":
-        require => Class['splunk::installed'],
         lens    => 'Puppet.lns',
         incl    => "${splunk_home}/etc/system/local/server.conf",
         changes => [

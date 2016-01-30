@@ -7,7 +7,9 @@
   "source": "https://github.com/jorritfolmer/puppet-splunk.git",
   "issues_url": "https://github.com/jorritfolmer/puppet-splunk/issues",
   "project_page": "https://github.com/jorritfolmer/puppet-splunk",
-  "dependencies": [],
+  "dependencies": [
+    {"name":"puppetlabs/stdlib","version_requirement":">= 3.2.0 < 5.0.0"}
+  ],
   "operatingsystem_support": [
     {
       "operatingsystem":"RedHat",

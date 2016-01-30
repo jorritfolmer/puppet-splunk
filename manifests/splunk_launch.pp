@@ -6,7 +6,6 @@ class splunk::splunk_launch (
 ){
   if $splunk_os_user == undef {
     augeas { "${splunk_home}/etc/splunk-launch.conf splunk_os_user":
-      require => Class['splunk::installed'],
       lens    => 'ShellVars.lns',
       incl    => "${splunk_home}/etc/splunk-launch.conf",
       changes => [
@@ -15,7 +14,6 @@ class splunk::splunk_launch (
     }
   } else {
     augeas { "${splunk_home}/etc/splunk-launch.conf splunk_os_user":
-      require => Class['splunk::installed'],
       lens    => 'ShellVars.lns',
       incl    => "${splunk_home}/etc/splunk-launch.conf",
       changes => [
@@ -25,7 +23,6 @@ class splunk::splunk_launch (
   }
   if $splunk_bindip == undef {
     augeas { "${splunk_home}/etc/splunk-launch.conf splunk_bindip":
-      require => Class['splunk::installed'],
       lens    => 'ShellVars.lns',
       incl    => "${splunk_home}/etc/splunk-launch.conf",
       changes => [
@@ -34,7 +31,6 @@ class splunk::splunk_launch (
     }
   } else {
     augeas { "${splunk_home}/etc/splunk-launch.conf splunk_bindip":
-      require => Class['splunk::installed'],
       lens    => 'ShellVars.lns',
       incl    => "${splunk_home}/etc/splunk-launch.conf",
       changes => [

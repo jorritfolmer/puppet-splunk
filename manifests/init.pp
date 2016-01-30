@@ -131,6 +131,26 @@ class splunk (
   include splunk::passwd
   include splunk::service
   include splunk::authentication
+
+  # make sure classes are properly ordered and contained
+  anchor { 'splunk_first': } ->
+  Class['splunk::installed'] ->
+  Class['splunk::inputs'] ->
+  Class['splunk::outputs'] ->
+  Class['splunk::certs::s2s'] ->
+  Class['splunk::web'] ->
+  Class['splunk::server::ssl'] ->
+  Class['splunk::server::license'] ->
+  Class['splunk::server::kvstore'] ->
+  Class['splunk::server::clustering'] ->
+  Class['splunk::splunk_launch'] ->
+  Class['splunk::distsearch'] ->
+  Class['splunk::deploymentclient'] ->
+  Class['splunk::passwd'] ->
+  Class['splunk::authentication'] ->
+  Class['splunk::service'] ->
+  anchor { 'splunk_last': }
+
 }
 
 # ISSUES

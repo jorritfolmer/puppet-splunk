@@ -8,10 +8,6 @@ class splunk::server::ssl (
 ){
   if $ecdhcurvename == undef {
     augeas { "${splunk_home}/etc/system/local/server.conf/sslConfig":
-      require => [
-        Class['splunk::installed'],
-        Exec['openssl dhparam'],
-      ],
       lens    => 'Puppet.lns',
       incl    => "${splunk_home}/etc/system/local/server.conf",
       changes => [
@@ -24,10 +20,6 @@ class splunk::server::ssl (
     }
   } else {
     augeas { "${splunk_home}/etc/system/local/server.conf/sslConfig":
-      require => [
-        Class['splunk::installed'],
-        Exec['openssl dhparam'],
-      ],
       lens    => 'Puppet.lns',
       incl    => "${splunk_home}/etc/system/local/server.conf",
       changes => [

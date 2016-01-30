@@ -5,7 +5,6 @@ class splunk::server::license (
 ){
   if $lm == undef {
     augeas { "${splunk_home}/etc/system/local/server.conf/license":
-      require => Class['splunk::installed'],
       lens    => 'Puppet.lns',
       incl    => "${splunk_home}/etc/system/local/server.conf",
       changes => [
@@ -14,7 +13,6 @@ class splunk::server::license (
     }
   } else {
     augeas { "${splunk_home}/etc/system/local/server.conf/license":
-      require => Class['splunk::installed'],
       lens    => 'Puppet.lns',
       incl    => "${splunk_home}/etc/system/local/server.conf",
       changes => [

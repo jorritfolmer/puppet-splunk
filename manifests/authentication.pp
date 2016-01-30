@@ -10,7 +10,6 @@ class splunk::authentication
   case $authType {
     'Splunk':    {
       augeas { "${splunk_home}/etc/system/local/authentication.conf SAML":
-        require => Class['splunk::installed'],
         lens    => 'Puppet.lns',
         incl    => "${splunk_home}/etc/system/local/authentication.conf",
         changes => [
@@ -46,7 +45,6 @@ class splunk::authentication
           fail 'Unsupported Identity Provider' }
       }
       augeas { "${splunk_home}/etc/system/local/authentication.conf SAML":
-        require => Class['splunk::installed'],
         lens    => 'Puppet.lns',
         incl    => "${splunk_home}/etc/system/local/authentication.conf",
         changes => [
