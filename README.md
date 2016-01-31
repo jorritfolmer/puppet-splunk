@@ -131,7 +131,11 @@ node 'some-server.internal.corp.tld' {
 
 ### Example 3: 
 
-One deployment/license server, one search head, and two indexers:
+One deployment/license server, one search head, and two indexers.
+Note that for the search head to add the indexer as its search peer, the
+indexer needs to be running **before** the search head manifest is executed.
+This means that you'll have to manage intra-node dependencies manually or
+through some other orchestration tool.
 
 ![Example 3](example3.png)
 
@@ -151,6 +155,10 @@ node 'splunk-ds.internal.corp.tld' {
       'splunk-idx1.internal.corp.tld:9997', 
       'splunk-idx2.internal.corp.tld:9997',
     ],
+    service      => {
+      ensure     => running,
+      enable     => true,
+    },
   }
 }
 
@@ -182,7 +190,7 @@ node 'splunk-sh.internal.corp.tld' {
     service      => {
       ensure     => running,
       enable     => true,
-    }
+    },
   }
 }
 
