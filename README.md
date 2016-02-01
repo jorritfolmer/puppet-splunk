@@ -476,6 +476,17 @@ If you have version >= 6.2.0 servers but with stock settings from a previous Spl
 
 ## Changelog
 
+### 1.0.8
+
+- Improved adding search peers
+- Added class containment, to properly support `require =>` from other resources or classes. This add a dependency on puppetlabs-stdlib.
+
+### 1.0.7
+
+- Added rpsec tests
+- Added github->travis-ci integration
+- Fixed issues for Puppet 2.7
+
 ### 1.0.6
 
 - Add SAML authentication support through ADFS as IdP
