@@ -1,6 +1,6 @@
 {
   "name": "jorritfolmer-splunk",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "author": "Jorrit Folmer",
   "summary": "Deploy Splunk instances into any imaginable topology, distributed or clustered.",
   "license": "MIT",

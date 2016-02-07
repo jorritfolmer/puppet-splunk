@@ -386,6 +386,17 @@ Malformed SAML document(Assertion) received from IDP Please provide a diag for a
 
   Optional. Used to point to a Splunk deployment server
 
+#### `ds_intermediate`
+
+  Optional. Used to configure the deployment server as a deploymentclient.
+  This is useful if you want to retain one central deployment server instead of
+  multiple, for example one for each DMZ.  Defaults to undef.
+
+#### `phonehomeintervalinsec`
+
+  Optional. Unsed to configure the phonehomeinterval of the deploymentclient.
+  Defaults to undef.
+
 #### `sslcompatibility`
 
   Optional. Used to configure the SSL compatibility level as defined by
@@ -428,11 +439,6 @@ Malformed SAML document(Assertion) received from IDP Please provide a diag for a
   Optional. Used to request indexer acknowlegement when sending data.
   Defaults to false.
 
-#### `ds_intermediate`
-
-  Optional. Used to configure the deployment server as a deploymentclient.
-  This is useful if you want to retain one central deployment server instead of
-  multiple, for example one for each DMZ.  Defaults to undef.
 
 #### `version`
 
@@ -475,6 +481,10 @@ However, if you still have versions < 6.2 , pass `sslcompatibility => 'intermedi
 If you have version >= 6.2.0 servers but with stock settings from a previous Splunk installation, also pass `sslcompatibility => 'intermediate'` in the universal forwarder declaration, otherwise the SSL connections to the deploymentserver will fail.
 
 ## Changelog
+
+### 1.0.9
+
+- Added phonehomeintervalinsec parameter to configure phoneHomeIntervalInSec for the deploymentclient
 
 ### 1.0.8
 
