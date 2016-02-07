@@ -1,4 +1,5 @@
 require 'spec_helper'
+
 describe 'splunk' do
 
   context 'with defaults for all parameters' do
@@ -76,6 +77,19 @@ describe 'splunk' do
     }
     it { should contain_class('splunk::installed') }
     it { should contain_package('splunk') }
+  end
+
+  context 'with deploymentserver' do
+    let(:params) { 
+      {
+        :ds => 'splunk-idx1.internal.corp.tld:9997',
+        :admin => { 'hash' => 'zzzz', 'fn' => 'yyyy', 'email' => 'wwww', },
+        :dontruncmds => true,
+      }
+    }
+    it { should contain_class('splunk::installed') }
+    it { should contain_package('splunk') }
+    it { should contain_augeas('/opt/splunk/etc/system/local/deploymentclient.conf deploymentServer') }
   end
 
 end

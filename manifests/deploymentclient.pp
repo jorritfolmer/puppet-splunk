@@ -3,7 +3,8 @@ class splunk::deploymentclient
 (
   $ds = $splunk::ds,
   $ds_intermediate = $splunk::ds_intermediate,
-  $splunk_home = $splunk::splunk_home
+  $splunk_home = $splunk::splunk_home,
+  $phonehomeintervalinsec = $splunk::phonehomeintervalinsec
 ){
   if $ds == undef {
     augeas { "${splunk_home}/etc/system/local/deploymentclient.conf deploymentServer":
@@ -14,15 +15,28 @@ class splunk::deploymentclient
       ],
     }
   } else {
-    augeas { "${splunk_home}/etc/system/local/deploymentclient.conf deploymentServer":
-      lens    => 'Puppet.lns',
-      incl    => "${splunk_home}/etc/system/local/deploymentclient.conf",
-      changes => [
-        "set target-broker:deploymentServer/targetUri ${ds}",
-        'set deployment-client/disabled false',
-      ],
+    if $phonehomeintervalinsec == undef {
+      augeas { "${splunk_home}/etc/system/local/deploymentclient.conf deploymentServer":
+        lens    => 'Puppet.lns',
+        incl    => "${splunk_home}/etc/system/local/deploymentclient.conf",
+        changes => [
+          "set target-broker:deploymentServer/targetUri ${ds}",
+          'set deployment-client/disabled false',
+        ],
+      }
+    } else {
+      augeas { "${splunk_home}/etc/system/local/deploymentclient.conf deploymentServer":
+        lens    => 'Puppet.lns',
+        incl    => "${splunk_home}/etc/system/local/deploymentclient.conf",
+        changes => [
+          "set target-broker:deploymentServer/targetUri ${ds}",
+          "set deployment-client/phoneHomeIntervalInSecs ${phonehomeintervalinsec}",
+          'set deployment-client/disabled false',
+        ],
+      }
     }
   }
+
   if $ds_intermediate == undef {
     augeas { "${splunk_home}/etc/system/local/deploymentclient.conf repositoryLocation":
       lens    => 'Puppet.lns',

@@ -36,5 +36,6 @@ class splunk::params (
   $idpurl      = undef
   $rolemap_SAML = { 'admin' => 'Domain Admins', 'power' => 'Power Users', 'user' => 'Domain Users'}
   $dontruncmds = false
+  $phonehomeintervalinsec = undef
 }
 

@@ -88,7 +88,8 @@ class splunk (
   $idptype      = $splunk::params::idptype,
   $idpurl       = $splunk::params::idpurl,
   $rolemap_SAML = $splunk::params::rolemap_SAML,
-  $dontruncmds  = $splunk::params::dontruncmds
+  $dontruncmds  = $splunk::params::dontruncmds,
+  $phonehomeintervalinsec = $splunk::params::phonehomeintervalinsec
   ) inherits splunk::params {
 
   if $type == 'uf' {
