@@ -265,6 +265,7 @@ node 'splunk-cidx1.internal.corp.tld',
       email      => 'changemeagain@example.com',
     },
     httpport     => 8000,
+    inputport    => 8000,
     clustering   => {
       mode       => 'slave',
       cm         => 'splunk-cm.internal.corp.tld:8089',
