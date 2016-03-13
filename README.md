@@ -7,7 +7,7 @@ This Puppet module can be used to create and arrange Splunk instances into simpl
 ## Principles
 
 1. **Splunk above Puppet.** Puppet is only used to configure the running skeleton of a Splunk constellation. It tries to keep away from Splunk administration as much as possible. For example, why deploy Splunk apps to forwarders through Puppet if you can use Splunk's multi-platform deployment server?
-2. **Power to the Splunkers.** A Splunk installation should typically not be administered by the IT or IT-infra teams, since it is often used in an audit context.
+2. **Power to the Splunkers.** A Splunk installation should typically not be administered by the IT or IT-infra teams. This Puppet module should smooth the path to implementing segregation of duties between administrators and watch(wo)men.
 3. **Secure by default**.
   - Splunk runs as user splunk instead of root.
   - No services are listening by default except the bare minimum (8089/tcp)
@@ -135,7 +135,7 @@ One deployment/license server, one search head, and two indexers.
 Note that for the search head to add the indexer as its search peer, the
 indexer needs to be running **before** the search head manifest is executed.
 This means that you'll have to manage intra-node dependencies manually or
-through some other orchestration tool.
+through an orchestration tool like Terraform.
 
 ![Example 3](example3.png)
 
@@ -282,9 +282,11 @@ Enabling Single Sign-On through Active Directory Federation Services (ADFS) as a
 node 'splunk-sh.internal.corp.tld' {
   class { 'splunk':
     ...
-    authtype     => 'SAML',
-    idptype      => 'ADFS',
-    idpurl       => 'https://sso.internal.corp.tld/adfs/ls',
+    auth           => { 
+      authtype     => 'SAML',
+      saml_idptype => 'ADFS',
+      saml_idpurl  => 'https://sso.internal.corp.tld/adfs/ls',
+    },
     ...
   }
 }
@@ -328,12 +330,38 @@ On the ADFS side:
 1. `Set-ADFSRelyingPartyTrust -TargetIdentifier host10.testlab.local -EncryptClaims $False`
 1. `Set-ADFSRelyingPartyTrust -TargetIdentifier host10.testlab.local -SignedSamlRequestsRequired $False`, otherwise you'll find messages like these in the Windows Eventlog: `System.NotSupportedException: ID6027: Enveloped Signature Transform cannot be the last transform in the chain.`
 
-For some reason the ADFS side doesn't like the AuthnRequests that Splunk sends, so `signAuthnRequest = false` is set in Splunk if you use `idptype => 'ADFS'`.
+For some reason the ADFS side doesn't like the AuthnRequests that Splunk sends, so `signAuthnRequest = false` is set in Splunk if you use `saml_idptype => 'ADFS'`.
 
 Logout doesn't work by the way, throws this error:
 
 ```
 Malformed SAML document(Assertion) received from IDP Please provide a diag for analysis. 
+```
+
+### Example 6
+
+Use LDAP as an authentication provider, e.g. with Active Directory. The example below also maps 2 groups in AD to Splunk admin, and 1 group to Splunk user.
+
+```
+node 'splunk-sh.internal.corp.tld' {
+  class { 'splunk':
+    ...
+    auth           => { 
+      authtype     => 'LDAP',
+      ldap_host                 => 'dc01.testlab.local',
+      ldap_bindDN               => 'CN=Splunk Service Account,CN=Users,DC=corp,DC=tld',
+      ldap_bindDNpassword       => 'changeme',
+      ldap_SSLEnabled           => 0,
+      ldap_userBaseDN           => 'CN=Users,DC=corp,DC=tld',
+      ldap_groupBaseDN          => 'CN=Users,DC=corp,DC=tld;OU=Groups,DC=corp,DC=tld',
+    },
+    rolemap     => {
+      'admin'   => 'Splunk Admins;Domain Admins',
+      'user'    => 'Splunk Users',
+    },
+    ...
+  }
+}
 ```
 
 ## Parameters
@@ -368,7 +396,7 @@ Malformed SAML document(Assertion) received from IDP Please provide a diag for a
 
 #### `splunk_os_user`
 
-  Optional. Run the Splunk instance as this user. Defaults to splunk
+  Optional. Run the Splunk instance as this user. Defaults to `splunk`
 
 #### `splunk_bindip`
 
@@ -392,6 +420,13 @@ Malformed SAML document(Assertion) received from IDP Please provide a diag for a
   Optional. Used to configure the deployment server as a deploymentclient.
   This is useful if you want to retain one central deployment server instead of
   multiple, for example one for each DMZ.  Defaults to undef.
+
+#### `repositorylocation`
+
+  Optional. Used to configure the location on the deployment client where the
+  incoming apps from the deployment server are stored. Use `master-apps` or
+  `shcluster/apps` if you want to use the deployment server to also deploy to
+  intermediate locations on the cluster master or search head deployer.
 
 #### `phonehomeintervalinsec`
 
@@ -443,27 +478,32 @@ Malformed SAML document(Assertion) received from IDP Please provide a diag for a
 
 #### `version`
 
-  Optional. Specify the SPlunk version to use.
+  Optional. Specify the Splunk version to use.
   For example to install the 6.2.2 version: `verion => '6.2.2-255606'`.
 
-#### `authtype`
+#### `auth`
 
-  Optional. Specify the authentication to use.
-  Currently supports 'Splunk' (default) and 'SAML'.
+  Optional. Used to configure Splunk authentication. 
+  Currently supports 'Splunk' (default) 'SAML' and 'LDAP'.
+  This is a hash with the following members:
 
-#### `idptype`
+  - `authtype` (can be one of `Splunk`,`LDAP`,`SAML`)
+  - `saml_idptype` (specifies the SAML identity provider type to use, currently only supports `ADFS`)
+  - `saml_idpurl` (specifies the base url for the identity provider, for ADFS IdP's this will be something like https://sso.corp.tld/adfs/ls )
+  - `ldap_host`
+  - `ldap_bindDN`
+  - `ldap_bindDNpassword`
+  - `ldap_userBaseDN`
+  - `ldap_groupBaseDN`
+  - `ldap_SSLEnabled`
+  - `ldap_userNameAttribute`
+  - `ldap_groupMemberAttribute`
+  - `ldap_groupNameAttribute`
+  - `ldap_realNameAttribute`
 
-  Optional. Specifies the SAML identity provider type to use.
-  Currently only supports 'ADFS'.
+#### `rolemap`
 
-#### `idpurl`
-
-  Optional. Specifies the base url for the identity provider.
-  For ADFS IdP's this will be something like https://sso.corp.tld/adfs/ls
-
-#### `rolemap_SAML`
-
-  Optional. Specifies the role mapping for SAML.
+  Optional. Specifies the role mapping for SAML and LDAP
   Defaults to:
 
   ```
@@ -482,6 +522,11 @@ However, if you still have versions < 6.2 , pass `sslcompatibility => 'intermedi
 If you have version >= 6.2.0 servers but with stock settings from a previous Splunk installation, also pass `sslcompatibility => 'intermediate'` in the universal forwarder declaration, otherwise the SSL connections to the deploymentserver will fail.
 
 ## Changelog
+
+### 2.0.0
+
+- Moved Splunk configuration out of etc/system/local to individual Splunk config apps
+- Add LDAP authentication support 
 
 ### 1.0.9
 

@@ -5,74 +5,129 @@ class splunk::server::clustering (
   $splunk_os_user = $splunk::splunk_os_user,
   $clustering = $splunk::clustering
 ){
+  $splunk_app_name = 'puppet_indexer_cluster'
+  $pass4SymmKey = $clustering[pass4SymmKey]
   case $clustering[mode] {
     'master': {
       $replication_factor = $clustering[replication_factor]
       $search_factor = $clustering[search_factor]
-      $pass4SymmKey = $clustering[pass4SymmKey]
-      augeas { "${splunk_home}/etc/system/local/server.conf/clustering":
-        lens    => 'Puppet.lns',
-        incl    => "${splunk_home}/etc/system/local/server.conf",
-        changes => [
-          'set clustering/mode master',
-          "set clustering/replication_factor ${replication_factor}",
-          "set clustering/search_factor ${search_factor}",
-        ],
-      }
-      file { "${splunk_home}/etc/apps/zz_replication_port/default/server.conf":
+      file { [
+        "${splunk_home}/etc/apps/${splunk_app_name}_slave_base",
+        "${splunk_home}/etc/apps/${splunk_app_name}_searchhead_base", ]:
         ensure  => absent,
+        recurse => true,
+        purge   => true,
+        force   => true,
+      } ->
+      file { [
+        "${splunk_home}/etc/apps/${splunk_app_name}_master_base",
+        "${splunk_home}/etc/apps/${splunk_app_name}_master_base/local",
+        "${splunk_home}/etc/apps/${splunk_app_name}_master_base/metadata",
+        "${splunk_home}/etc/apps/${splunk_app_name}_pass4symmkey_base",
+        "${splunk_home}/etc/apps/${splunk_app_name}_pass4symmkey_base/local",
+        "${splunk_home}/etc/apps/${splunk_app_name}_pass4symmkey_base/metadata",]:
+        ensure => directory,
+        owner  => $splunk_os_user,
+        group  => $splunk_os_user,
+        mode   => '0700',
+      } ->
+      file { "${splunk_home}/etc/apps/${splunk_app_name}_pass4symmkey_base/local/server.conf":
+        ensure  => present,
+        owner   => $splunk_os_user,
+        group   => $splunk_os_user,
+        content => template("splunk/${splunk_app_name}_pass4symmkey_base/local/server.conf"),
+      } ->
+      file { "${splunk_home}/etc/apps/${splunk_app_name}_master_base/local/server.conf":
+        ensure  => present,
+        owner   => $splunk_os_user,
+        group   => $splunk_os_user,
+        content => template("splunk/${splunk_app_name}_master_base/local/server.conf"),
       }
+
     }
     'slave': {
       $cm = $clustering[cm]
-      $pass4SymmKey = $clustering[pass4SymmKey]
-      augeas { "${splunk_home}/etc/system/local/server.conf/clustering":
-        lens    => 'Puppet.lns',
-        incl    => "${splunk_home}/etc/system/local/server.conf",
-        changes => [
-          'set clustering/mode slave',
-          "set clustering/master_uri https://${cm}",
-          "set clustering/#comment 'replication_port is set in ${splunk_home}/etc/apps/zz_replication_port/default/server.conf'",
-        ],
+      file { [
+        "${splunk_home}/etc/apps/${splunk_app_name}_master_base",
+        "${splunk_home}/etc/apps/${splunk_app_name}_searchhead_base", ]:
+        ensure  => absent,
+        recurse => true,
+        purge   => true,
+        force   => true,
       } ->
-      file { [ "${splunk_home}/etc/apps/zz_replication_port", "${splunk_home}/etc/apps/zz_replication_port/default" ]:
+      file { [
+        "${splunk_home}/etc/apps/${splunk_app_name}_slave_base",
+        "${splunk_home}/etc/apps/${splunk_app_name}_slave_base/local",
+        "${splunk_home}/etc/apps/${splunk_app_name}_slave_base/metadata",
+        "${splunk_home}/etc/apps/${splunk_app_name}_pass4symmkey_base",
+        "${splunk_home}/etc/apps/${splunk_app_name}_pass4symmkey_base/local",
+        "${splunk_home}/etc/apps/${splunk_app_name}_pass4symmkey_base/metadata",]:
         ensure => directory,
-        mode   => '0700',
         owner  => $splunk_os_user,
+        group  => $splunk_os_user,
+        mode   => '0700',
       } ->
-      file { "${splunk_home}/etc/apps/zz_replication_port/default/server.conf":
+      file { "${splunk_home}/etc/apps/${splunk_app_name}_pass4symmkey_base/local/server.conf":
         ensure  => present,
-        mode    => '0700',
         owner   => $splunk_os_user,
-        content => "[replication_port://9887]\n",
+        group   => $splunk_os_user,
+        content => template("splunk/${splunk_app_name}_pass4symmkey_base/local/server.conf"),
+      } ->
+      file { "${splunk_home}/etc/apps/${splunk_app_name}_slave_base/local/server.conf":
+        ensure  => present,
+        owner   => $splunk_os_user,
+        group   => $splunk_os_user,
+        content => template("splunk/${splunk_app_name}_slave_base/local/server.conf"),
       }
+
     }
     'searchhead': {
       $cm = $clustering[cm]
-      $pass4SymmKey = $clustering[pass4SymmKey]
-      augeas { "${splunk_home}/etc/system/local/server.conf/clustering":
-        lens    => 'Puppet.lns',
-        incl    => "${splunk_home}/etc/system/local/server.conf",
-        changes => [
-          'set clustering/mode searchhead',
-          "set clustering/master_uri https://${cm}",
-        ],
-      }
-      file { "${splunk_home}/etc/apps/zz_replication_port/default/server.conf":
+      file { [
+        "${splunk_home}/etc/apps/${splunk_app_name}_master_base",
+        "${splunk_home}/etc/apps/${splunk_app_name}_slave_base", ]:
         ensure  => absent,
+        recurse => true,
+        purge   => true,
+        force   => true,
+      } ->
+      file { [
+        "${splunk_home}/etc/apps/${splunk_app_name}_searchhead_base",
+        "${splunk_home}/etc/apps/${splunk_app_name}_searchhead_base/local",
+        "${splunk_home}/etc/apps/${splunk_app_name}_searchhead_base/metadata",
+        "${splunk_home}/etc/apps/${splunk_app_name}_pass4symmkey_base",
+        "${splunk_home}/etc/apps/${splunk_app_name}_pass4symmkey_base/local",
+        "${splunk_home}/etc/apps/${splunk_app_name}_pass4symmkey_base/metadata",]:
+        ensure => directory,
+        owner  => $splunk_os_user,
+        group  => $splunk_os_user,
+        mode   => '0700',
+      } ->
+      file { "${splunk_home}/etc/apps/${splunk_app_name}_pass4symmkey_base/local/server.conf":
+        ensure  => present,
+        owner   => $splunk_os_user,
+        group   => $splunk_os_user,
+        content => template("splunk/${splunk_app_name}_pass4symmkey_base/local/server.conf"),
+      } ->
+      file { "${splunk_home}/etc/apps/${splunk_app_name}_searchhead_base/local/server.conf":
+        ensure  => present,
+        owner   => $splunk_os_user,
+        group   => $splunk_os_user,
+        content => template("splunk/${splunk_app_name}_searchhead_base/local/server.conf"),
       }
+
     }
     default: {
-      augeas { "${splunk_home}/etc/system/local/server.conf/clustering":
-        lens    => 'Puppet.lns',
-        incl    => "${splunk_home}/etc/system/local/server.conf",
-        changes => [
-          'rm clustering',
-          'rm replication_port:9887',
-        ],
-      }
-      file { "${splunk_home}/etc/apps/zz_replication_port/default/server.conf":
+      # without clustering, remove all clustering config apps
+      file { [
+        "${splunk_home}/etc/apps/${splunk_app_name}_slave_base",
+        "${splunk_home}/etc/apps/${splunk_app_name}_searchhead_base",
+        "${splunk_home}/etc/apps/${splunk_app_name}_pass4symmkey_base",
+        "${splunk_home}/etc/apps/${splunk_app_name}_master_base", ]:
         ensure  => absent,
+        recurse => true,
+        purge   => true,
+        force   => true,
       }
     }
   }

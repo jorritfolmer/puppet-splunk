@@ -4,47 +4,31 @@ class splunk::inputs (
   $ciphersuite = $splunk::ciphersuite,
   $sslversions = $splunk::sslversions,
   $ecdhcurvename = $splunk::ecdhcurvename,
-  $splunk_home = $splunk::splunk_home
+  $splunk_home = $splunk::splunk_home,
+  $splunk_os_user = $splunk::splunk_os_user
 ){
+  $splunk_app_name = 'puppet_common_ssl_inputs'
   if $inputport == undef {
-    augeas { "${splunk_home}/etc/system/local/inputs.conf":
-      lens    => 'Puppet.lns',
-      incl    => "${splunk_home}/etc/system/local/inputs.conf",
-      changes => [
-        'rm splunktcp-ssl:*',
-      ];
+    file {"${splunk_home}/etc/apps/${splunk_app_name}":
+      ensure  => absent,
+      recurse => true,
+      purge   => true,
+      force   => true,
     }
   } else {
-    if $ecdhcurvename == undef {
-      augeas { "${splunk_home}/etc/system/local/inputs.conf":
-        lens    => 'Puppet.lns',
-        incl    => "${splunk_home}/etc/system/local/inputs.conf",
-        changes => [
-          "set splunktcp-ssl:${inputport}/connection_host ip",
-          "set splunktcp-ssl:${inputport}/disabled 0",
-          "set SSL/cipherSuite ${ciphersuite}",
-          "set SSL/sslVersions ${sslversions}",
-          "set SSL/serverCert '${splunk_home}/etc/auth/certs/s2s.pem'",
-          "set SSL/rootCA '${splunk_home}/etc/auth/certs/ca.crt'",
-          "set SSL/dhfile '${splunk_home}/etc/auth/certs/dhparam.pem'",
-          'rm SSL/ecdhCurveName',
-        ];
-      }
-    } else {
-      augeas { "${splunk_home}/etc/system/local/inputs.conf":
-        lens    => 'Puppet.lns',
-        incl    => "${splunk_home}/etc/system/local/inputs.conf",
-        changes => [
-          "set splunktcp-ssl:${inputport}/connection_host ip",
-          "set splunktcp-ssl:${inputport}/disabled 0",
-          "set SSL/cipherSuite ${ciphersuite}",
-          "set SSL/sslVersions ${sslversions}",
-          "set SSL/serverCert '${splunk_home}/etc/auth/certs/s2s.pem'",
-          "set SSL/rootCA '${splunk_home}/etc/auth/certs/ca.crt'",
-          "set SSL/dhfile '${splunk_home}/etc/auth/certs/dhparam.pem'",
-          "set SSL/ecdhCurveName ${ecdhcurvename}",
-        ];
-      }
+    file { ["${splunk_home}/etc/apps/${splunk_app_name}",
+            "${splunk_home}/etc/apps/${splunk_app_name}/local",
+            "${splunk_home}/etc/apps/${splunk_app_name}/metadata",]:
+      ensure => directory,
+      owner  => $splunk_os_user,
+      group  => $splunk_os_user,
+      mode   => '0700',
+    } ->
+    file { "${splunk_home}/etc/apps/${splunk_app_name}/local/inputs.conf":
+      ensure  => present,
+      owner   => $splunk_os_user,
+      group   => $splunk_os_user,
+      content => template("splunk/${splunk_app_name}/local/inputs.conf"),
     }
   }
 }

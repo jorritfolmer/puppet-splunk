@@ -1,23 +1,31 @@
 # vim: ts=2 sw=2 et
 class splunk::server::license (
   $lm = $splunk::lm,
+  $splunk_os_user = $splunk::splunk_os_user,
   $splunk_home = $splunk::splunk_home
 ){
+  $splunk_app_name = 'puppet_common_license_client_base'
   if $lm == undef {
-    augeas { "${splunk_home}/etc/system/local/server.conf/license":
-      lens    => 'Puppet.lns',
-      incl    => "${splunk_home}/etc/system/local/server.conf",
-      changes => [
-        'rm license/master_uri',
-      ],
+    file {"${splunk_home}/etc/apps/${splunk_app_name}":
+      ensure  => absent,
+      recurse => true,
+      purge   => true,
+      force   => true,
     }
   } else {
-    augeas { "${splunk_home}/etc/system/local/server.conf/license":
-      lens    => 'Puppet.lns',
-      incl    => "${splunk_home}/etc/system/local/server.conf",
-      changes => [
-        "set license/master_uri https://${lm}",
-      ],
+    file { ["${splunk_home}/etc/apps/${splunk_app_name}",
+            "${splunk_home}/etc/apps/${splunk_app_name}/local",
+            "${splunk_home}/etc/apps/${splunk_app_name}/metadata",]:
+      ensure => directory,
+      owner  => $splunk_os_user,
+      group  => $splunk_os_user,
+      mode   => '0700',
+    } ->
+    file { "${splunk_home}/etc/apps/${splunk_app_name}/local/server.conf":
+      ensure  => present,
+      owner   => $splunk_os_user,
+      group   => $splunk_os_user,
+      content => template("splunk/${splunk_app_name}/local/server.conf"),
     }
   }
 }
