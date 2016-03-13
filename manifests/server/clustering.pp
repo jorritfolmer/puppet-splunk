@@ -3,10 +3,16 @@
 class splunk::server::clustering (
   $splunk_home = $splunk::splunk_home,
   $splunk_os_user = $splunk::splunk_os_user,
-  $clustering = $splunk::clustering
+  $clustering = $splunk::clustering,
 ){
   $splunk_app_name = 'puppet_indexer_cluster'
-  $pass4SymmKey = $clustering[pass4SymmKey]
+  # if no pass4symmkey defined under clustering, default to general
+  # pass4symmkey
+  if $clustering[pass4symmkey] == undef {
+    $pass4symmkey = $splunk::pass4symmkey
+  } else {
+    $pass4symmkey = $clustering[pass4symmkey]
+  }
   case $clustering[mode] {
     'master': {
       $replication_factor = $clustering[replication_factor]

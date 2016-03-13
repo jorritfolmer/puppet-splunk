@@ -349,11 +349,11 @@ node 'splunk-sh.internal.corp.tld' {
     auth           => { 
       authtype     => 'LDAP',
       ldap_host                 => 'dc01.testlab.local',
-      ldap_bindDN               => 'CN=Splunk Service Account,CN=Users,DC=corp,DC=tld',
-      ldap_bindDNpassword       => 'changeme',
-      ldap_SSLEnabled           => 0,
-      ldap_userBaseDN           => 'CN=Users,DC=corp,DC=tld',
-      ldap_groupBaseDN          => 'CN=Users,DC=corp,DC=tld;OU=Groups,DC=corp,DC=tld',
+      ldap_binddn               => 'CN=Splunk Service Account,CN=Users,DC=corp,DC=tld',
+      ldap_binddnpassword       => 'changeme',
+      ldap_sslenabled           => 0,
+      ldap_userbasedn           => 'CN=Users,DC=corp,DC=tld',
+      ldap_groupbasedn          => 'CN=Users,DC=corp,DC=tld;OU=Groups,DC=corp,DC=tld',
     },
     rolemap     => {
       'admin'   => 'Splunk Admins;Domain Admins',
@@ -491,15 +491,15 @@ node 'splunk-sh.internal.corp.tld' {
   - `saml_idptype` (specifies the SAML identity provider type to use, currently only supports `ADFS`)
   - `saml_idpurl` (specifies the base url for the identity provider, for ADFS IdP's this will be something like https://sso.corp.tld/adfs/ls )
   - `ldap_host`
-  - `ldap_bindDN`
-  - `ldap_bindDNpassword`
-  - `ldap_userBaseDN`
-  - `ldap_groupBaseDN`
-  - `ldap_SSLEnabled`
-  - `ldap_userNameAttribute`
-  - `ldap_groupMemberAttribute`
-  - `ldap_groupNameAttribute`
-  - `ldap_realNameAttribute`
+  - `ldap_binddn`
+  - `ldap_binddnpassword`
+  - `ldap_userbasedn`
+  - `ldap_groupbasedn`
+  - `ldap_sslenabled`
+  - `ldap_usernameattribute`
+  - `ldap_groupmemberattribute`
+  - `ldap_groupnameattribute`
+  - `ldap_realnameattribute`
 
 #### `rolemap`
 
