@@ -27,6 +27,7 @@ class splunk (
   $searchpeers  = $splunk::params::searchpeers,
   $admin        = $splunk::params::admin,
   $clustering   = $splunk::params::clustering,
+  $shclustering = $splunk::params::shclustering,
   $service      = $splunk::params::service,
   $useACK       = $splunk::params::useACK,
   $ds_intermediate = $splunk::params::ds_intemediate,
@@ -74,6 +75,7 @@ class splunk (
   include splunk::server::license
   include splunk::server::kvstore
   include splunk::server::clustering
+  include splunk::server::shclustering
   include splunk::splunk_launch
   include splunk::deploymentclient
   include splunk::distsearch
@@ -93,6 +95,7 @@ class splunk (
   Class['splunk::server::license'] ->
   Class['splunk::server::kvstore'] ->
   Class['splunk::server::clustering'] ->
+  Class['splunk::server::shclustering'] ->
   Class['splunk::splunk_launch'] ->
   Class['splunk::deploymentclient'] ->
   Class['splunk::distsearch'] ->
