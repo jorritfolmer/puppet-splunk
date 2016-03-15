@@ -325,10 +325,10 @@ On the ADFS side:
    ![ADFS show all claim rules for Splunk](adfs_claim_rules.png)
 
 1. import the Splunk Root CA (/opt/splunk/etc/auth/cacert.pem) in the Trusted Root Certificates store of the Windows server,
-1. If you're using your own certificates: `Set-ADFSRelyingPartyTrust -TargetIdentifier host10.testlab.local -EncryptionCertificateRevocationCheck none`
-1. If you're using your own certificates: `Set-ADFSRelyingPartyTrust -TargetIdentifier host10.testlab.local -SigningCertificateRevocationCheck none`
-1. `Set-ADFSRelyingPartyTrust -TargetIdentifier host10.testlab.local -EncryptClaims $False`
-1. `Set-ADFSRelyingPartyTrust -TargetIdentifier host10.testlab.local -SignedSamlRequestsRequired $False`, otherwise you'll find messages like these in the Windows Eventlog: `System.NotSupportedException: ID6027: Enveloped Signature Transform cannot be the last transform in the chain.`
+1. If you're using your own certificates: `Set-ADFSRelyingPartyTrust -TargetIdentifier splunk-sh1.internal.corp.tld -EncryptionCertificateRevocationCheck none`
+1. If you're using your own certificates: `Set-ADFSRelyingPartyTrust -TargetIdentifier splunk-sh1.internal.corp.tld -SigningCertificateRevocationCheck none`
+1. `Set-ADFSRelyingPartyTrust -TargetIdentifier splunk-sh1.internal.corp.tld -EncryptClaims $False`
+1. `Set-ADFSRelyingPartyTrust -TargetIdentifier splunk-sh1.internal.corp.tld -SignedSamlRequestsRequired $False`, otherwise you'll find messages like these in the Windows Eventlog: `System.NotSupportedException: ID6027: Enveloped Signature Transform cannot be the last transform in the chain.`
 
 For some reason the ADFS side doesn't like the AuthnRequests that Splunk sends, so `signAuthnRequest = false` is set in Splunk if you use `saml_idptype => 'ADFS'`.
 
@@ -348,7 +348,7 @@ node 'splunk-sh.internal.corp.tld' {
     ...
     auth           => { 
       authtype     => 'LDAP',
-      ldap_host                 => 'dc01.testlab.local',
+      ldap_host                 => 'dc01.internal.corp.tld',
       ldap_binddn               => 'CN=Splunk Service Account,CN=Users,DC=corp,DC=tld',
       ldap_binddnpassword       => 'changeme',
       ldap_sslenabled           => 0,
@@ -363,6 +363,46 @@ node 'splunk-sh.internal.corp.tld' {
   }
 }
 ```
+
+### Example 7
+
+Splunk search head clustering (SHC) not only requires  configuration
+management, but also some orchestration to get it up and running.
+Since Puppet mainly does configuration management, you can use the exampe below
+to configure a staging server as search head cluster node. The resulting
+configuration directories in `/opt/splunk/etc/puppet_*/` can then be copied to
+a search head deployer who will further take care of managing the SHC node
+configuration.
+
+```
+node 'splunk-staging.internal.corp.tld' {
+  class { 'splunk':
+    ...
+    shclustering   => {
+      mode         => 'searchhead',
+      shd          => 'splunk-shd.internal.corp.tld:8089',
+      pass4symmkey => 'SHCl33tsecret',
+      label        => 'My First SHC',
+    },
+     ...
+  }
+}
+
+# note the real shc nodes aren't defined
+
+node 'splunk-shd.internal.corp.tld' {
+  class { 'splunk':
+    ...
+    shclustering   => {
+      mode         => 'deployer',
+      pass4symmkey => 'SHCl33tsecret',
+    },
+     ...
+  }
+}
+```
+
+The search head cluster will still need an `splunk init shcluster-config` and `splunk bootstrap shcluster-captain` before it is up and running.
 
 ## Parameters
 
@@ -463,12 +503,20 @@ node 'splunk-sh.internal.corp.tld' {
 
 #### `clustering`
 
-  Optional. Used to configure Splunk clustering. This is a hash with 4 members:
+  Optional. Used to configure Splunk indexer clustering. This is a hash with 4 members:
 
   - `mode` (can be one of `master`,`searchhead`,`slave`)
   - `replication_factor`
   - `search_factor`
   - `cm` (points to cluster master in case of searchhead or slave)
+
+#### `shclustering`
+
+  Optional. Used to configure Splunk search head clustering. This is a hash with 4 members:
+
+  - `mode` (can be one of `searchhead`,`deployer`)
+  - `replication_factor`
+  - `shd` (points to search head deployer, but see caveat in Example 7)
 
 #### `useACK`
 

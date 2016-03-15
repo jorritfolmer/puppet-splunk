@@ -104,7 +104,6 @@ class splunk (
   Class['splunk::service'] ->
   splunk::addsearchpeers { $searchpeers: }
   anchor { 'splunk_last': }
-
 }
 
 # ISSUES
