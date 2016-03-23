@@ -370,9 +370,9 @@ Splunk search head clustering (SHC) not only requires  configuration
 management, but also some orchestration to get it up and running.
 Since Puppet mainly does configuration management, you can use the exampe below
 to configure a staging server as search head cluster node. The resulting
-configuration directories in `/opt/splunk/etc/puppet_*/` can then be copied to
-a search head deployer who will further take care of managing the SHC node
-configuration.
+configuration directories in `/opt/splunk/etc/apps/puppet_*/` can then be copied to
+a search head deployer in `/opt/splunk/etc/shcluster/apps` who will further
+take care of managing the SHC node configuration.
 
 ```
 node 'splunk-staging.internal.corp.tld' {
@@ -402,7 +402,7 @@ node 'splunk-shd.internal.corp.tld' {
 }
 ```
 
-The search head cluster will still need an `splunk init shcluster-config` and `splunk bootstrap shcluster-captain` before it is up and running.
+The search head cluster will still need a `splunk init shcluster-config` and `splunk bootstrap shcluster-captain` before it is up and running.
 
 ## Parameters
 
@@ -571,6 +571,11 @@ If you have version >= 6.2.0 servers but with stock settings from a previous Spl
 
 ## Changelog
 
+### 2.1.0
+
+- Added search head clustering (SHC) support, although only useful for staging purposes due to the overruling nature of the search head deployer (SHD)
+- Added support to reuse Puppet certs from /etc/puppetlabs/puppet/ssl whenever commercial Puppet is used.
+
 ### 2.0.0
 
 - Moved Splunk configuration out of etc/system/local to individual Splunk config apps
@@ -637,9 +642,6 @@ Initial release:
 
 ## Roadmap
 
-- Migrate config files into an app instead of using the `system` folder
-- Search head clustering: search head
-- Search head clustering: deployer
 - Distributed Management Console
 - Data Collection Node
 - Add defined type so multiple splunk instances can be deployed on a single system
