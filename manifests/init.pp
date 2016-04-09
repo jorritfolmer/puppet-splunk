@@ -65,6 +65,17 @@ class splunk (
       $ecdhcurvename = undef }
   }
 
+  if $shclustering[mode] == 'searchhead' {
+    # for SHC nodes we only place bootstrap config, so make
+    # sure that staging directories end up using default dir
+    # instead of local, and don't replace any existing config 
+    $splunk_app_precedence_dir = 'default'
+    $splunk_app_replace = false
+  } else {
+    $splunk_app_precedence_dir = 'local'
+    $splunk_app_replace = true
+  }
+
   include splunk::installed
   include splunk::inputs
   include splunk::outputs

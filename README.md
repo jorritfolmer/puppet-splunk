@@ -230,7 +230,7 @@ node 'splunk-sh.internal.corp.tld' {
     },
     httpport     => 8000,
     kvstoreport  => 8191,
-    tcpout       => [ 'splunk-cidx1.internal.corp.tld:9997', 'splunk-cidx2.internal.corp.tld:9997', ],
+    tcpout       => [ 'splunk-idx1.internal.corp.tld:9997', 'splunk-idx2.internal.corp.tld:9997', ],
     clustering   => {
       mode       => 'searchhead',
       cm         => 'splunk-cm.internal.corp.tld:8089',
@@ -246,7 +246,7 @@ node 'splunk-cm.internal.corp.tld' {
       email      => 'changemeagain@example.com',
     },
     httpport     => 8000,
-    tcpout       => [ 'splunk-cidx1.internal.corp.tld:9997', 'splunk-cidx2.internal.corp.tld:9997', ],
+    tcpout       => [ 'splunk-idx1.internal.corp.tld:9997', 'splunk-idx2.internal.corp.tld:9997', ],
     clustering   => {
       mode               => 'master',
       replication_factor => 2,
@@ -255,9 +255,9 @@ node 'splunk-cm.internal.corp.tld' {
   }
 }
 
-node 'splunk-cidx1.internal.corp.tld', 
-     'splunk-cidx2.internal.corp.tld',
-     'splunk-cidx3.internal.corp.tld' {
+node 'splunk-idx1.internal.corp.tld', 
+     'splunk-idx2.internal.corp.tld',
+     'splunk-idx3.internal.corp.tld' {
   class { 'splunk':
     admin        => {
       hash       => '$6$MR9IJFF7RBnVA.k1$/30EBSzy0EJKZ94SjHFIUHjQjO3/P/4tx0JmWCp/En47MJceaXsevhBLE2w/ibjHlAUkD6k0U.PmY/noe9Jok0',
@@ -366,16 +366,17 @@ node 'splunk-sh.internal.corp.tld' {
 
 ### Example 7
 
-Splunk search head clustering (SHC) not only requires  configuration
+Splunk search head clustering (SHC) not only requires configuration
 management, but also some orchestration to get it up and running.
-Since Puppet mainly does configuration management, you can use the exampe below
-to configure a staging server as search head cluster node. The resulting
-configuration directories in `/opt/splunk/etc/apps/puppet_*/` can then be copied to
-a search head deployer in `/opt/splunk/etc/shcluster/apps` who will further
-take care of managing the SHC node configuration.
+
+Since the SH Deployer also has an active role in configuration management, you
+will have to take some extra steps in the right order to prevent Puppet and SH
+deployer from interferring with each other.
 
 ```
-node 'splunk-staging.internal.corp.tld' {
+node 'splunk-sh1.internal.corp.tld',
+     'splunk-sh2.internal.corp.tld', 
+     'splunk-sh3.internal.corp.tld'  {
   class { 'splunk':
     ...
     shclustering   => {
@@ -387,8 +388,6 @@ node 'splunk-staging.internal.corp.tld' {
      ...
   }
 }
-
-# note the real shc nodes aren't defined
 
 node 'splunk-shd.internal.corp.tld' {
   class { 'splunk':
@@ -402,7 +401,13 @@ node 'splunk-shd.internal.corp.tld' {
 }
 ```
 
-The search head cluster will still need a `splunk init shcluster-config` and `splunk bootstrap shcluster-captain` before it is up and running.
+Steps:
+
+1. Do a puppet run on the SH deployer and SH cluster nodes, but don't start Splunk yet.
+2. Copy the $SPLUNK_HOME/etc/apps/puppet_* directories created by Puppet from a SH cluster node to etc/shcluster/apps/ on the SH deployer
+3. Start the SH deployer and the SH cluster nodes
+4. Perform a `splunk bootstrap shcluster-captain -servers_list "https://splunk-sh1.internal.corp.tld:8089,https://splunk-sh2.internal.corp.tld:8089,https://splunk-sh1.internal.corp.tld:8089" -auth admin:changemeagain
+
 
 ## Parameters
 
@@ -570,6 +575,11 @@ However, if you still have versions < 6.2 , pass `sslcompatibility => 'intermedi
 If you have version >= 6.2.0 servers but with stock settings from a previous Splunk installation, also pass `sslcompatibility => 'intermediate'` in the universal forwarder declaration, otherwise the SSL connections to the deploymentserver will fail.
 
 ## Changelog
+
+### 2.1.1
+
+- Improved search head clustering (SHC) support: Puppet now only places the initial SHC node configuration, and won't touch it afterwards. This allows the SH deployer to take over after initial configuration. A staging SHC instance is no longer necessary.
+- Improved search head clustering (SHC) support: `splunk init shcluster` is no longer necessary, only `splunk bootstrap shcluster-captain`
 
 ### 2.1.0
 

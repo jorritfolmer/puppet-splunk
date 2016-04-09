@@ -3,6 +3,8 @@
 class splunk::server::clustering (
   $splunk_home = $splunk::splunk_home,
   $splunk_os_user = $splunk::splunk_os_user,
+  $splunk_app_precedence_dir = $splunk::splunk_app_precedence_dir,
+  $splunk_app_replace = $splunk::splunk_app_replace,
   $clustering = $splunk::clustering,
 ){
   $splunk_app_name = 'puppet_indexer_cluster'
@@ -27,26 +29,28 @@ class splunk::server::clustering (
       } ->
       file { [
         "${splunk_home}/etc/apps/${splunk_app_name}_master_base",
-        "${splunk_home}/etc/apps/${splunk_app_name}_master_base/local",
+        "${splunk_home}/etc/apps/${splunk_app_name}_master_base/${splunk_app_precedence_dir}",
         "${splunk_home}/etc/apps/${splunk_app_name}_master_base/metadata",
         "${splunk_home}/etc/apps/${splunk_app_name}_pass4symmkey_base",
-        "${splunk_home}/etc/apps/${splunk_app_name}_pass4symmkey_base/local",
+        "${splunk_home}/etc/apps/${splunk_app_name}_pass4symmkey_base/${splunk_app_precedence_dir}",
         "${splunk_home}/etc/apps/${splunk_app_name}_pass4symmkey_base/metadata",]:
         ensure => directory,
         owner  => $splunk_os_user,
         group  => $splunk_os_user,
         mode   => '0700',
       } ->
-      file { "${splunk_home}/etc/apps/${splunk_app_name}_pass4symmkey_base/local/server.conf":
+      file { "${splunk_home}/etc/apps/${splunk_app_name}_pass4symmkey_base/${splunk_app_precedence_dir}/server.conf":
         ensure  => present,
         owner   => $splunk_os_user,
         group   => $splunk_os_user,
+        replace => $splunk_app_replace,
         content => template("splunk/${splunk_app_name}_pass4symmkey_base/local/server.conf"),
       } ->
-      file { "${splunk_home}/etc/apps/${splunk_app_name}_master_base/local/server.conf":
+      file { "${splunk_home}/etc/apps/${splunk_app_name}_master_base/${splunk_app_precedence_dir}/server.conf":
         ensure  => present,
         owner   => $splunk_os_user,
         group   => $splunk_os_user,
+        replace => $splunk_app_replace,
         content => template("splunk/${splunk_app_name}_master_base/local/server.conf"),
       }
 
@@ -63,26 +67,28 @@ class splunk::server::clustering (
       } ->
       file { [
         "${splunk_home}/etc/apps/${splunk_app_name}_slave_base",
-        "${splunk_home}/etc/apps/${splunk_app_name}_slave_base/local",
+        "${splunk_home}/etc/apps/${splunk_app_name}_slave_base/${splunk_app_precedence_dir}",
         "${splunk_home}/etc/apps/${splunk_app_name}_slave_base/metadata",
         "${splunk_home}/etc/apps/${splunk_app_name}_pass4symmkey_base",
-        "${splunk_home}/etc/apps/${splunk_app_name}_pass4symmkey_base/local",
+        "${splunk_home}/etc/apps/${splunk_app_name}_pass4symmkey_base/${splunk_app_precedence_dir}",
         "${splunk_home}/etc/apps/${splunk_app_name}_pass4symmkey_base/metadata",]:
         ensure => directory,
         owner  => $splunk_os_user,
         group  => $splunk_os_user,
         mode   => '0700',
       } ->
-      file { "${splunk_home}/etc/apps/${splunk_app_name}_pass4symmkey_base/local/server.conf":
+      file { "${splunk_home}/etc/apps/${splunk_app_name}_pass4symmkey_base/${splunk_app_precedence_dir}/server.conf":
         ensure  => present,
         owner   => $splunk_os_user,
         group   => $splunk_os_user,
+        replace => $splunk_app_replace,
         content => template("splunk/${splunk_app_name}_pass4symmkey_base/local/server.conf"),
       } ->
-      file { "${splunk_home}/etc/apps/${splunk_app_name}_slave_base/local/server.conf":
+      file { "${splunk_home}/etc/apps/${splunk_app_name}_slave_base/${splunk_app_precedence_dir}/server.conf":
         ensure  => present,
         owner   => $splunk_os_user,
         group   => $splunk_os_user,
+        replace => $splunk_app_replace,
         content => template("splunk/${splunk_app_name}_slave_base/local/server.conf"),
       }
 
@@ -99,26 +105,28 @@ class splunk::server::clustering (
       } ->
       file { [
         "${splunk_home}/etc/apps/${splunk_app_name}_searchhead_base",
-        "${splunk_home}/etc/apps/${splunk_app_name}_searchhead_base/local",
+        "${splunk_home}/etc/apps/${splunk_app_name}_searchhead_base/${splunk_app_precedence_dir}",
         "${splunk_home}/etc/apps/${splunk_app_name}_searchhead_base/metadata",
         "${splunk_home}/etc/apps/${splunk_app_name}_pass4symmkey_base",
-        "${splunk_home}/etc/apps/${splunk_app_name}_pass4symmkey_base/local",
+        "${splunk_home}/etc/apps/${splunk_app_name}_pass4symmkey_base/${splunk_app_precedence_dir}",
         "${splunk_home}/etc/apps/${splunk_app_name}_pass4symmkey_base/metadata",]:
         ensure => directory,
         owner  => $splunk_os_user,
         group  => $splunk_os_user,
         mode   => '0700',
       } ->
-      file { "${splunk_home}/etc/apps/${splunk_app_name}_pass4symmkey_base/local/server.conf":
+      file { "${splunk_home}/etc/apps/${splunk_app_name}_pass4symmkey_base/${splunk_app_precedence_dir}/server.conf":
         ensure  => present,
         owner   => $splunk_os_user,
         group   => $splunk_os_user,
+        replace => $splunk_app_replace,
         content => template("splunk/${splunk_app_name}_pass4symmkey_base/local/server.conf"),
       } ->
-      file { "${splunk_home}/etc/apps/${splunk_app_name}_searchhead_base/local/server.conf":
+      file { "${splunk_home}/etc/apps/${splunk_app_name}_searchhead_base/${splunk_app_precedence_dir}/server.conf":
         ensure  => present,
         owner   => $splunk_os_user,
         group   => $splunk_os_user,
+        replace => $splunk_app_replace,
         content => template("splunk/${splunk_app_name}_searchhead_base/local/server.conf"),
       }
 
