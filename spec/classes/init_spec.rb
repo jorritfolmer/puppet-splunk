@@ -259,10 +259,10 @@ describe 'splunk' do
     }
     it { should contain_class('splunk::installed') }
     it { should contain_package('splunk') }
-    it { should contain_file('/opt/splunk/etc/apps/puppet_search_shcluster_base/local/server.conf').with_content(/conf_deploy_fetch_url = https:\/\/splunk-shd.internal.corp.tld:8089/) }
-    it { should contain_file('/opt/splunk/etc/apps/puppet_search_shcluster_base/local/server.conf').with_content(/\[replication_port:/) }
-    it { should contain_file('/opt/splunk/etc/apps/puppet_search_shcluster_base/local/server.conf').with_content(/shcluster_label = SHC/) }
-    it { should contain_file('/opt/splunk/etc/apps/puppet_search_shcluster_pass4symmkey_base/local/server.conf').with_content(/pass4SymmKey = /) }
+    it { should contain_file('/opt/splunk/etc/apps/puppet_search_shcluster_base/default/server.conf').with_content(/conf_deploy_fetch_url = https:\/\/splunk-shd.internal.corp.tld:8089/) }
+    it { should contain_file('/opt/splunk/etc/apps/puppet_search_shcluster_base/default/server.conf').with_content(/\[replication_port:/) }
+    it { should contain_file('/opt/splunk/etc/apps/puppet_search_shcluster_base/default/server.conf').with_content(/shcluster_label = SHC/) }
+    it { should contain_file('/opt/splunk/etc/apps/puppet_search_shcluster_pass4symmkey_base/default/server.conf').with_content(/pass4SymmKey = /) }
   end
 
   context 'with search head deployer role' do
