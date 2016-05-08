@@ -53,7 +53,7 @@ class splunk::server::shclustering (
         lens    => 'Puppet.lns',
         incl    => "${splunk_home}/etc/system/local/server.conf",
         changes => [
-          "set shclustering/mgmt_uri https://${fqdn}:8089",
+          "set shclustering/mgmt_uri https://${::fqdn}:8089",
         ],
       }
     }
