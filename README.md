@@ -300,29 +300,9 @@ On the ADFS side:
     - then browse to `https://splunk-sh.internal.corp.tld/saml/spmetadata`, and copy/paste the SAML metadata XML to the Windows server. 
     - import the SAML metadata XML from the relying party (Splunk) from a file
 
-1. Add 3 new claim descriptions for:
-
-    - role
-    - realName
-    - mail
-
-   ![ADFS claim descriptions for Splunk](adfs_claim_descriptions.png)
-
-1. Add a new claim rule to map Active Directory attributes to the new claim descriptions created above:
+1. Add a new claim rule to map Active Directory attributes to new claims
    
    ![ADFS get attributes claim rule for Splunk](adfs_claim_rules_get_attrs.png)
-
-1. Add a new claim rule to map Domain Admins to the `role` claim attribute:
-
-   ![ADFS map admins claim rule for Splunk](adfs_claim_rule_group_membership_admins.png)
-
-1. Add a new claim rule to map Domain Users to the `role` claim attribute:
-
-   ![ADFS map users claim rule for Splunk](adfs_claim_rule_group_membership_users.png)
-
-   The rules overview should look something like this:
-
-   ![ADFS show all claim rules for Splunk](adfs_claim_rules.png)
 
 1. import the Splunk Root CA (/opt/splunk/etc/auth/cacert.pem) in the Trusted Root Certificates store of the Windows server,
 1. If you're using your own certificates: `Set-ADFSRelyingPartyTrust -TargetIdentifier splunk-sh1.internal.corp.tld -EncryptionCertificateRevocationCheck none`
@@ -330,13 +310,41 @@ On the ADFS side:
 1. `Set-ADFSRelyingPartyTrust -TargetIdentifier splunk-sh1.internal.corp.tld -EncryptClaims $False`
 1. `Set-ADFSRelyingPartyTrust -TargetIdentifier splunk-sh1.internal.corp.tld -SignedSamlRequestsRequired $False`, otherwise you'll find messages like these in the Windows Eventlog: `System.NotSupportedException: ID6027: Enveloped Signature Transform cannot be the last transform in the chain.`
 
-For some reason the ADFS side doesn't like the AuthnRequests that Splunk sends, so `signAuthnRequest = false` is set in Splunk if you use `saml_idptype => 'ADFS'`.
-
-Logout doesn't work by the way, throws this error:
+You can use the SAML tracer Firefox plugin to see what gets posted to Splunk via ADFS after a succesful authentication. The relevant part should look something like this:
 
 ```
-Malformed SAML document(Assertion) received from IDP Please provide a diag for analysis. 
+        ...
+        <Subject>
+            <NameID>jfolmer@testlab.local</NameID>
+            <SubjectConfirmation Method="urn:oasis:names:tc:SAML:2.0:cm:bearer">
+                <SubjectConfirmationData InResponseTo="host15.testlab.local.12.AF9F4C1A-EAEA-4EF5-A501-E57AB33D7776"
+                                         NotOnOrAfter="2016-11-04T21:23:34.597Z"
+                                         Recipient="https://host15.testlab.local:8000/saml/acs"
+                                         />
+            </SubjectConfirmation>
+        </Subject>
+        <Conditions NotBefore="2016-11-04T21:18:34.581Z"
+                    NotOnOrAfter="2016-11-04T22:18:34.581Z"
+                    >
+            <AudienceRestriction>
+                <Audience>host15.testlab.local</Audience>
+            </AudienceRestriction>
+        </Conditions>
+        <AttributeStatement>
+            <Attribute Name="http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name">
+                <AttributeValue>Jorrit Folmer</AttributeValue>
+            </Attribute>
+            <Attribute Name="http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress">
+                <AttributeValue>jfolmer@testlab.local</AttributeValue>
+            </Attribute>
+            <Attribute Name="http://schemas.microsoft.com/ws/2008/06/identity/claims/role">
+                <AttributeValue>Domain Users</AttributeValue>
+                <AttributeValue>Splunk Admins</AttributeValue>
+            </Attribute>
+        </AttributeStatement>
+        ...
 ```
+
 
 ### Example 6
 
@@ -575,6 +583,10 @@ However, if you still have versions < 6.2 , pass `sslcompatibility => 'intermedi
 If you have version >= 6.2.0 servers but with stock settings from a previous Splunk installation, also pass `sslcompatibility => 'intermediate'` in the universal forwarder declaration, otherwise the SSL connections to the deploymentserver will fail.
 
 ## Changelog
+
+### 2.1.2
+
+- Improved SAML support and updated settings for Splunk 6.4 and Splunk 6.5
 
 ### 2.1.1
 
