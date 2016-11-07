@@ -29,7 +29,7 @@ class splunk::params (
     enable => true,
     ensure => undef,
   }
-  $useACK      = false
+  $use_ack      = false
   $ds_intermediate = undef
   $phonehomeintervalinsec = 60
   $repositorylocation = undef

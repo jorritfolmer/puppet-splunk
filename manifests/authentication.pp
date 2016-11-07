@@ -97,5 +97,7 @@ class splunk::authentication
         content => template("splunk/${splunk_app_name}_ldap_base/local/authentication.conf"),
       }
     }
+    default: {
+    }
   }
 }

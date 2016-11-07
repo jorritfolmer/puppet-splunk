@@ -6,7 +6,7 @@ define splunk::addsearchpeers {
     $admin = $splunk::admin
     $adminpass = $admin[pass]
     $dontruncmds = $splunk::dontruncmds
-  
+
     if $adminpass == undef {
       err('Plaintext admin password not set, skipping addition of search peers to search head')
     } elsif $dontruncmds == true {

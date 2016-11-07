@@ -531,7 +531,7 @@ Steps:
   - `replication_factor`
   - `shd` (points to search head deployer, but see caveat in Example 7)
 
-#### `useACK`
+#### `use_ack`
 
   Optional. Used to request indexer acknowlegement when sending data.
   Defaults to false.
@@ -583,6 +583,10 @@ However, if you still have versions < 6.2 , pass `sslcompatibility => 'intermedi
 If you have version >= 6.2.0 servers but with stock settings from a previous Splunk installation, also pass `sslcompatibility => 'intermediate'` in the universal forwarder declaration, otherwise the SSL connections to the deploymentserver will fail.
 
 ## Changelog
+
+### 3.0.0
+
+- Moved useACK paramter to use_ack due to [stricter language check](https://docs.puppet.com/puppet/latest/reference/lang_reserved.html#parameters)
 
 ### 2.1.2
 
@@ -637,7 +641,7 @@ If you have version >= 6.2.0 servers but with stock settings from a previous Spl
 
 ### 1.0.2
 
-- Added `useACK` parameter to manage indexer acknowledgement
+- Added `use_ack` parameter to manage indexer acknowledgement
 - Updated README with Debian / Ubuntu prerequisites.
 
 ### 1.0.1
