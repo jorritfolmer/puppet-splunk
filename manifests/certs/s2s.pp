@@ -51,5 +51,19 @@ class splunk::certs::s2s (
     creates => [ "${splunk_home}/etc/auth/certs/s2s.pem", ],
   }
 
+  # reuse certs from Red Hat packaged Puppet
+  exec { 'openssl s2s ca redhat puppet':
+    command => "cat /var/lib/puppet/ssl/certs/ca.pem > ${splunk_home}/etc/auth/certs/ca.crt",
+    path    => ['/bin', '/sbin', '/usr/bin', '/usr/sbin'],
+    creates => [ "${splunk_home}/etc/auth/certs/ca.crt", ],
+    require => File["${splunk_home}/etc/auth/certs"],
+    onlyif  => '/usr/bin/test -e /var/lib/puppet/ssl'
+  } ->
+  exec { 'openssl s2s 1 redhat puppet':
+    command => "cat /var/lib/puppet/ssl/private_keys/${::fqdn}.pem /var/lib/pupp/ssl/certs/${::fqdn}.pem > ${splunk_home}/etc/auth/certs/s2s.pem",
+    path    => ['/bin', '/sbin', '/usr/bin', '/usr/sbin'],
+    creates => [ "${splunk_home}/etc/auth/certs/s2s.pem", ],
+  }
+
 }
 
