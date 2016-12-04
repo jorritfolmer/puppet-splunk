@@ -106,9 +106,32 @@ node 'splunk-server.internal.corp.tld' {
 }
 ```
 
-### Example 2: 
+### Example 2a: 
 
 Extends the example above with a node that will run the Splunk universal forwarder. It uses the first server as Deployment Server (`ds =>`) where apps, inputs and outputs can be managed and deployed through Forwarder Management.
+
+![Example 2](example2.png)
+
+```puppet
+node 'splunk-server.internal.corp.tld' {
+  class { 'splunk':
+    httpport     => 8000,
+    kvstoreport  => 8191,
+    inputport    => 9997,
+  }
+}
+
+node 'some-server.internal.corp.tld' {
+  class { 'splunk':
+    type => 'uf',
+    ds   => 'splunk-server.internal.corp.tld:8089',
+  }
+}
+```
+
+### Example 2b: 
+
+Almost identical to example 2a, except that this will allow non-Puppetized Splunk clients to connect to the deploymentserver since the default Splunk config isn't compatible with modern compability. Setting the deploymentserver to intermediate compatibility will allow these clients to make the initial connection, after which you can deploy a common_ssl_base config app to them with modern ssl compatibility.
 
 ![Example 2](example2.png)
 
@@ -489,8 +512,11 @@ Steps:
 #### `sslcompatibility`
 
   Optional. Used to configure the SSL compatibility level as defined by
-  Mozilla Labs.  Defaults to "modern" compatibility. Set to
-  "intermediate" or "old" if you have older Splunk forwarders or clients
+  Mozilla Labs:  
+
+  - `modern`
+  - `intermediate`
+  - `old`
 
 #### `admin`
 
