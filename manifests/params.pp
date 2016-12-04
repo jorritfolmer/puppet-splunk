@@ -24,6 +24,7 @@ class splunk::params (
   $searchpeers = 'empty'
   $admin       = undef
   $clustering  = { }
+  $replication_port = 9887
   $shclustering  = { }
   $service     = {
     enable => true,

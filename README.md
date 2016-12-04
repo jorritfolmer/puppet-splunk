@@ -586,7 +586,8 @@ If you have version >= 6.2.0 servers but with stock settings from a previous Spl
 
 ### 3.0.0
 
-- Moved useACK paramter to use_ack due to [stricter language check](https://docs.puppet.com/puppet/latest/reference/lang_reserved.html#parameters)
+- Added replication_port parameter to configure index cluster replication port.
+- Moved useACK paramter to use_ack due to [Puppet stricter language check](https://docs.puppet.com/puppet/latest/reference/lang_reserved.html#parameters)
 
 ### 2.1.2
 

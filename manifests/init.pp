@@ -27,6 +27,7 @@ class splunk (
   $searchpeers  = $splunk::params::searchpeers,
   $admin        = $splunk::params::admin,
   $clustering   = $splunk::params::clustering,
+  $replication_port  = $splunk::params::replication_port,
   $shclustering = $splunk::params::shclustering,
   $service      = $splunk::params::service,
   $use_ack       = $splunk::params::use_ack,

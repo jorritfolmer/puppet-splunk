@@ -235,6 +235,22 @@ describe 'splunk' do
     it { should contain_file('/opt/splunk/etc/apps/puppet_indexer_cluster_pass4symmkey_base/local/server.conf').with_content(/pass4SymmKey = changeme/) }
   end
 
+  context 'with cluster slave role and custom replication_port' do
+    let(:params) { 
+      {
+        :clustering  => { 'mode' => 'slave', 'pass4symmkey' => 'changeme', 'cm' => 'splunk-cm.internal.corp.tld:8089' },
+        :admin => { 'hash' => 'zzzz', 'fn' => 'yyyy', 'email' => 'wwww', },
+        :dontruncmds => true,
+        :replication_port => 12345,
+      }
+    }
+    it { should contain_class('splunk::installed') }
+    it { should contain_package('splunk') }
+    it { should contain_file('/opt/splunk/etc/apps/puppet_indexer_cluster_slave_base/local/server.conf').with_content(/master_uri = https:\/\/splunk-cm.internal.corp.tld:8089/) }
+    it { should contain_file('/opt/splunk/etc/apps/puppet_indexer_cluster_pass4symmkey_base/local/server.conf').with_content(/pass4SymmKey = changeme/) }
+    it { should contain_file('/opt/splunk/etc/apps/puppet_indexer_cluster_slave_base/local/server.conf').with_content(/\[replication_port:\/\/12345\]\ndisabled = false\n/) }
+  end
+
   context 'with cluster searchhead role' do
     let(:params) { 
       {
