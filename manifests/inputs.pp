@@ -7,7 +7,9 @@ class splunk::inputs (
   $splunk_home = $splunk::splunk_home,
   $splunk_app_precedence_dir = $splunk::splunk_app_precedence_dir,
   $splunk_app_replace = $splunk::splunk_app_replace,
-  $splunk_os_user = $splunk::splunk_os_user
+  $splunk_os_user = $splunk::splunk_os_user,
+  $sslrootcapath   = $splunk::sslrootcapath,
+  $sslcertpath   = $splunk::sslcertpath
 ){
   $splunk_app_name = 'puppet_common_ssl_inputs'
   if $inputport == undef {

@@ -43,6 +43,23 @@ describe 'splunk' do
     it { should contain_file('/opt/splunk/etc/apps/puppet_common_ssl_outputs/local/outputs.conf').with_content(/server = splunk-idx.internal.corp.tld:9997/) }
   end
 
+  context 'with tcpout as string and revert to default splunk cert instead of puppet cert reuse' do
+    let(:params) { 
+      {
+        :tcpout => 'splunk-idx.internal.corp.tld:9997',
+        :admin => { 'hash' => 'zzzz', 'fn' => 'yyyy', 'email' => 'wwww', },
+        :reuse_puppet_certs => false,
+        :sslcertpath => 'server.pem',
+        :sslrootcapath => 'cacert.pem',
+      }
+    }
+    it { should contain_class('splunk::installed') }
+    it { should contain_package('splunk') }
+    it { should contain_file('/opt/splunk/etc/apps/puppet_common_ssl_base/local/server.conf').with_content(/sslRootCAPath = \/opt\/splunk\/etc\/auth\/cacert.pem/) }
+    it { should contain_file('/opt/splunk/etc/apps/puppet_common_ssl_outputs/local/outputs.conf').with_content(/server = splunk-idx.internal.corp.tld:9997/) }
+    it { should contain_file('/opt/splunk/etc/apps/puppet_common_ssl_outputs/local/outputs.conf').with_content(/sslCertPath = \/opt\/splunk\/etc\/auth\/server.pem/) }
+  end
+
   context 'with tcpout as array' do
     let(:params) { 
       {
@@ -103,6 +120,24 @@ describe 'splunk' do
     it { should contain_class('splunk::installed') }
     it { should contain_package('splunk') }
     it { should contain_file('/opt/splunk/etc/apps/puppet_common_ssl_inputs/local/inputs.conf').with_content(/\[splunktcp-ssl:9997\]/) }
+  end
+
+  context 'with inputs but with default splunk certs instead of puppet cert reuse' do
+    let(:params) { 
+      {
+        :inputport => 9997,
+        :admin => { 'hash' => 'zzzz', 'fn' => 'yyyy', 'email' => 'wwww', },
+        :dontruncmds => true,
+        :reuse_puppet_certs => false,
+        :sslcertpath => 'server.pem',
+        :sslrootcapath => 'cacert.pem',
+      }
+    }
+    it { should contain_class('splunk::installed') }
+    it { should contain_package('splunk') }
+    it { should contain_file('/opt/splunk/etc/apps/puppet_common_ssl_base/local/server.conf').with_content(/sslRootCAPath = \/opt\/splunk\/etc\/auth\/cacert.pem/) }
+    it { should contain_file('/opt/splunk/etc/apps/puppet_common_ssl_inputs/local/inputs.conf').with_content(/\[splunktcp-ssl:9997\]/) }
+    it { should contain_file('/opt/splunk/etc/apps/puppet_common_ssl_inputs/local/inputs.conf').with_content(/serverCert = \/opt\/splunk\/etc\/auth\/server.pem/) }
   end
 
   context 'with web' do
@@ -205,6 +240,21 @@ describe 'splunk' do
     it { should contain_package('splunk') }
     # the cipherSuite must be properly escaped, e.g. the + ! characters
     it { should contain_file('/opt/splunk/etc/apps/puppet_common_ssl_base/local/server.conf').with_content(/cipherSuite = ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH\+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:\!aNULL:\!eNULL:\!EXPORT:\!DES:\!RC4:\!3DES:\!MD5:\!PSK/) }
+  end
+
+  context 'with default splunk certs instead of puppet cert reuse' do
+    let(:params) { 
+      {
+        :admin => { 'hash' => 'zzzz', 'fn' => 'yyyy', 'email' => 'wwww', },
+        :dontruncmds => true,
+        :reuse_puppet_certs => false,
+        :sslcertpath => 'server.pam',
+        :sslrootcapath => 'cacert.pem',
+      }
+    }
+    it { should contain_class('splunk::installed') }
+    it { should contain_package('splunk') }
+    it { should contain_file('/opt/splunk/etc/apps/puppet_common_ssl_base/local/server.conf').with_content(/sslRootCAPath = \/opt\/splunk\/etc\/auth\/cacert.pem/) }
   end
 
   context 'with cluster master role' do

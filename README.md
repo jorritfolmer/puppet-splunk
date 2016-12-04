@@ -86,15 +86,15 @@ file { "/etc/apt/sources.list.d/splunk.list":
 To give this module a try, you don't necessarily have to setup a Certiticate Authority for the various SSL certificates that Splunk uses.
 
 1. By default Splunk already uses its own CA (1024 bits) that is used to create and sign the certificate for the 8089/tcp management port and 8000/tcp web interface: /opt/splunk/etc/auth/ca.pem. However, since everyone can grab the key from a Splunk trial download, it's an unlikely candidate for real production use.
-2. Because there is already a Puppet CA in place, this module reuses the client key (4096 bits) and client certificate signed by the Puppet CA.
+2. Because there is already a Puppet CA in place, this module reuses the client key (4096 bits) and client certificate signed by the Puppet CA. For quick testing in heterogeneous non-production environments you can revert to using the Splunk provides certs and CA with `reuse_puppet_certs => false`.
 
 By default, the Splunk module doesn't manage the state of the splunk service, except configure to start Splunk or Splunkforwarder at boot time. However, if you do want Puppet to interfere while performing a cluster rolling restart or an indexer restart, have a look at the `service` parameter. 
 
-### Example 1: 
+### Example 1a: 
 
 Define a single standalone Splunk instance that you can use to index and search, for example with the trial license:
 
-![Example 1](example1.png)
+![Example 1a](example1.png)
 
 ```puppet
 node 'splunk-server.internal.corp.tld' {
@@ -102,6 +102,26 @@ node 'splunk-server.internal.corp.tld' {
     httpport     => 8000,
     kvstoreport  => 8191,
     inputport    => 9997,
+  }
+}
+```
+
+### Example 1b: 
+
+Define a single standalone Splunk instance that you can use to index and search, for example with the trial license.
+This time use the Splunk provided non-production testing certificates instead of reusing the ones signed by the Puppet CA, for example for testing in heterogeneous environments with non-Puppetized Splunk forwarders.
+
+![Example 1b](example1.png)
+
+```puppet
+node 'splunk-server.internal.corp.tld' {
+  class { 'splunk':
+    httpport           => 8000,
+    kvstoreport        => 8191,
+    inputport          => 9997,
+    reuse_puppet_certs => false,
+    sslcertpath        => 'server.pem',
+    sslrootcapath      => 'cacert.pem',
   }
 }
 ```
@@ -131,16 +151,22 @@ node 'some-server.internal.corp.tld' {
 
 ### Example 2b: 
 
-Almost identical to example 2a, except that this will allow non-Puppetized Splunk clients to connect to the deploymentserver since the default Splunk config isn't compatible with modern compability. Setting the deploymentserver to intermediate compatibility will allow these clients to make the initial connection, after which you can deploy a common_ssl_base config app to them with modern ssl compatibility.
+Almost identical to example 2a, except with some SSL downgrading, not suitable for production.
+This will allow non-Puppetized Splunk clients to connect to the various servicessince the default Splunk config isn't compatible with modern compability. Setting the deploymentserver to intermediate compatibility will allow these clients to make the initial connection, after which you can deploy a common_ssl_base config app to them with modern ssl compatibility.
+The manifest below will also use the Splunk provided non-production certificates, instead of the ones signed by the Puppet CA.
 
 ![Example 2](example2.png)
 
 ```puppet
 node 'splunk-server.internal.corp.tld' {
   class { 'splunk':
-    httpport     => 8000,
-    kvstoreport  => 8191,
-    inputport    => 9997,
+    httpport           => 8000,
+    kvstoreport        => 8191,
+    inputport          => 9997,
+    sslcompatibility   => 'intermediate',
+    reuse_puppet_certs => false,
+    sslcertpath        => 'server.pem',
+    sslrootcapath      => 'cacert.pem',
   }
 }
 
@@ -148,6 +174,9 @@ node 'some-server.internal.corp.tld' {
   class { 'splunk':
     type => 'uf',
     ds   => 'splunk-server.internal.corp.tld:8089',
+    reuse_puppet_certs => false,
+    sslcertpath        => 'server.pem',
+    sslrootcapath      => 'cacert.pem',
   }
 }
 ```
@@ -514,9 +543,28 @@ Steps:
   Optional. Used to configure the SSL compatibility level as defined by
   Mozilla Labs:  
 
-  - `modern`
+  - `modern` (default)
   - `intermediate`
   - `old`
+
+#### `reuse_puppet_certs`
+
+   Optional. By default the certificates signed by the Puppet CA will be reused. However if you want to do some quick testing with non-Puppetized nodes, set this to `false`, and make sure to point `sslcertpath => 'server.pem'` and `sslrootcapath => 'cacert.pem'` to the default Splunk testing certs.
+
+   - `true` (default)
+   - `false`
+
+#### `sslcertpath`
+
+   Optional. Can be together with `reuse_puppet_certs => false` to point to either your own certificates, or to the default Splunk provided testing certficates.
+
+   Note that the path is relative to $SPLUNK_HOME/etc/auth/
+
+#### `sslrootcapath`
+
+   Optional. Can be together with `reuse_puppet_certs => false` to point to either your own CA certificates, or to the default Splunk provided testing CA certficates. 
+
+   Note that the path is relative to $SPLUNK_HOME/etc/auth/
 
 #### `admin`
 
@@ -610,88 +658,7 @@ If you have version >= 6.2.0 servers but with stock settings from a previous Spl
 
 ## Changelog
 
-### 3.0.0
-
-- Added replication_port parameter to configure index cluster replication port.
-- Moved useACK paramter to use_ack due to [Puppet stricter language check](https://docs.puppet.com/puppet/latest/reference/lang_reserved.html#parameters)
-
-### 2.1.2
-
-- Improved SAML support and updated settings for Splunk 6.4 and Splunk 6.5
-
-### 2.1.1
-
-- Improved search head clustering (SHC) support: Puppet now only places the initial SHC node configuration, and won't touch it afterwards. This allows the SH deployer to take over after initial configuration. A staging SHC instance is no longer necessary.
-- Improved search head clustering (SHC) support: `splunk init shcluster` is no longer necessary, only `splunk bootstrap shcluster-captain`
-
-### 2.1.0
-
-- Added search head clustering (SHC) support, although only useful for staging purposes due to the overruling nature of the search head deployer (SHD)
-- Added support to reuse Puppet certs from /etc/puppetlabs/puppet/ssl whenever commercial Puppet is used.
-
-### 2.0.0
-
-- Moved Splunk configuration out of etc/system/local to individual Splunk config apps
-- Add LDAP authentication support 
-
-### 1.0.9
-
-- Added phonehomeintervalinsec parameter to configure phoneHomeIntervalInSec for the deploymentclient
-
-### 1.0.8
-
-- Improved adding search peers
-- Added class containment, to properly support `require =>` from other resources or classes. This add a dependency on puppetlabs-stdlib.
-
-### 1.0.7
-
-- Added rpsec tests
-- Added github->travis-ci integration
-- Fixed issues for Puppet 2.7
-
-### 1.0.6
-
-- Add SAML authentication support through ADFS as IdP
-
-### 1.0.5
-
-- Specify IP to bind to
-
-### 1.0.4
-
-- Optionally specify Splunk version to install
-- Merged PR #1 from @timidri
-
-### 1.0.3
-
-- Added `ds_intermediate` parameter to create a deployment server that can deploy apps from an another upstream deployment server.
-
-### 1.0.2
-
-- Added `use_ack` parameter to manage indexer acknowledgement
-- Updated README with Debian / Ubuntu prerequisites.
-
-### 1.0.1
-
-- Added `service` parameter to manage start and running state of the Splunk or Splunkforwarder service.
-
-### 1.0.0
-
-Initial release: 
-
-- License master
-- Splunk web
-- Standalone search head
-- KVstore
-- Standalone indexer
-- Deployment server
-- Deployment client
-- Distributed search
-- Forwarding with load-balancing
-- Data input with SSL
-- Index clustering: cluster master
-- Index clustering: cluster peer
-- Index clustering: search head
+Moved to CHANGELOG.md
 
 ## Roadmap
 
