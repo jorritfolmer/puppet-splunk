@@ -34,12 +34,13 @@ class splunk::certs::s2s (
       path    => ['/bin', '/sbin', '/usr/bin', '/usr/sbin'],
       creates => [ "${splunk_home}/etc/auth/${sslrootcapath}", ],
       require => File["${splunk_home}/etc/auth/certs"],
-      onlyif  => '/usr/bin/test -e /etc/puppet/ssl'
+      onlyif  => '/usr/bin/test -e /etc/puppet/ssl/ssl/certs/ca.pem'
     } ->
     exec { 'openssl s2s 1 opensource puppet':
       command => "cat /etc/puppet/ssl/private_keys/${::fqdn}.pem /etc/puppet/ssl/certs/${::fqdn}.pem > ${splunk_home}/etc/auth/${sslcertpath}",
       path    => ['/bin', '/sbin', '/usr/bin', '/usr/sbin'],
       creates => [ "${splunk_home}/etc/auth/${sslcertpath}", ],
+      onlyif  => "/usr/bin/test -e /etc/puppet/ssl/private_keys/${::fqdn}.pem"
     }
 
     # reuse certs from commercial Puppet
@@ -48,12 +49,13 @@ class splunk::certs::s2s (
       path    => ['/bin', '/sbin', '/usr/bin', '/usr/sbin'],
       creates => [ "${splunk_home}/etc/auth/${sslrootcapath}", ],
       require => File["${splunk_home}/etc/auth/certs"],
-      onlyif  => '/usr/bin/test -e /etc/puppetlabs/puppet/ssl'
+      onlyif  => '/usr/bin/test -e /etc/puppetlabs/puppet/ssl/certs/ca.pem'
     } ->
     exec { 'openssl s2s 1 commercial puppet':
       command => "cat /etc/puppetlabs/puppet/ssl/private_keys/${::fqdn}.pem /etc/puppetlabs/puppet/ssl/certs/${::fqdn}.pem > ${splunk_home}/etc/auth/${sslcertpath}",
       path    => ['/bin', '/sbin', '/usr/bin', '/usr/sbin'],
       creates => [ "${splunk_home}/etc/auth/certs/s2s.pem", ],
+      onlyif  => "/usr/bin/test -e /etc/puppetlabs/puppet/ssl/private_keys/${::fqdn}.pem"
     }
 
     # reuse certs from Red Hat packaged Puppet
@@ -62,12 +64,13 @@ class splunk::certs::s2s (
       path    => ['/bin', '/sbin', '/usr/bin', '/usr/sbin'],
       creates => [ "${splunk_home}/etc/auth/${sslrootcapath}", ],
       require => File["${splunk_home}/etc/auth/certs"],
-      onlyif  => '/usr/bin/test -e /var/lib/puppet/ssl'
+      onlyif  => '/usr/bin/test -e /var/lib/puppet/ssl/certs/ca.pem'
     } ->
     exec { 'openssl s2s 1 redhat puppet':
       command => "cat /var/lib/puppet/ssl/private_keys/${::fqdn}.pem /var/lib/pupp/ssl/certs/${::fqdn}.pem > ${splunk_home}/etc/auth/${sslcertpath}",
       path    => ['/bin', '/sbin', '/usr/bin', '/usr/sbin'],
       creates => [ "${splunk_home}/etc/auth/certs/s2s.pem", ],
+      onlyif  => "/usr/bin/test -e /var/lib/puppet/ssl/private_keys/${::fqdn}.pem"
     }
   }
 }

@@ -269,6 +269,7 @@ node 'splunk-idx1.internal.corp.tld', 'splunk-idx2.internal.corp.tld' {
 ### Example 4: 
 
 A Splunk indexer cluster consisting of one deployment/license/searchhead server, a cluster master, and three cluster peers.
+The cluster master also acts as license master.
 
 ![Example 4](example4.png)
 
@@ -282,6 +283,7 @@ node 'splunk-sh.internal.corp.tld' {
     },
     httpport     => 8000,
     kvstoreport  => 8191,
+    lm           => 'splunk-cm.internal.corp.tld:8089',
     tcpout       => [ 'splunk-idx1.internal.corp.tld:9997', 'splunk-idx2.internal.corp.tld:9997', ],
     clustering   => {
       mode       => 'searchhead',
@@ -316,8 +318,8 @@ node 'splunk-idx1.internal.corp.tld',
       fn         => 'Cluster Peer Administrator',
       email      => 'changemeagain@example.com',
     },
-    httpport     => 8000,
-    inputport    => 8000,
+    inputport    => 9997,
+    lm           => 'splunk-cm.internal.corp.tld:8089',
     clustering   => {
       mode       => 'slave',
       cm         => 'splunk-cm.internal.corp.tld:8089',
@@ -467,6 +469,69 @@ Steps:
 2. Copy the $SPLUNK_HOME/etc/apps/puppet_* directories created by Puppet from a SH cluster node to etc/shcluster/apps/ on the SH deployer
 3. Start the SH deployer and the SH cluster nodes
 4. Perform a `splunk bootstrap shcluster-captain -servers_list "https://splunk-sh1.internal.corp.tld:8089,https://splunk-sh2.internal.corp.tld:8089,https://splunk-sh1.internal.corp.tld:8089" -auth admin:changemeagain
+
+### Example 8
+
+Configure a multisite cluster with 2 sites with 1 indexer each.
+Site 1 hosts splunk-cm and splunk-idx1. Site 2 hosts splunk-idx2.
+
+```
+node 'splunk-cm.internal.corp.tld', 
+  class { 'splunk':
+    admin        => {
+      hash       => '$6$MR9IJFF7RBnVA.k1$/30EBSzy0EJKZ94SjHFIUHjQjO3/P/4tx0JmWCp/En47MJceaXsevhBLE2w/ibjHlAUkD6k0U.PmY/noe9Jok0',
+      fn         => 'Cluster Master Administrator',
+      email      => 'changemeagain@example.com',
+    },
+    httpport     => 8000,
+    tcpout       => [ 'splunk-idx1.internal.corp.tld:9997', 'splunk-idx2.internal.corp.tld:9997', ],
+    clustering   => {
+      mode               => 'master',
+      replication_factor => 2,
+      search_factor      => 2,
+      site               => 'site1',
+      available_sites    => 'site1,site2',
+      site_replication_factor => 'origin:1, total:2',
+      site_search_factor => 'origin:1, total:2',
+    }
+  }
+}
+
+node 'splunk-idx1.internal.corp.tld', 
+  class { 'splunk':
+    admin        => {
+      hash       => '$6$MR9IJFF7RBnVA.k1$/30EBSzy0EJKZ94SjHFIUHjQjO3/P/4tx0JmWCp/En47MJceaXsevhBLE2w/ibjHlAUkD6k0U.PmY/noe9Jok0',
+      fn         => 'Cluster Peer Administrator',
+      email      => 'changemeagain@example.com',
+    },
+    inputport    => 9997,
+    lm           => 'splunk-cm.internal.corp.tld:8089',
+    clustering   => {
+      site       => 'site1',
+      mode       => 'slave',
+      cm         => 'splunk-cm.internal.corp.tld:8089',
+    }
+  }
+}
+
+node 'splunk-idx2.internal.corp.tld', 
+  class { 'splunk':
+    admin        => {
+      hash       => '$6$MR9IJFF7RBnVA.k1$/30EBSzy0EJKZ94SjHFIUHjQjO3/P/4tx0JmWCp/En47MJceaXsevhBLE2w/ibjHlAUkD6k0U.PmY/noe9Jok0',
+      fn         => 'Cluster Peer Administrator',
+      email      => 'changemeagain@example.com',
+    },
+    inputport    => 9997,
+    lm           => 'splunk-cm.internal.corp.tld:8089',
+    clustering   => {
+      site       => 'site2',
+      mode       => 'slave',
+      cm         => 'splunk-cm.internal.corp.tld:8089',
+    }
+  }
+}
+
+```
 
 
 ## Parameters
@@ -662,7 +727,6 @@ Moved to CHANGELOG.md
 
 ## Roadmap
 
-- Distributed Management Console
 - Data Collection Node
 - Add defined type so multiple splunk instances can be deployed on a single system
 
