@@ -20,7 +20,8 @@ class splunk::server::clustering (
     'master': {
       $replication_factor = $clustering[replication_factor]
       $search_factor = $clustering[search_factor]
-      $site = $clustering[site]
+      # site is a reserved word in Puppet 4.x, switching to thissite
+      $thissite = $clustering[thissite]
       $multisite = $clustering[multisite]
       $available_sites = $clustering[available_sites]
       $site_replication_factor = $clustering[site_replication_factor]
@@ -63,7 +64,8 @@ class splunk::server::clustering (
     }
     'slave': {
       $cm = $clustering[cm]
-      $site = $clustering[site]
+      # site is a reserved word in Puppet 4.x, switching to thissite
+      $thissite = $clustering[thissite]
       file { [
         "${splunk_home}/etc/apps/${splunk_app_name}_master_base",
         "${splunk_home}/etc/apps/${splunk_app_name}_searchhead_base", ]:
@@ -102,7 +104,8 @@ class splunk::server::clustering (
     }
     'searchhead': {
       $cm = $clustering[cm]
-      $site = $clustering[site]
+      # site is a reserved word in Puppet 4.x, switching to thissite
+      $thissite = $clustering[thissite]
       file { [
         "${splunk_home}/etc/apps/${splunk_app_name}_master_base",
         "${splunk_home}/etc/apps/${splunk_app_name}_slave_base", ]:

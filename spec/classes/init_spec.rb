@@ -357,4 +357,19 @@ describe 'splunk' do
     it { should contain_file('/opt/splunk/etc/apps/puppet_search_shcluster_pass4symmkey_base/local/server.conf').with_content(/pass4SymmKey = SHCsecret/) }
   end
 
+  context 'with multisite indexer clustering' do
+    let(:params) { 
+      {
+        :clustering  => { 'mode' => 'master', 'thissite' => 'site1', 'available_sites' => 'site1,site2', 'site_replication_factor' => 'origin:1, total:2', 'site_search_factor' => 'origin:1, total:2'},
+        :admin => { 'hash' => 'zzzz', 'fn' => 'yyyy', 'email' => 'wwww', },
+        :dontruncmds => true,
+      }
+    }
+    it { should contain_class('splunk::installed') }
+    it { should contain_package('splunk') }
+    it { should contain_file('/opt/splunk/etc/apps/puppet_indexer_cluster_master_base/local/server.conf').with_content(/multisite = true/) }
+    it { should contain_file('/opt/splunk/etc/apps/puppet_indexer_cluster_master_base/local/server.conf').with_content(/available_sites = site1,site2/) }
+    it { should contain_file('/opt/splunk/etc/apps/puppet_indexer_cluster_master_base/local/server.conf').with_content(/\[general\]\nsite = site1/) }
+  end
+
 end

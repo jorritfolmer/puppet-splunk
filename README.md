@@ -7,7 +7,7 @@ This Puppet module can be used to create and arrange Splunk instances into simpl
 ## Principles
 
 1. **Splunk above Puppet.** Puppet is only used to configure the running skeleton of a Splunk constellation. It tries to keep away from Splunk administration as much as possible. For example, why deploy Splunk apps to forwarders through Puppet if you can use Splunk's multi-platform deployment server?
-2. **Power to the Splunkers.** A Splunk installation should typically not be administered by the IT or IT-infra teams. This Puppet module should smooth the path to implementing segregation of duties between administrators and watch(wo)men.
+2. **Power to the Splunkers.** A Splunk installation should typically not be administered by the IT or IT-infra teams. This Puppet module should smooth the path to implementing segregation of duties between administrators and watch(wo)men (ISO 27002 12.4.3 or BIR 10.10.3).
 3. **Secure by default**.
   - Splunk runs as user splunk instead of root.
   - No services are listening by default except the bare minimum (8089/tcp)
@@ -661,6 +661,17 @@ node 'splunk-idx2.internal.corp.tld',
   - `replication_factor`
   - `search_factor`
   - `cm` (points to cluster master in case of searchhead or slave)
+
+  For multisite indexer clustering:
+
+  - `thissite` (assigns this node to a site, value can be site1..site63. `site` is a reserved word in Puppet 4.x hence the choice for `thissite`)
+
+  For cluster masters of multisite indexer clusters:
+
+  - `available_sites` (e.g. 'site1,site2')
+  - `site_replication_factor` (e.g. 'origin:1, total:2')
+  - `site_search_factor` (e.g. 'origin:1, total:2')
+
 
 #### `shclustering`
 
