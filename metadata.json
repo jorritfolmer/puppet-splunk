@@ -1,8 +1,8 @@
 {
   "name": "jorritfolmer-splunk",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "author": "Jorrit Folmer",
-  "summary": "Deploy Splunk instances into any imaginable topology, distributed or clustered.",
+  "summary": "Deploy Splunk instances into any imaginable topology, distributed or (multisite) clustered.",
   "license": "MIT",
   "source": "https://github.com/jorritfolmer/puppet-splunk.git",
   "issues_url": "https://github.com/jorritfolmer/puppet-splunk/issues",

@@ -2,7 +2,7 @@
 
 [![Travis CI build status](https://travis-ci.org/jorritfolmer/puppet-splunk.svg?branch=master)](https://travis-ci.org/jorritfolmer/puppet-splunk)
 
-This Puppet module can be used to create and arrange Splunk instances into simple, distributed or clustered topologies. It does so with the following principles in mind:
+This Puppet module can be used to create and arrange Splunk instances into simple, distributed or (multisite) clustered topologies. It does so with the following principles in mind:
 
 ## Principles
 
@@ -16,6 +16,24 @@ This Puppet module can be used to create and arrange Splunk instances into simpl
   - Ciphers are set to [modern compatibility](https://wiki.mozilla.org/Security/Server_Side_TLS)
   - Admin password can be set using its SHA512 hash in the Puppet manifests instead of plain-text.
 4. **Supports any topology.** Single server? Redundant multi-site clustering? Heavy forwarder in a DMZ?
+
+## Quick-start
+
+Define a single standalone Splunk instance that you can use to index and search, for example with the trial license:
+
+![Example 1a](example1.png)
+
+```puppet
+node 'splunk-server.internal.corp.tld' {
+  class { 'splunk':
+    httpport     => 8000,
+    kvstoreport  => 8191,
+    inputport    => 9997,
+  }
+}
+```
+
+See the other examples below for more elaborate topologies.
 
 ## Prerequisites
 
@@ -90,23 +108,7 @@ To give this module a try, you don't necessarily have to setup a Certiticate Aut
 
 By default, the Splunk module doesn't manage the state of the splunk service, except configure to start Splunk or Splunkforwarder at boot time. However, if you do want Puppet to interfere while performing a cluster rolling restart or an indexer restart, have a look at the `service` parameter. 
 
-### Example 1a: 
-
-Define a single standalone Splunk instance that you can use to index and search, for example with the trial license:
-
-![Example 1a](example1.png)
-
-```puppet
-node 'splunk-server.internal.corp.tld' {
-  class { 'splunk':
-    httpport     => 8000,
-    kvstoreport  => 8191,
-    inputport    => 9997,
-  }
-}
-```
-
-### Example 1b: 
+### Example 1: 
 
 Define a single standalone Splunk instance that you can use to index and search, for example with the trial license.
 This time use the Splunk provided non-production testing certificates instead of reusing the ones signed by the Puppet CA, for example for testing in heterogeneous environments with non-Puppetized Splunk forwarders.

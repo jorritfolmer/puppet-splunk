@@ -1,3 +1,7 @@
+### 3.0.1
+
+- Fixed failing ca.crt reuse from open-source Puppet
+
 ### 3.0.0
 
 - Added support for multisite indexer clustering
