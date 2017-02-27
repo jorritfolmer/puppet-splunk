@@ -1,3 +1,7 @@
+### 3.1.0
+
+- Added minfreespace parameter
+
 ### 3.0.2
 
 - Changed curve to secp384r1 to support Chrome

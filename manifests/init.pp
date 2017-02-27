@@ -40,6 +40,7 @@ class splunk (
   $rolemap                    = $splunk::params::rolemap,
   $dontruncmds                = $splunk::params::dontruncmds,
   $pass4symmkey               = $splunk::params::pass4symmkey,
+  $minfreespace               = $splunk::params::minfreespace,
   $phonehomeintervalinsec     = $splunk::params::phonehomeintervalinsec
   ) inherits splunk::params {
 
@@ -91,6 +92,7 @@ class splunk (
   include splunk::server::kvstore
   include splunk::server::clustering
   include splunk::server::shclustering
+  include splunk::server::diskusage
   include splunk::splunk_launch
   include splunk::deploymentclient
   include splunk::distsearch
@@ -111,6 +113,7 @@ class splunk (
   Class['splunk::server::kvstore'] ->
   Class['splunk::server::clustering'] ->
   Class['splunk::server::shclustering'] ->
+  Class['splunk::server::diskusage'] ->
   Class['splunk::splunk_launch'] ->
   Class['splunk::deploymentclient'] ->
   Class['splunk::distsearch'] ->

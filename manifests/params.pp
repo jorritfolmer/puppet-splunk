@@ -59,6 +59,7 @@ class splunk::params (
     'user'      => 'Domain Users',
   }
   $dontruncmds = false
+  $minfreespace = undef
   $pass4symmkey = 'changeme'
 }
 
