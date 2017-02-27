@@ -1,3 +1,8 @@
+### 3.0.2
+
+- Changed curve to secp384r1 to support Chrome
+- Added AES256-GCM-SHA384 to cipherlist because mongod doesn't support curves and fails client helo's from Splunk. These failures appeared with Splunk 6.5.x
+
 ### 3.0.1
 
 - Fixed failing ca.crt reuse from open-source Puppet
