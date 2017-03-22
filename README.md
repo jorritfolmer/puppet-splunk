@@ -2,7 +2,17 @@
 
 [![Travis CI build status](https://travis-ci.org/jorritfolmer/puppet-splunk.svg?branch=master)](https://travis-ci.org/jorritfolmer/puppet-splunk)
 
-This Puppet module can be used to create and arrange Splunk instances into simple, distributed or (multisite) clustered topologies. It does so with the following principles in mind:
+This Puppet module can be used to create and arrange the following Splunk instances into simple, distributed or (multisite) clustered topologies:
+
+- Splunk indexers
+- Splunk search heads
+- Splunk cluster masters
+- Splunk search head deployers
+- Splunk deployment servers
+- Splunk heavy forwarders
+- Splunk universal forwarders
+
+It does so with the following principles in mind:
 
 ## Principles
 

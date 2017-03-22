@@ -1,6 +1,8 @@
 ### 3.1.0
 
 - Added minfreespace parameter
+- Fixed metadata.json
+- Fixed hardcoded ecdhcurve
 
 ### 3.0.2
 
