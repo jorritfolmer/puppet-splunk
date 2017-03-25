@@ -1,3 +1,7 @@
+### 3.1.1
+
+- Fixed typo in Puppet SSL directory pathname
+
 ### 3.1.0
 
 - Added minfreespace parameter
