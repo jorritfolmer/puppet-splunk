@@ -35,6 +35,7 @@ class splunk (
   $service                    = $splunk::params::service,
   $use_ack                    = $splunk::params::use_ack,
   $ds_intermediate            = $splunk::params::ds_intemediate,
+  $repositorylocation         = $splunk::params::repositorylocation,
   $version                    = $splunk::params::version,
   $auth                       = $splunk::params::auth,
   $rolemap                    = $splunk::params::rolemap,

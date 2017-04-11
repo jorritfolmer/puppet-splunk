@@ -99,14 +99,14 @@ describe 'splunk' do
   context 'with deploymentserver' do
     let(:params) { 
       {
-        :ds => 'splunk-idx1.internal.corp.tld:9997',
+        :ds => 'splunk-ds.internal.corp.tld:8089',
         :admin => { 'hash' => 'zzzz', 'fn' => 'yyyy', 'email' => 'wwww', },
         :dontruncmds => true,
       }
     }
     it { should contain_class('splunk::installed') }
     it { should contain_package('splunk') }
-    it { should contain_file('/opt/splunk/etc/apps/puppet_common_deploymentclient_base/local/deploymentclient.conf').with_content(/targetUri = splunk-idx1.internal.corp.tld:9997/) }
+    it { should contain_file('/opt/splunk/etc/apps/puppet_common_deploymentclient_base/local/deploymentclient.conf').with_content(/targetUri = splunk-ds.internal.corp.tld:8089/) }
   end
 
   context 'with inputs' do
@@ -370,6 +370,21 @@ describe 'splunk' do
     it { should contain_file('/opt/splunk/etc/apps/puppet_indexer_cluster_master_base/local/server.conf').with_content(/multisite = true/) }
     it { should contain_file('/opt/splunk/etc/apps/puppet_indexer_cluster_master_base/local/server.conf').with_content(/available_sites = site1,site2/) }
     it { should contain_file('/opt/splunk/etc/apps/puppet_indexer_cluster_master_base/local/server.conf').with_content(/\[general\]\nsite = site1/) }
+  end
+
+  context 'with custom repositorylocation' do
+    let(:params) { 
+      {
+        :ds => 'splunk-ds.internal.corp.tld:8089',
+        :ds_intermediate => true,
+        :repositorylocation => 'master-apps',
+        :admin => { 'hash' => 'zzzz', 'fn' => 'yyyy', 'email' => 'wwww', },
+        :dontruncmds => true,
+      }
+    }
+    it { should contain_class('splunk::installed') }
+    it { should contain_package('splunk') }
+    it { should contain_file('/opt/splunk/etc/apps/puppet_common_deploymentclient_base/local/deploymentclient.conf').with_content(/repositoryLocation = \/opt\/splunk\/etc\/master-apps/) }
   end
 
 end
