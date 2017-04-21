@@ -52,8 +52,8 @@ class splunk::authentication
         recurse => true,
         purge   => true,
         force   => true,
-      } ->
-      file { [
+      }
+      -> file { [
         "${splunk_home}/etc/apps/${splunk_app_name}_saml_base",
         "${splunk_home}/etc/apps/${splunk_app_name}_saml_base/${splunk_app_precedence_dir}",
         "${splunk_home}/etc/apps/${splunk_app_name}_saml_base/metadata",]:
@@ -61,8 +61,8 @@ class splunk::authentication
         owner  => $splunk_os_user,
         group  => $splunk_os_user,
         mode   => '0700',
-      } ->
-      file { "${splunk_home}/etc/apps/${splunk_app_name}_saml_base/${splunk_app_precedence_dir}/authentication.conf":
+      }
+      -> file { "${splunk_home}/etc/apps/${splunk_app_name}_saml_base/${splunk_app_precedence_dir}/authentication.conf":
         ensure  => present,
         owner   => $splunk_os_user,
         group   => $splunk_os_user,
@@ -78,8 +78,8 @@ class splunk::authentication
         recurse => true,
         purge   => true,
         force   => true,
-      } ->
-      file { [
+      }
+      -> file { [
         "${splunk_home}/etc/apps/${splunk_app_name}_ldap_base",
         "${splunk_home}/etc/apps/${splunk_app_name}_ldap_base/${splunk_app_precedence_dir}",
         "${splunk_home}/etc/apps/${splunk_app_name}_ldap_base/metadata",]:
@@ -87,8 +87,8 @@ class splunk::authentication
         owner  => $splunk_os_user,
         group  => $splunk_os_user,
         mode   => '0700',
-      } ->
-      file { "${splunk_home}/etc/apps/${splunk_app_name}_ldap_base/${splunk_app_precedence_dir}/authentication.conf":
+      }
+      -> file { "${splunk_home}/etc/apps/${splunk_app_name}_ldap_base/${splunk_app_precedence_dir}/authentication.conf":
         ensure  => present,
         owner   => $splunk_os_user,
         group   => $splunk_os_user,

@@ -15,8 +15,8 @@ class splunk::certs::s2s (
     group   => $splunk_os_user,
     mode    => '0700',
     recurse => true,
-  } ->
-  exec { 'openssl dhparam':
+  }
+  -> exec { 'openssl dhparam':
     command   => "openssl dhparam -outform PEM -out ${splunk_home}/etc/auth/certs/dhparam.pem ${dhparamsize}",
     path      => ['/bin', '/sbin', '/usr/bin', '/usr/sbin'],
     creates   => [
@@ -35,8 +35,8 @@ class splunk::certs::s2s (
       creates => [ "${splunk_home}/etc/auth/${sslrootcapath}", ],
       require => File["${splunk_home}/etc/auth/certs"],
       onlyif  => '/usr/bin/test -e /etc/puppet/ssl/certs/ca.pem'
-    } ->
-    exec { 'openssl s2s 1 opensource puppet':
+    }
+    -> exec { 'openssl s2s 1 opensource puppet':
       command => "cat /etc/puppet/ssl/private_keys/${::fqdn}.pem /etc/puppet/ssl/certs/${::fqdn}.pem > ${splunk_home}/etc/auth/${sslcertpath}",
       path    => ['/bin', '/sbin', '/usr/bin', '/usr/sbin'],
       creates => [ "${splunk_home}/etc/auth/${sslcertpath}", ],
@@ -50,8 +50,8 @@ class splunk::certs::s2s (
       creates => [ "${splunk_home}/etc/auth/${sslrootcapath}", ],
       require => File["${splunk_home}/etc/auth/certs"],
       onlyif  => '/usr/bin/test -e /etc/puppetlabs/puppet/ssl/certs/ca.pem'
-    } ->
-    exec { 'openssl s2s 1 commercial puppet':
+    }
+    -> exec { 'openssl s2s 1 commercial puppet':
       command => "cat /etc/puppetlabs/puppet/ssl/private_keys/${::fqdn}.pem /etc/puppetlabs/puppet/ssl/certs/${::fqdn}.pem > ${splunk_home}/etc/auth/${sslcertpath}",
       path    => ['/bin', '/sbin', '/usr/bin', '/usr/sbin'],
       creates => [ "${splunk_home}/etc/auth/certs/s2s.pem", ],
@@ -65,8 +65,8 @@ class splunk::certs::s2s (
       creates => [ "${splunk_home}/etc/auth/${sslrootcapath}", ],
       require => File["${splunk_home}/etc/auth/certs"],
       onlyif  => '/usr/bin/test -e /var/lib/puppet/ssl/certs/ca.pem'
-    } ->
-    exec { 'openssl s2s 1 redhat puppet':
+    }
+    -> exec { 'openssl s2s 1 redhat puppet':
       command => "cat /var/lib/puppet/ssl/private_keys/${::fqdn}.pem /var/lib/puppet/ssl/certs/${::fqdn}.pem > ${splunk_home}/etc/auth/${sslcertpath}",
       path    => ['/bin', '/sbin', '/usr/bin', '/usr/sbin'],
       creates => [ "${splunk_home}/etc/auth/certs/s2s.pem", ],

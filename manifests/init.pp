@@ -102,26 +102,26 @@ class splunk (
   include splunk::service
 
   # make sure classes are properly ordered and contained
-  anchor { 'splunk_first': } ->
-  Class['splunk::installed'] ->
-  Class['splunk::inputs'] ->
-  Class['splunk::outputs'] ->
-  Class['splunk::certs::s2s'] ->
-  Class['splunk::web'] ->
-  Class['splunk::server::general'] ->
-  Class['splunk::server::ssl'] ->
-  Class['splunk::server::license'] ->
-  Class['splunk::server::kvstore'] ->
-  Class['splunk::server::clustering'] ->
-  Class['splunk::server::shclustering'] ->
-  Class['splunk::server::diskusage'] ->
-  Class['splunk::splunk_launch'] ->
-  Class['splunk::deploymentclient'] ->
-  Class['splunk::distsearch'] ->
-  Class['splunk::passwd'] ->
-  Class['splunk::authentication'] ->
-  Class['splunk::service'] ->
-  splunk::addsearchpeers { $searchpeers: }
+  anchor { 'splunk_first': }
+  -> Class['splunk::installed']
+  -> Class['splunk::inputs']
+  -> Class['splunk::outputs']
+  -> Class['splunk::certs::s2s']
+  -> Class['splunk::web']
+  -> Class['splunk::server::general']
+  -> Class['splunk::server::ssl']
+  -> Class['splunk::server::license']
+  -> Class['splunk::server::kvstore']
+  -> Class['splunk::server::clustering']
+  -> Class['splunk::server::shclustering']
+  -> Class['splunk::server::diskusage']
+  -> Class['splunk::splunk_launch']
+  -> Class['splunk::deploymentclient']
+  -> Class['splunk::distsearch']
+  -> Class['splunk::passwd']
+  -> Class['splunk::authentication']
+  -> Class['splunk::service']
+  -> splunk::addsearchpeers { $searchpeers: }
   anchor { 'splunk_last': }
 }
 

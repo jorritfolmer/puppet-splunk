@@ -33,8 +33,8 @@ class splunk::server::clustering (
         recurse => true,
         purge   => true,
         force   => true,
-      } ->
-      file { [
+      }
+      -> file { [
         "${splunk_home}/etc/apps/${splunk_app_name}_master_base",
         "${splunk_home}/etc/apps/${splunk_app_name}_master_base/${splunk_app_precedence_dir}",
         "${splunk_home}/etc/apps/${splunk_app_name}_master_base/metadata",
@@ -45,15 +45,15 @@ class splunk::server::clustering (
         owner  => $splunk_os_user,
         group  => $splunk_os_user,
         mode   => '0700',
-      } ->
-      file { "${splunk_home}/etc/apps/${splunk_app_name}_pass4symmkey_base/${splunk_app_precedence_dir}/server.conf":
+      }
+      -> file { "${splunk_home}/etc/apps/${splunk_app_name}_pass4symmkey_base/${splunk_app_precedence_dir}/server.conf":
         ensure  => present,
         owner   => $splunk_os_user,
         group   => $splunk_os_user,
         replace => $splunk_app_replace,
         content => template("splunk/${splunk_app_name}_pass4symmkey_base/local/server.conf"),
-      } ->
-      file { "${splunk_home}/etc/apps/${splunk_app_name}_master_base/${splunk_app_precedence_dir}/server.conf":
+      }
+      -> file { "${splunk_home}/etc/apps/${splunk_app_name}_master_base/${splunk_app_precedence_dir}/server.conf":
         ensure  => present,
         owner   => $splunk_os_user,
         group   => $splunk_os_user,
@@ -73,8 +73,8 @@ class splunk::server::clustering (
         recurse => true,
         purge   => true,
         force   => true,
-      } ->
-      file { [
+      }
+      -> file { [
         "${splunk_home}/etc/apps/${splunk_app_name}_slave_base",
         "${splunk_home}/etc/apps/${splunk_app_name}_slave_base/${splunk_app_precedence_dir}",
         "${splunk_home}/etc/apps/${splunk_app_name}_slave_base/metadata",
@@ -85,15 +85,15 @@ class splunk::server::clustering (
         owner  => $splunk_os_user,
         group  => $splunk_os_user,
         mode   => '0700',
-      } ->
-      file { "${splunk_home}/etc/apps/${splunk_app_name}_pass4symmkey_base/${splunk_app_precedence_dir}/server.conf":
+      }
+      -> file { "${splunk_home}/etc/apps/${splunk_app_name}_pass4symmkey_base/${splunk_app_precedence_dir}/server.conf":
         ensure  => present,
         owner   => $splunk_os_user,
         group   => $splunk_os_user,
         replace => $splunk_app_replace,
         content => template("splunk/${splunk_app_name}_pass4symmkey_base/local/server.conf"),
-      } ->
-      file { "${splunk_home}/etc/apps/${splunk_app_name}_slave_base/${splunk_app_precedence_dir}/server.conf":
+      }
+      -> file { "${splunk_home}/etc/apps/${splunk_app_name}_slave_base/${splunk_app_precedence_dir}/server.conf":
         ensure  => present,
         owner   => $splunk_os_user,
         group   => $splunk_os_user,
@@ -113,8 +113,8 @@ class splunk::server::clustering (
         recurse => true,
         purge   => true,
         force   => true,
-      } ->
-      file { [
+      }
+      -> file { [
         "${splunk_home}/etc/apps/${splunk_app_name}_searchhead_base",
         "${splunk_home}/etc/apps/${splunk_app_name}_searchhead_base/${splunk_app_precedence_dir}",
         "${splunk_home}/etc/apps/${splunk_app_name}_searchhead_base/metadata",
@@ -125,15 +125,15 @@ class splunk::server::clustering (
         owner  => $splunk_os_user,
         group  => $splunk_os_user,
         mode   => '0700',
-      } ->
-      file { "${splunk_home}/etc/apps/${splunk_app_name}_pass4symmkey_base/${splunk_app_precedence_dir}/server.conf":
+      }
+      -> file { "${splunk_home}/etc/apps/${splunk_app_name}_pass4symmkey_base/${splunk_app_precedence_dir}/server.conf":
         ensure  => present,
         owner   => $splunk_os_user,
         group   => $splunk_os_user,
         replace => $splunk_app_replace,
         content => template("splunk/${splunk_app_name}_pass4symmkey_base/local/server.conf"),
-      } ->
-      file { "${splunk_home}/etc/apps/${splunk_app_name}_searchhead_base/${splunk_app_precedence_dir}/server.conf":
+      }
+      -> file { "${splunk_home}/etc/apps/${splunk_app_name}_searchhead_base/${splunk_app_precedence_dir}/server.conf":
         ensure  => present,
         owner   => $splunk_os_user,
         group   => $splunk_os_user,

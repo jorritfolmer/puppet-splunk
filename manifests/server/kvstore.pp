@@ -14,16 +14,16 @@ class splunk::server::kvstore (
       recurse => true,
       purge   => true,
       force   => true,
-    } ->
-    file { ["${splunk_home}/etc/apps/${splunk_app_name}_disabled",
+    }
+    -> file { ["${splunk_home}/etc/apps/${splunk_app_name}_disabled",
             "${splunk_home}/etc/apps/${splunk_app_name}_disabled/${splunk_app_precedence_dir}",
             "${splunk_home}/etc/apps/${splunk_app_name}_disabled/metadata",]:
       ensure => directory,
       owner  => $splunk_os_user,
       group  => $splunk_os_user,
       mode   => '0700',
-    } ->
-    file { "${splunk_home}/etc/apps/${splunk_app_name}_disabled/${splunk_app_precedence_dir}/server.conf":
+    }
+    -> file { "${splunk_home}/etc/apps/${splunk_app_name}_disabled/${splunk_app_precedence_dir}/server.conf":
       ensure  => present,
       owner   => $splunk_os_user,
       group   => $splunk_os_user,
@@ -37,16 +37,16 @@ class splunk::server::kvstore (
       recurse => true,
       purge   => true,
       force   => true,
-    } ->
-    file { ["${splunk_home}/etc/apps/${splunk_app_name}_base",
+    }
+    -> file { ["${splunk_home}/etc/apps/${splunk_app_name}_base",
             "${splunk_home}/etc/apps/${splunk_app_name}_base/${splunk_app_precedence_dir}",
             "${splunk_home}/etc/apps/${splunk_app_name}_base/metadata",]:
       ensure => directory,
       owner  => $splunk_os_user,
       group  => $splunk_os_user,
       mode   => '0700',
-    } ->
-    file { "${splunk_home}/etc/apps/${splunk_app_name}_base/${splunk_app_precedence_dir}/server.conf":
+    }
+    -> file { "${splunk_home}/etc/apps/${splunk_app_name}_base/${splunk_app_precedence_dir}/server.conf":
       ensure  => present,
       owner   => $splunk_os_user,
       group   => $splunk_os_user,

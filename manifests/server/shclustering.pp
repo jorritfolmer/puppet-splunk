@@ -31,25 +31,25 @@ class splunk::server::shclustering (
         owner  => $splunk_os_user,
         group  => $splunk_os_user,
         mode   => '0700',
-      } ->
-      file { "${splunk_home}/etc/apps/${splunk_app_name}_pass4symmkey_base/${splunk_app_precedence_dir}/server.conf":
+      }
+      -> file { "${splunk_home}/etc/apps/${splunk_app_name}_pass4symmkey_base/${splunk_app_precedence_dir}/server.conf":
         ensure  => present,
         owner   => $splunk_os_user,
         group   => $splunk_os_user,
         replace => $splunk_app_replace,
         content => template("splunk/${splunk_app_name}_pass4symmkey_base/local/server.conf"),
-      } ->
-      file { "${splunk_home}/etc/apps/${splunk_app_name}_base/${splunk_app_precedence_dir}/server.conf":
+      }
+      -> file { "${splunk_home}/etc/apps/${splunk_app_name}_base/${splunk_app_precedence_dir}/server.conf":
         ensure  => present,
         owner   => $splunk_os_user,
         group   => $splunk_os_user,
         replace => $splunk_app_replace,
         content => template("splunk/${splunk_app_name}_base/local/server.conf"),
-      } ->
+      }
       # unfortunately we need to edit etc/system/local/server.conf directly,
       # to prevent the SH Deployer from overwriting server specific config
       # directives like mgmt_uri 
-      augeas { "${splunk_home}/etc/system/local/server.conf/shclustering":
+      -> augeas { "${splunk_home}/etc/system/local/server.conf/shclustering":
         lens    => 'Puppet.lns',
         incl    => "${splunk_home}/etc/system/local/server.conf",
         changes => [
@@ -67,8 +67,8 @@ class splunk::server::shclustering (
         owner  => $splunk_os_user,
         group  => $splunk_os_user,
         mode   => '0700',
-      } ->
-      file { "${splunk_home}/etc/apps/${splunk_app_name}_pass4symmkey_base/${splunk_app_precedence_dir}/server.conf":
+      }
+      -> file { "${splunk_home}/etc/apps/${splunk_app_name}_pass4symmkey_base/${splunk_app_precedence_dir}/server.conf":
         ensure  => present,
         owner   => $splunk_os_user,
         group   => $splunk_os_user,

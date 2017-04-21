@@ -24,8 +24,8 @@ class splunk::server::diskusage (
       owner  => $splunk_os_user,
       group  => $splunk_os_user,
       mode   => '0700',
-    } ->
-    file { "${splunk_home}/etc/apps/${splunk_app_name}_base/${splunk_app_precedence_dir}/server.conf":
+    }
+    -> file { "${splunk_home}/etc/apps/${splunk_app_name}_base/${splunk_app_precedence_dir}/server.conf":
       ensure  => present,
       owner   => $splunk_os_user,
       group   => $splunk_os_user,
