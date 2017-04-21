@@ -648,7 +648,12 @@ node 'splunk-idx2.internal.corp.tld',
   Optional. Used to create a local admin user with predefined hash, full
   name and email This is a hash with 3 members:
 
-  - `hash` (SHA512 hash of the admin password)
+  - `hash` (SHA512 hash of the admin password. To generate the hash use one of:
+
+     -  `grub-crypt --sha-512` (RHEL/CENTOS)
+     -  `mkpasswd -m sha-512`  (Debian)
+     -  `python -c 'import crypt,getpass; print(crypt.crypt(getpass.getpass(), crypt.mksalt(crypt.METHOD_SHA512)))'`
+
   - `pass` (Plaintext password, only used for search heads to add search peers in distributed search)
   - `fn`   (Full name)
   - `email` (Email address)
