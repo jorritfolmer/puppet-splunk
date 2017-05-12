@@ -34,7 +34,7 @@ class splunk (
   $shclustering               = $splunk::params::shclustering,
   $service                    = $splunk::params::service,
   $use_ack                    = $splunk::params::use_ack,
-  $ds_intermediate            = $splunk::params::ds_intemediate,
+  $ds_intermediate            = $splunk::params::ds_intermediate,
   $repositorylocation         = $splunk::params::repositorylocation,
   $version                    = $splunk::params::version,
   $auth                       = $splunk::params::auth,

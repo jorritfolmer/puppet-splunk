@@ -387,4 +387,18 @@ describe 'splunk' do
     it { should contain_file('/opt/splunk/etc/apps/puppet_common_deploymentclient_base/local/deploymentclient.conf').with_content(/repositoryLocation = \/opt\/splunk\/etc\/master-apps/) }
   end
 
+  context 'with ds_intermediate set' do
+    let(:params) { 
+      {
+        :ds => 'splunk-ds.internal.corp.tld:8089',
+        :ds_intermediate => true,
+        :admin => { 'hash' => 'zzzz', 'fn' => 'yyyy', 'email' => 'wwww', },
+        :dontruncmds => true,
+      }
+    }
+    it { should contain_class('splunk::installed') }
+    it { should contain_package('splunk') }
+    it { should contain_file('/opt/splunk/etc/apps/puppet_common_deploymentclient_base/local/deploymentclient.conf').with_content(/repositoryLocation = \/opt\/splunk\/etc\/deployment-apps/) }
+  end
+
 end

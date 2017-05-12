@@ -4,7 +4,6 @@ class splunk::certs::s2s (
   $package = $splunk::package,
   $splunk_os_user = $splunk::splunk_os_user,
   $splunk_home   = $splunk::splunk_home,
-  $use_certs     = $splunk::use_certs,
   $sslcertpath   = $splunk::sslcertpath,
   $sslrootcapath = $splunk::sslrootcapath,
   $reuse_puppet_certs = $splunk::reuse_puppet_certs

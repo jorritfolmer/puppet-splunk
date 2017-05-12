@@ -1,3 +1,16 @@
+### 3.1.3
+
+- Fixed typo in ds_intermediate parameter (Issue #11)
+- Added forgotten ecdhcurvename_intermediate parameter (Issue #11)
+- Removed obsolete use_certs parameter (Issue #11)
+- Added TEST_COVERAGE.md
+
+### 3.1.2
+
+- Fixed forgotten repositorylocation (issue #9)
+- Added instructions to generate SHA512 password hashes (Issue #10)
+- Updated arrows to follow Puppet style guide
+
 ### 3.1.1
 
 - Fixed typo in Puppet SSL directory pathname
