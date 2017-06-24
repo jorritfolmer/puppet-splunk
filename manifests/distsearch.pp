@@ -2,7 +2,7 @@
 
 class splunk::distsearch (
   $searchpeers = $splunk::searchpeers,
-  $splunk_os_user = $splunk::splunk_os_user,
+  $splunk_os_user = $splunk::real_splunk_os_user,
   $splunk_home = $splunk::splunk_home
 ){
   if $searchpeers == undef {

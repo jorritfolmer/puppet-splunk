@@ -1,8 +1,8 @@
-# Puppet module to deploy Splunk into any imaginable topology.
+# Puppet module to deploy Splunk into any imaginable topology on Windows and Linux.
 
 [![Travis CI build status](https://travis-ci.org/jorritfolmer/puppet-splunk.svg?branch=master)](https://travis-ci.org/jorritfolmer/puppet-splunk)
 
-This Puppet module can be used to create and arrange the following Splunk instances into simple, distributed or (multisite) clustered topologies:
+This Puppet module can be used on Windows and Linux to create and arrange the following Splunk instances into simple, distributed or (multisite) clustered topologies:
 
 - Splunk indexers
 - Splunk search heads
@@ -27,9 +27,14 @@ It does so with the following principles in mind:
   - Admin password can be set using its SHA512 hash in the Puppet manifests instead of plain-text.
 4. **Supports any topology.** Single server? Redundant multi-site clustering? Heavy forwarder in a DMZ?
 
+## Prerequisites
+
+1. A running Puppet master
+2. A running repository server with splunk and splunkforwarder packages. See below if you need help setting it up.
+
 ## Quick-start
 
-Define a single standalone Splunk instance that you can use to index and search, for example with the trial license:
+Define a single standalone Splunk instance on Linux that you can use to index and search, for example with the trial license:
 
 ![Example 1a](example1.png)
 
@@ -43,12 +48,21 @@ node 'splunk-server.internal.corp.tld' {
 }
 ```
 
+Or define a single standalone Splunk instance on Windows with:
+
+```puppet
+node 'splunk-server.internal.corp.tld' {
+  class { 'splunk':
+    package_source => '//dc01/Company/splunk-6.6.1-aeae3fe0c5af-x64-release.msi',
+    httpport       => 8000,
+    kvstoreport    => 8191,
+    inputport      => 9997,
+  }
+}
+```
+
 See the other examples below for more elaborate topologies.
 
-## Prerequisites
-
-1. A running Puppet master
-2. A running repository server with splunk and splunkforwarder packages. See below if you need help setting it up.
 
 ### Splunk YUM repository (Red Hat based)
 
@@ -102,10 +116,20 @@ file { "/etc/apt/sources.list.d/splunk.list":
 }
 ```
 
-## Installation
+### CIFS share with .msi files (Windows based)
+
+For Windows installations just put the .msi Splunk installation files for
+Windows on a share that is accessible from all your Windows servers.
+
+1. create a share that can be accessed by all your Windows servers
+2. download the relevant Splunk .msi files from the Splunk website into this share
+3. specify `package_source` and point to one of these .msi files
+
+
+## Puppet-Splunk installation
 
 1. SSH to your Puppet master
-2. `cd /etc/puppet/modules`
+2. `cd /etc/puppet/modules` or `cd /etc/puppetlabs/code/environments/production/modules`, depending on your Puppet version
 3. `puppet module install jorritfolmer-splunk` or `git clone https://github.com/jorritfolmer/puppet-splunk.git; mv puppet-splunk splunk`
 4. Create your Splunk topology, see below for examples.
 
@@ -113,10 +137,11 @@ file { "/etc/apt/sources.list.d/splunk.list":
 
 To give this module a try, you don't necessarily have to setup a Certiticate Authority for the various SSL certificates that Splunk uses.
 
-1. By default Splunk already uses its own CA (1024 bits) that is used to create and sign the certificate for the 8089/tcp management port and 8000/tcp web interface: /opt/splunk/etc/auth/ca.pem. However, since everyone can grab the key from a Splunk trial download, it's an unlikely candidate for real production use.
-2. Because there is already a Puppet CA in place, this module reuses the client key (4096 bits) and client certificate signed by the Puppet CA. For quick testing in heterogeneous non-production environments you can revert to using the Splunk provides certs and CA with `reuse_puppet_certs => false`.
+By default, this module reuses the Puppet client SSL key (4096 bits) and client certificate, so we can save us the trouble of setting up and maintaining our own certificate authority. 
 
-By default, the Splunk module doesn't manage the state of the splunk service, except configure to start Splunk or Splunkforwarder at boot time. However, if you do want Puppet to interfere while performing a cluster rolling restart or an indexer restart, have a look at the `service` parameter. 
+For quick testing in heterogeneous non-production environments you can revert to using the Splunk provides certs and CA with `reuse_puppet_certs => false`. Or you can point to your own certificates with `sslcertpath` and `sslrootcapath`.
+
+The Splunk module doesn't manage the state of the splunk service, except configure to start Splunk or Splunkforwarder at boot time. However, if you do want Puppet to interfere while performing a cluster rolling restart or an indexer restart, have a look at the `service` parameter. 
 
 ### Example 1: 
 
@@ -128,6 +153,22 @@ This time use the Splunk provided non-production testing certificates instead of
 ```puppet
 node 'splunk-server.internal.corp.tld' {
   class { 'splunk':
+    httpport           => 8000,
+    kvstoreport        => 8191,
+    inputport          => 9997,
+    reuse_puppet_certs => false,
+    sslcertpath        => 'server.pem',
+    sslrootcapath      => 'cacert.pem',
+  }
+}
+```
+
+To define a standalone Splunk instance running on Windows:
+
+```puppet
+node 'splunk-server.internal.corp.tld' {
+  class { 'splunk':
+    package_source     => '//dc01/Company/splunk-6.6.1-aeae3fe0c5af-x64-release.msi',
     httpport           => 8000,
     kvstoreport        => 8191,
     inputport          => 9997,
@@ -160,6 +201,28 @@ node 'some-server.internal.corp.tld' {
   }
 }
 ```
+
+The equivalent for Windows environments:
+
+```puppet
+node 'splunk-server.internal.corp.tld' {
+  class { 'splunk':
+    package_source => '//dc01/Company/splunk-6.6.1-aeae3fe0c5af-x64-release.msi',
+    httpport       => 8000,
+    kvstoreport    => 8191,
+    inputport      => 9997,
+  }
+}
+
+node 'some-server.internal.corp.tld' {
+  class { 'splunk':
+    package_source => '//dc01/Company/splunkforwarder-6.6.1-aeae3fe0c5af-x64-release.msi',
+    type           => 'uf',
+    ds             => 'splunk-server.internal.corp.tld:8089',
+  }
+}
+```
+
 
 ### Example 2b: 
 
@@ -576,6 +639,11 @@ node 'splunk-idx2.internal.corp.tld',
   Set `tcpout => 'splunk-idx1.internal.corp.tld:9997'` if you do want to
   forward events to a Splunk indexer. 
 
+#### `package_source`
+
+  Optional and for Windows only. Use this to point to the .msi installation file.
+  This can be a UNC path like \\DC01\Company\splunkforwarder-6.6.1-aeae3fe0c5af-x64-release.msi
+
 #### `splunk_os_user`
 
   Optional. Run the Splunk instance as this user. Defaults to `splunk`
@@ -658,6 +726,10 @@ node 'splunk-idx2.internal.corp.tld',
   - `fn`   (Full name)
   - `email` (Email address)
 
+#### `minfreespace`
+
+  Optional. Used to specify the minimum amount of freespace in kb before Splunk stops indexing data.
+
 #### `service`
 
   Optional. Used to manage the running and startup state of the
@@ -702,7 +774,6 @@ node 'splunk-idx2.internal.corp.tld',
 
   Optional. Used to request indexer acknowlegement when sending data.
   Defaults to false.
-
 
 #### `version`
 
@@ -753,10 +824,14 @@ If you have version >= 6.2.0 servers but with stock settings from a previous Spl
 
 Moved to CHANGELOG.md
 
+## Test coverage
+
+Moved to TEST_COVERAGE.md
+
 ## Roadmap
 
-- Data Collection Node
-- Add defined type so multiple splunk instances can be deployed on a single system
+- Managed service account for Windows installations
+- Convert examples to patterns or building blocks
 
 ## Out-of-scope
 

@@ -1,14 +1,16 @@
 # vim: ts=2 sw=2 et
 class splunk::params (
 ) {
-  $type        = undef
-  $splunk_os_user = 'splunk'
+  $type           = undef
+  $package_source = undef
+  $splunk_os_user = undef
+  $splunk_os_group = undef
   $splunk_bindip  = undef
-  $lm          = undef
-  $ds          = undef
-  $inputport   = undef
-  $outputs     = undef
-  $webssl      = true
+  $lm             = undef
+  $ds             = undef
+  $inputport      = undef
+  $outputs        = undef
+  $webssl         = true
   $sslcompatibility = 'modern'
   $sslversions_modern = 'tls1.1, tls1.2'
   $ciphersuite_modern = 'ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:AES256-GCM-SHA384:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!3DES:!MD5:!PSK'

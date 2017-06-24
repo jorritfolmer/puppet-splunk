@@ -6,8 +6,10 @@
 # based on the provided parameters. 
 
 class splunk (
-  $type         = $splunk::params::type,
+  $type                       = $splunk::params::type,
+  $package_source             = $splunk::params::package_source,
   $splunk_os_user             = $splunk::params::splunk_os_user,
+  $splunk_os_group            = $splunk::params::splunk_os_group,
   $splunk_bindip              = $splunk::params::splunk_bindip,
   $lm                         = $splunk::params::lm,
   $ds                         = $splunk::params::ds,
@@ -45,12 +47,41 @@ class splunk (
   $phonehomeintervalinsec     = $splunk::params::phonehomeintervalinsec
   ) inherits splunk::params {
 
-  if $type == 'uf' {
-    $splunk_home = '/opt/splunkforwarder'
-    $package = 'splunkforwarder'
-  } else {
-    $splunk_home = '/opt/splunk'
-    $package = 'splunk'
+  case $::osfamily {
+    /^[Ww]indows$/: {
+      if $type == 'uf' {
+        $splunk_home = 'c:/program files/splunkuniversalforwarder'
+        $package = 'UniversalForwarder'
+      } else {
+        $splunk_home = 'c:/program files/splunk'
+        $package = 'Splunk Enterprise'
+      }
+      if $splunk_os_user == undef {
+        $real_splunk_os_user = 'S-1-5-18'
+      }
+      if $splunk_os_group == undef {
+        $real_splunk_os_group = 'Administrators'
+      }
+      $real_splunk_dir_mode = '0775'
+      $real_splunk_file_mode = '0774'
+    }
+    default: {
+      if $type == 'uf' {
+        $splunk_home = '/opt/splunkforwarder'
+        $package = 'splunkforwarder'
+      } else {
+        $splunk_home = '/opt/splunk'
+        $package = 'splunk'
+      }
+      if $splunk_os_user == undef {
+        $real_splunk_os_user = 'splunk'
+      }
+      if $splunk_os_group == undef {
+        $real_splunk_os_group = 'splunk'
+      }
+      $real_splunk_dir_mode = '0700'
+      $real_splunk_file_mode = '0600'
+    }
   }
 
   case $sslcompatibility {

@@ -43,6 +43,19 @@ describe 'splunk' do
     it { should contain_file('/opt/splunk/etc/apps/puppet_common_ssl_outputs/local/outputs.conf').with_content(/server = splunk-idx.internal.corp.tld:9997/) }
   end
 
+  context 'with tcpout as string and use_ack' do
+    let(:params) { 
+      {
+        :tcpout => 'splunk-idx.internal.corp.tld:9997',
+        :use_ack => true,
+        :admin => { 'hash' => 'zzzz', 'fn' => 'yyyy', 'email' => 'wwww', },
+      }
+    }
+    it { should contain_class('splunk::installed') }
+    it { should contain_package('splunk') }
+    it { should contain_file('/opt/splunk/etc/apps/puppet_common_ssl_outputs/local/outputs.conf').with_content(/useACK = true/) }
+  end
+
   context 'with tcpout as string and revert to default splunk cert instead of puppet cert reuse' do
     let(:params) { 
       {

@@ -2,7 +2,10 @@
 class splunk::passwd (
   $admin = $splunk::admin,
   $splunk_home = $splunk::splunk_home,
-  $splunk_os_user = $splunk::splunk_os_user
+  $splunk_os_user = $splunk::real_splunk_os_user,
+  $splunk_os_group = $splunk::real_splunk_os_group,
+  $splunk_dir_mode = $splunk::real_splunk_dir_mode,
+  $splunk_file_mode = $splunk::real_splunk_file_mode
 ){
   if $admin != undef {
     $hash  = $admin[hash]
@@ -11,7 +14,8 @@ class splunk::passwd (
     file { "${splunk_home}/etc/passwd":
       ensure  => present,
       owner   => $splunk_os_user,
-      mode    => '0600',
+      group   => $splunk_os_group,
+      mode    => $splunk_dir_mode,
       content => ':admin:::',
       replace => 'no',
     }
@@ -23,7 +27,8 @@ class splunk::passwd (
     -> file { "${splunk_home}/etc/.ui_login":
       ensure  => present,
       owner   => $splunk_os_user,
-      mode    => '0600',
+      group   => $splunk_os_group,
+      mode    => $splunk_file_mode,
       content => '',
       replace => 'no',
     }

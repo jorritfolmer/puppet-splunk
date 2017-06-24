@@ -5,6 +5,14 @@
 | version | tested | total |
 |---------|--------|-------|
 | v3.1.3  |   22   |  40   |
+| v3.2.0  |   23   |  42   |
+
+## By operating system:
+
+| os      | tested | total |
+|---------|--------|-------|
+| linux   |   23   |  42   |
+| windows |   0    |  42   |
 
 ## By parameter:
 
@@ -29,6 +37,7 @@
 | `kvstoreport`| Y |
 | `lm`| Y |
 | `minfreespace` | no |
+| `package_source` | no |
 | `pass4symmkey` | no |
 | `phonehomeintervalinsec` | no |
 | `replication_port`| Y |
@@ -41,12 +50,13 @@
 | `shclustering  => { mode => 'searchhead'`| Y |
 | `splunk_bindip` | no |
 | `splunk_os_user` | no |
+| `splunk_os_group` | no |
 | `sslcertpath`| Y |
 | `sslcompatibility` | no |
-| `sslrootcapath`| Y |
+| `sslrootcapath` | Y |
 | `sslversions_intermediate` | no |
 | `sslversions_modern` | no |
-| `tcpout`| Y |
-| `type => 'uf'`| Y |
-| `use_ack` | no |
+| `tcpout` | Y |
+| `type => 'uf'` | Y |
+| `use_ack` | yes |
 | `version` | no | 
