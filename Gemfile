@@ -6,6 +6,11 @@ else
   gem 'puppet', '3.7.5' 
 end
 
+if rspecpuppetversion = ENV['RSPEC_PUPPET_VERSION']
+  gem 'rspec-puppet', rspecpuppetversion, :require => false
+else
+  gem 'rspec-puppet', '2.5.0' 
+end
 
 # rspec must be v2 for ruby 1.8.7
 if RUBY_VERSION >= '1.8.7' and RUBY_VERSION < '1.9'

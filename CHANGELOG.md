@@ -1,3 +1,12 @@
+### 3.3.0
+
+- Added requireclientcert
+- Successfully verified compatibility with Puppet 5.0.0 (Ruby 2.4) through Travis
+
+### 3.2.0
+
+- Added support for Windows
+
 ### 3.1.3
 
 - Fixed typo in ds_intermediate parameter (Issue #11)

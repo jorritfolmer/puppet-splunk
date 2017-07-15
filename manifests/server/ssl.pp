@@ -8,6 +8,7 @@ class splunk::server::ssl (
   $ciphersuite = $splunk::ciphersuite,
   $sslversions = $splunk::sslversions,
   $ecdhcurvename = $splunk::ecdhcurvename,
+  $requireclientcert = $splunk::requireclientcert,
   $splunk_app_precedence_dir = $splunk::splunk_app_precedence_dir,
   $splunk_app_replace = $splunk::splunk_app_replace,
   $splunk_home = $splunk::splunk_home,

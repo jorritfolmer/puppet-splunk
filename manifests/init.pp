@@ -22,6 +22,7 @@ class splunk (
   $sslversions_intermediate   = $splunk::params::sslversions_intermediate,
   $dhparamsize_intermediate   = $splunk::params::dhparamsize_intermediate,
   $ecdhcurvename_intermediate = $splunk::params::ecdhcurvename_intermediate,
+  $requireclientcert          = $splunk::params::requireclientcert,
   $reuse_puppet_certs         = $splunk::params::reuse_puppet_certs,
   $sslcertpath                = $splunk::params::sslcertpath,
   $sslrootcapath              = $splunk::params::sslrootcapath,

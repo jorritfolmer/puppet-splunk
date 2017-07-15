@@ -764,7 +764,7 @@ node 'splunk-idx2.internal.corp.tld',
 
 #### `shclustering`
 
-  Optional. Used to configure Splunk search head clustering. This is a hash with 4 members:
+  Optional. Used to configure Splunk search head clustering. This is a hash with 3 members:
 
   - `mode` (can be one of `searchhead`,`deployer`)
   - `replication_factor`
@@ -799,6 +799,28 @@ node 'splunk-idx2.internal.corp.tld',
   - `ldap_groupmemberattribute`
   - `ldap_groupnameattribute`
   - `ldap_realnameattribute`
+
+#### `requireClientCert`
+
+  Optional. Used on a server to require clients to present an SSL certificate.
+  Can be an array with:
+
+  - `inputs`: require clients to present a certificate when sending data to Splunk
+  - `splunkd`: require deployment clients and search peers to present a certificate when 
+
+
+  For example require both splunkd and inputs connections to present a certificate:
+
+  ```
+  requireclientcert => ['splunkd','inputs'],
+  ```
+
+  Or only require forwarders to present a certificate when sending data;
+
+  ```
+  requireclientcert => 'inputs',
+  ```
+
 
 #### `rolemap`
 

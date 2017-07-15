@@ -56,6 +56,7 @@ describe 'splunk' do
     it { should contain_file('/opt/splunk/etc/apps/puppet_common_ssl_outputs/local/outputs.conf').with_content(/useACK = true/) }
   end
 
+
   context 'with tcpout as string and revert to default splunk cert instead of puppet cert reuse' do
     let(:params) { 
       {
@@ -201,6 +202,45 @@ describe 'splunk' do
     it { should contain_class('splunk::installed') }
     it { should contain_package('splunk') }
     it { should contain_file('/opt/splunk/etc/apps/puppet_common_kvstore_disabled/local/server.conf').with_content(/disabled = true/) }
+  end
+
+  context 'with requireclientcert inputs ' do
+    let(:params) { 
+      {
+        :inputport => 9997,
+        :requireclientcert => 'inputs',
+        :admin => { 'hash' => 'zzzz', 'fn' => 'yyyy', 'email' => 'wwww', },
+      }
+    }
+    it { should contain_class('splunk::installed') }
+    it { should contain_package('splunk') }
+    it { should contain_file('/opt/splunk/etc/apps/puppet_common_ssl_inputs/local/inputs.conf').with_content(/requireClientCert = true/) }
+  end
+
+  context 'with requireclientcert splunkd ' do
+    let(:params) { 
+      {
+        :requireclientcert => 'splunkd',
+        :admin => { 'hash' => 'zzzz', 'fn' => 'yyyy', 'email' => 'wwww', },
+      }
+    }
+    it { should contain_class('splunk::installed') }
+    it { should contain_package('splunk') }
+    it { should contain_file('/opt/splunk/etc/apps/puppet_common_ssl_base/local/server.conf').with_content(/requireClientCert = true/) }
+  end
+
+  context 'with requireclientcert splunkd and inputs' do
+    let(:params) { 
+      {
+        :inputport => 9997,
+        :requireclientcert => ['splunkd','inputs'],
+        :admin => { 'hash' => 'zzzz', 'fn' => 'yyyy', 'email' => 'wwww', },
+      }
+    }
+    it { should contain_class('splunk::installed') }
+    it { should contain_package('splunk') }
+    it { should contain_file('/opt/splunk/etc/apps/puppet_common_ssl_base/local/server.conf').with_content(/requireClientCert = true/) }
+    it { should contain_file('/opt/splunk/etc/apps/puppet_common_ssl_inputs/local/inputs.conf').with_content(/requireClientCert = true/) }
   end
 
   context 'with saml auth' do

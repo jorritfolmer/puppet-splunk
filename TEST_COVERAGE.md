@@ -6,13 +6,14 @@
 |---------|--------|-------|
 | v3.1.3  |   22   |  40   |
 | v3.2.0  |   23   |  42   |
+| v3.2.0  |   24   |  43   |
 
 ## By operating system:
 
 | os      | tested | total |
 |---------|--------|-------|
-| linux   |   23   |  42   |
-| windows |   0    |  42   |
+| linux   |   24   |  43   |
+| windows |   0    |  43   |
 
 ## By parameter:
 
@@ -42,6 +43,7 @@
 | `phonehomeintervalinsec` | no |
 | `replication_port`| Y |
 | `repositorylocation`| Y |
+| `requireclientcert`| Y |
 | `reuse_puppet_certs`| Y |
 | `rolemap` | no |
 | `searchpeers`| Y |

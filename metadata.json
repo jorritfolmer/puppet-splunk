@@ -1,6 +1,6 @@
 {
   "name": "jorritfolmer-splunk",
-  "version": "3.2.0",
+  "version": "3.3.0",
   "author": "Jorrit Folmer",
   "summary": "Deploy Splunk indexers, search heads and universal forwarders into any imaginable topology, distributed or (multisite) clustered.",
   "license": "MIT",
@@ -34,7 +34,7 @@
   ],
   "requirements": [
     {
-      "version_requirement": ">= 2.7.14 < 5.0.0",
+      "version_requirement": ">= 2.7.14 < 6.0.0",
       "name": "puppet"
     }
   ],
