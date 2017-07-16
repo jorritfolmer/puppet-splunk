@@ -21,6 +21,7 @@ class splunk::server::clustering (
   }
   case $clustering[mode] {
     'master': {
+      $indexer_discovery = $clustering[indexer_discovery]
       $replication_factor = $clustering[replication_factor]
       $search_factor = $clustering[search_factor]
       # site is a reserved word in Puppet 4.x, switching to thissite

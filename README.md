@@ -551,7 +551,7 @@ Configure a multisite cluster with 2 sites with 1 indexer each.
 Site 1 hosts splunk-cm and splunk-idx1. Site 2 hosts splunk-idx2.
 
 ```
-node 'splunk-cm.internal.corp.tld', 
+node 'splunk-cm.internal.corp.tld' {
   class { 'splunk':
     admin        => {
       hash       => '$6$MR9IJFF7RBnVA.k1$/30EBSzy0EJKZ94SjHFIUHjQjO3/P/4tx0JmWCp/En47MJceaXsevhBLE2w/ibjHlAUkD6k0U.PmY/noe9Jok0',
@@ -572,7 +572,7 @@ node 'splunk-cm.internal.corp.tld',
   }
 }
 
-node 'splunk-idx1.internal.corp.tld', 
+node 'splunk-idx1.internal.corp.tld' {
   class { 'splunk':
     admin        => {
       hash       => '$6$MR9IJFF7RBnVA.k1$/30EBSzy0EJKZ94SjHFIUHjQjO3/P/4tx0JmWCp/En47MJceaXsevhBLE2w/ibjHlAUkD6k0U.PmY/noe9Jok0',
@@ -589,7 +589,7 @@ node 'splunk-idx1.internal.corp.tld',
   }
 }
 
-node 'splunk-idx2.internal.corp.tld', 
+node 'splunk-idx2.internal.corp.tld' {
   class { 'splunk':
     admin        => {
       hash       => '$6$MR9IJFF7RBnVA.k1$/30EBSzy0EJKZ94SjHFIUHjQjO3/P/4tx0JmWCp/En47MJceaXsevhBLE2w/ibjHlAUkD6k0U.PmY/noe9Jok0',
@@ -607,6 +607,58 @@ node 'splunk-idx2.internal.corp.tld',
 }
 
 ```
+
+### Example 9
+
+Configure an index cluster with indexer discovery 
+
+```
+node 'splunk-cm.internal.corp.tld' {
+  class { 'splunk':
+    admin        => {
+      hash       => '$6$MR9IJFF7RBnVA.k1$/30EBSzy0EJKZ94SjHFIUHjQjO3/P/4tx0JmWCp/En47MJceaXsevhBLE2w/ibjHlAUkD6k0U.PmY/noe9Jok0',
+      fn         => 'Cluster Master Administrator',
+      email      => 'changemeagain@example.com',
+    },
+    httpport     => 8000,
+    tcpout       => 'indexer_discovery',
+    clustering   => {
+      mode               => 'master',
+      replication_factor => 2,
+      search_factor      => 2,
+      indexer_discovery  => true,
+    }
+  }
+}
+
+node 'splunk-idx1.internal.corp.tld','splunk-idx2.internal.corp.tld' {
+  class { 'splunk':
+    admin        => {
+      hash       => '$6$MR9IJFF7RBnVA.k1$/30EBSzy0EJKZ94SjHFIUHjQjO3/P/4tx0JmWCp/En47MJceaXsevhBLE2w/ibjHlAUkD6k0U.PmY/noe9Jok0',
+      fn         => 'Cluster Peer Administrator',
+      email      => 'changemeagain@example.com',
+    },
+    inputport    => 9997,
+    lm           => 'splunk-cm.internal.corp.tld:8089',
+    clustering   => {
+      mode       => 'slave',
+      cm         => 'splunk-cm.internal.corp.tld:8089',
+    }
+  }
+}
+
+node 'some-server.internal.corp.tld' {
+  class { 'splunk':
+    type       => 'uf',
+    tcpout     => 'indexer_discovery',
+    clustering => {
+      cm       => 'host03.testlab.local:8089',
+    }
+  }
+}
+
+```
+
 
 
 ## Parameters
@@ -636,8 +688,17 @@ node 'splunk-idx2.internal.corp.tld',
 #### `tcpout`
 
   Optional. When omitted, it will not forward events to a Splunk indexer.
+
   Set `tcpout => 'splunk-idx1.internal.corp.tld:9997'` if you do want to
   forward events to a Splunk indexer. 
+
+  Set `tcpout => 'indexer_discovery' if you want to use indexer discovery instead of specifying indexers manually. Requires specifying a cluster master through:
+
+  ```
+  clustering => {
+     cm      => 'splunk-cm.internal.corp.tld:8089'
+  }
+  ```
 
 #### `package_source`
 
@@ -749,7 +810,8 @@ node 'splunk-idx2.internal.corp.tld',
   - `mode` (can be one of `master`,`searchhead`,`slave`)
   - `replication_factor`
   - `search_factor`
-  - `cm` (points to cluster master in case of searchhead or slave)
+  - `cm` (points to cluster master in case of searchhead,slave, or forwarder in case of indexer discovery)
+  - `indexer_discovery` (enables indexer discovery on the master node)
 
   For multisite indexer clustering:
 
@@ -800,7 +862,7 @@ node 'splunk-idx2.internal.corp.tld',
   - `ldap_groupnameattribute`
   - `ldap_realnameattribute`
 
-#### `requireClientCert`
+#### `requireclientcert`
 
   Optional. Used on a server to require clients to present an SSL certificate.
   Can be an array with:

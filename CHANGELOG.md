@@ -1,3 +1,7 @@
+### 3.4.0
+
+- Added indexer discovery
+
 ### 3.3.0
 
 - Added requireclientcert

@@ -6,14 +6,15 @@
 |---------|--------|-------|
 | v3.1.3  |   22   |  40   |
 | v3.2.0  |   23   |  42   |
-| v3.2.0  |   24   |  43   |
+| v3.3.0  |   24   |  43   |
+| v3.4.0  |   26   |  45   |
 
 ## By operating system:
 
 | os      | tested | total |
 |---------|--------|-------|
-| linux   |   24   |  43   |
-| windows |   0    |  43   |
+| linux   |   26   |  45   |
+| windows |   0    |  45   |
 
 ## By parameter:
 
@@ -27,6 +28,7 @@
 | `clustering => { mode => 'master'` | Y |
 | `clustering => { mode => 'searchhead'` | Y |
 | `clustering => { mode => 'slave'` | Y |
+| `clustering => { indexer_discovery => true` | Y |
 | `dhparamsize_intermediate` | no |
 | `dhparamsize_modern` | no |
 | `ds_intermediate` | Y |
@@ -59,6 +61,7 @@
 | `sslversions_intermediate` | no |
 | `sslversions_modern` | no |
 | `tcpout` | Y |
+| `tcpout` => 'indexer_discovery'| Y |
 | `type => 'uf'` | Y |
 | `use_ack` | yes |
 | `version` | no | 

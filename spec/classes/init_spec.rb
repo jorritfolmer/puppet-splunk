@@ -86,6 +86,49 @@ describe 'splunk' do
     it { should contain_file('/opt/splunk/etc/apps/puppet_common_ssl_outputs/local/outputs.conf').with_content(/server = splunk-idx1.internal.corp.tld:9997, splunk-idx2.internal.corp.tld:9997/) }
   end
 
+  context 'with tcpout == indexer_discovery' do
+    let(:params) { 
+      {
+        :tcpout => 'indexer_discovery',
+        :clustering  => { 'pass4symmkey' => 'changeme', 'cm' => 'splunk-cm.internal.corp.tld:8089' },
+        :admin => { 'hash' => 'zzzz', 'fn' => 'yyyy', 'email' => 'wwww', },
+      }
+    }
+    it { should contain_class('splunk::installed') }
+    it { should contain_package('splunk') }
+    it { should contain_file('/opt/splunk/etc/apps/puppet_common_ssl_outputs/local/outputs.conf').with_content(/indexerDiscovery = cluster/) }
+    it { should contain_file('/opt/splunk/etc/apps/puppet_common_ssl_outputs/local/outputs.conf').with_content(/master_uri = https:\/\/splunk-cm.internal.corp.tld:8089/) }
+    it { should_not contain_file('/opt/splunk/etc/apps/puppet_indexer_cluster_pass4symmkey_base/local/server.conf') }
+  end
+
+  context 'with indexer_discovery enabled on master' do
+    let(:params) { 
+      {
+        :clustering  => { 'pass4symmkey' => 'changeme', 'mode' => 'master', 'indexer_discovery' => true, },
+        :admin => { 'hash' => 'zzzz', 'fn' => 'yyyy', 'email' => 'wwww', },
+      }
+    }
+    it { should contain_class('splunk::installed') }
+    it { should contain_package('splunk') }
+    it { should contain_file('/opt/splunk/etc/apps/puppet_indexer_cluster_master_base/local/server.conf').with_content(/\[indexer_discovery\]/) }
+  end
+
+  context 'with universalforwarder and tcpout == indexer_discovery' do
+    let(:params) { 
+      {
+        :type => 'uf',
+        :tcpout => 'indexer_discovery',
+        :clustering  => { 'pass4symmkey' => 'changeme', 'cm' => 'splunk-cm.internal.corp.tld:8089' },
+        :admin => { 'hash' => 'zzzz', 'fn' => 'yyyy', 'email' => 'wwww', },
+      }
+    }
+    it { should contain_class('splunk::installed') }
+    it { should contain_package('splunkforwarder') }
+    it { should contain_file('/opt/splunkforwarder/etc/apps/puppet_common_ssl_outputs/local/outputs.conf').with_content(/indexerDiscovery = cluster/) }
+    it { should contain_file('/opt/splunkforwarder/etc/apps/puppet_common_ssl_outputs/local/outputs.conf').with_content(/master_uri = https:\/\/splunk-cm.internal.corp.tld:8089/) }
+    it { should_not contain_file('/opt/splunkforwarder/etc/apps/puppet_indexer_cluster_pass4symmkey_base/local/server.conf') }
+  end
+
   context 'with searchpeers as array' do
     let(:params) { 
       {

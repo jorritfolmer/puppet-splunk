@@ -1,6 +1,7 @@
 # vim: ts=2 sw=2 et
 class splunk::outputs (
   $tcpout = $splunk::tcpout,
+  $clustering = $splunk::clustering,
   $splunk_os_user = $splunk::real_splunk_os_user,
   $splunk_os_group = $splunk::real_splunk_os_group,
   $splunk_dir_mode = $splunk::real_splunk_dir_mode,
@@ -12,6 +13,16 @@ class splunk::outputs (
   $sslrootcapath   = $splunk::sslrootcapath,
   $sslcertpath   = $splunk::sslcertpath
 ){
+  if $clustering[cm] == undef {
+    $cm = "${::fqdn}:8089"
+  } else {
+    $cm = $clustering[cm]
+  }
+  if $clustering[pass4symmkey] == undef {
+    $pass4symmkey = $splunk::pass4symmkey
+  } else {
+    $pass4symmkey = $clustering[pass4symmkey]
+  }
   $splunk_app_name = 'puppet_common_ssl_outputs'
   if $tcpout == undef {
     file {"${splunk_home}/etc/apps/${splunk_app_name}":
