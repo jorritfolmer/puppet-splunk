@@ -31,6 +31,16 @@ describe 'splunk' do
     end
   end
 
+  context 'with package_source' do
+    let(:params) { 
+      {
+        :package_source => 'https://download.splunk.com/products/splunk/releases/6.6.2/linux/splunk-6.6.2-4b804538c686-linux-2.6-x86_64.rpm'
+      }
+    }
+    it { should contain_class('splunk::installed') }
+    it { should contain_package('splunk') }
+  end
+
   context 'with tcpout as string' do
     let(:params) { 
       {

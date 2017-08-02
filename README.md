@@ -702,8 +702,11 @@ node 'some-server.internal.corp.tld' {
 
 #### `package_source`
 
-  Optional and for Windows only. Use this to point to the .msi installation file.
+  Optional
+
+  * For Windows: Use this to point to the .msi installation file.
   This can be a UNC path like \\DC01\Company\splunkforwarder-6.6.1-aeae3fe0c5af-x64-release.msi
+  * For Linux: Use this to point to the URL of a Splunk RPM file. WARNING: this will cause the entire RPM file to be downloaded at *every* Puppet run by the package provider, even though it is already installed. Create your own local repository if you don't want this.
 
 #### `splunk_os_user`
 

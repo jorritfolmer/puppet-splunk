@@ -8,12 +8,13 @@
 | v3.2.0  |   23   |  42   |
 | v3.3.0  |   24   |  43   |
 | v3.4.0  |   26   |  45   |
+| v3.4.1  |   27   |  45   |
 
 ## By operating system:
 
 | os      | tested | total |
 |---------|--------|-------|
-| linux   |   26   |  45   |
+| linux   |   27   |  45   |
 | windows |   0    |  45   |
 
 ## By parameter:
@@ -40,7 +41,7 @@
 | `kvstoreport`| Y |
 | `lm`| Y |
 | `minfreespace` | no |
-| `package_source` | no |
+| `package_source` | yes |
 | `pass4symmkey` | no |
 | `phonehomeintervalinsec` | no |
 | `replication_port`| Y |

@@ -18,9 +18,14 @@ class splunk::installed (
       }
     }
     default: {
-      if $version == undef {
+      if $version == undef and $package_source == undef {
         package { $package:
           ensure => installed,
+        }
+      } elsif $version == undef and package_source != undef {
+        package { $package:
+          ensure => installed,
+          name   => $package_source,
         }
       } else {
         package { $package:
