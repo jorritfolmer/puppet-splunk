@@ -756,6 +756,8 @@ node 'some-server.internal.corp.tld' {
   - `intermediate`
   - `old`
 
+  Also see the Compatibility section below.
+
 #### `reuse_puppet_certs`
 
    Optional. By default the certificates signed by the Puppet CA will be reused. However if you want to do some quick testing with non-Puppetized nodes, set this to `false`, and make sure to point `sslcertpath => 'server.pem'` and `sslrootcapath => 'cacert.pem'` to the default Splunk testing certs.
@@ -902,10 +904,11 @@ node 'some-server.internal.corp.tld' {
 
 ## Compatibility
 
-Requires Splunk and Splunkforwarders >= 6.2.0.
-However, if you still have versions < 6.2 , pass `sslcompatibility => 'intermediate'`.
+Set sslcompatibility in these cases:
 
-If you have version >= 6.2.0 servers but with stock settings from a previous Splunk installation, also pass `sslcompatibility => 'intermediate'` in the universal forwarder declaration, otherwise the SSL connections to the deploymentserver will fail.
+* If you have older 6.0, 6.1, 6,2 or 6.3 releases that connect to Splunk 6.6 (see SPL-141961, SPL-141964)
+* If you have older 6.0, 6,1 releases that connect to Splunk 6.2, 6,3, 6,4 or 6,5
+* If you have 6.2, 6,3, 6.4 or 6.5 releases with default Splunk ssl settings that connect to Splunk managed by this module
 
 ## Changelog
 

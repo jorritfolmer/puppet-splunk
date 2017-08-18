@@ -6,6 +6,8 @@ class splunk::splunk_launch (
 ){
   case $::osfamily {
     /^[Ww]indows$/: {
+      notify {'Setting splunk_os_user not supported on Windows':}
+      warning('Setting splunk_os_user not supported on Windows')
       # On Windows there is no Augeas
     }
     default: {

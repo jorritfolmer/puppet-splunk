@@ -1,6 +1,9 @@
-### 3.4.0
+### 3.4.1
 
-- Added package_source for Linux for repository-less environments
+- Added package_source for Linux in repository-less environments
+- Perform first-time-run after an upgrade
+- Fix boot-start for older Splunk UF versions
+- Add ssl3 to intermediate_compatibility due to SPL-141961 and SPL-141964
 
 ### 3.4.0
 

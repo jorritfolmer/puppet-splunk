@@ -32,11 +32,19 @@ class splunk::installed (
           ensure => $version,
         }
       }
-      exec { 'splunk enable boot-start etcetera':
-        command => "${splunk_home}/bin/splunk enable boot-start -user ${splunk_os_user} --accept-license --answer-yes --no-prompt",
+      exec { 'splunk initial run':
+        command => "${splunk_home}/bin/splunk version --accept-license --answer-yes --no-prompt",
         path    => ["${splunk_home}/bin", '/bin', '/sbin', '/usr/bin', '/usr/sbin'],
         require => Package[$package],
+        user    => $splunk_os_user,
         creates => "${splunk_home}/etc/system/local/server.conf",
+        notify  => Exec['splunk enable boot-start'],
+      }
+      exec { 'splunk enable boot-start':
+        command     => "${splunk_home}/bin/splunk enable boot-start -user ${splunk_os_user} --accept-license --answer-yes --no-prompt",
+        path        => ["${splunk_home}/bin", '/bin', '/sbin', '/usr/bin', '/usr/sbin'],
+        require     => Package[$package],
+        refreshonly => true,
       }
     }
   }

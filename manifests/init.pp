@@ -131,6 +131,7 @@ class splunk (
   include splunk::distsearch
   include splunk::passwd
   include splunk::authentication
+  include splunk::first_time_run
   include splunk::service
 
   # make sure classes are properly ordered and contained
@@ -152,6 +153,7 @@ class splunk (
   -> Class['splunk::distsearch']
   -> Class['splunk::passwd']
   -> Class['splunk::authentication']
+  -> Class['splunk::first_time_run']
   -> Class['splunk::service']
   -> splunk::addsearchpeers { $searchpeers: }
   anchor { 'splunk_last': }

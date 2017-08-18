@@ -78,6 +78,7 @@ class splunk::certs::s2s (
       }
       -> exec { 'openssl dhparam':
         command   => "openssl dhparam -outform PEM -out ${splunk_home}/etc/auth/certs/dhparam.pem ${dhparamsize}",
+        user      => $splunk_os_user,
         path      => ['/bin', '/sbin', '/usr/bin', '/usr/sbin', "${splunk_home}/bin"],
         creates   => [
           "${splunk_home}/etc/auth/certs/dhparam.pem",
@@ -104,7 +105,7 @@ class splunk::certs::s2s (
         }
 
         # reuse certs from commercial Puppet
-        exec { 'openssl s2s ca commercial puppet':
+        -> exec { 'openssl s2s ca commercial puppet':
           command => "cat /etc/puppetlabs/puppet/ssl/certs/ca.pem > ${splunk_home}/etc/auth/${sslrootcapath}",
           path    => ['/bin', '/sbin', '/usr/bin', '/usr/sbin', "${splunk_home}/bin"],
           creates => [ "${splunk_home}/etc/auth/${sslrootcapath}", ],
@@ -119,7 +120,7 @@ class splunk::certs::s2s (
         }
 
         # reuse certs from Red Hat packaged Puppet
-        exec { 'openssl s2s ca redhat puppet':
+        -> exec { 'openssl s2s ca redhat puppet':
           command => "cat /var/lib/puppet/ssl/certs/ca.pem > ${splunk_home}/etc/auth/${sslrootcapath}",
           path    => ['/bin', '/sbin', '/usr/bin', '/usr/sbin', "${splunk_home}/bin"],
           creates => [ "${splunk_home}/etc/auth/${sslrootcapath}", ],
@@ -131,6 +132,18 @@ class splunk::certs::s2s (
           path    => ['/bin', '/sbin', '/usr/bin', '/usr/sbin', "${splunk_home}/bin"],
           creates => [ "${splunk_home}/etc/auth/certs/s2s.pem", ],
           onlyif  => "/usr/bin/test -e /var/lib/puppet/ssl/private_keys/${::fqdn}.pem"
+        }
+
+        # Fix permissions
+        -> file { "${splunk_home}/etc/auth/${sslrootcapath}":
+          owner => $splunk_os_user,
+          group => $splunk_os_group,
+          mode  => $splunk_file_mode,
+        }
+        -> file { "${splunk_home}/etc/auth/${sslcertpath}":
+          owner => $splunk_os_user,
+          group => $splunk_os_group,
+          mode  => $splunk_file_mode,
         }
       }
     }
