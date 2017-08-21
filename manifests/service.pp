@@ -6,8 +6,6 @@ class splunk::service (
 ) {
   case $::osfamily {
     /^[Ww]indows$/: {
-      notice("enable => ${service}[enable]")
-      notice("ensure => ${service}[ensure]")
       case $type {
         'uf':    { $windows_service = 'SplunkForwarder' }
         default: { $windows_service = 'Splunkd' }
@@ -24,16 +22,20 @@ class splunk::service (
       }
     }
     default: {
-      notice("enable => ${service}[enable]")
-      notice("ensure => ${service}[ensure]")
       if $service[ensure] == undef {
         service { 'splunk':
-          enable  => $service[enable],
+          enable => $service[enable],
+          status => "${splunk_home}/bin/splunk status",
+          start  => "${splunk_home}/bin/splunk start",
+          stop   => "${splunk_home}/bin/splunk stop",
         }
       } else {
         service { 'splunk':
           ensure => $service[ensure],
           enable => $service[enable],
+          status => "${splunk_home}/bin/splunk status",
+          start  => "${splunk_home}/bin/splunk start",
+          stop   => "${splunk_home}/bin/splunk stop",
         }
       }
     }

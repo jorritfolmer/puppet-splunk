@@ -20,6 +20,34 @@ describe 'splunk' do
     it { should contain_file('/opt/splunk/etc/passwd') }
   end
 
+  context 'with service ensured running' do
+    let(:params) { 
+      {
+        :service => { 'ensure' => 'running'}
+      }
+    }
+    it { should contain_class('splunk::installed') }
+    it { should contain_package('splunk') }
+    it { should_not contain_file('/opt/splunk/etc/.ui_login') }
+    it { should contain_service('splunk').with(
+      'ensure' => 'running')
+    }
+  end
+
+  context 'with service enable true' do
+    let(:params) { 
+      {
+        :service => { 'enable' => true}
+      }
+    }
+    it { should contain_class('splunk::installed') }
+    it { should contain_package('splunk') }
+    it { should_not contain_file('/opt/splunk/etc/.ui_login') }
+    it { should contain_service('splunk').with(
+      'enable' => true)
+    }
+  end
+
   context 'with type=>uf' do
     let(:params) { 
       {

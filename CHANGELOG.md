@@ -1,3 +1,7 @@
+### 3.4.2
+
+- Fixed service status confusion (Issue #16)
+
 ### 3.4.1
 
 - Added package_source for Linux in repository-less environments

@@ -9,7 +9,7 @@
 | v3.3.0  |   24   |  43   |
 | v3.4.0  |   26   |  45   |
 | v3.4.1  |   27   |  45   |
-| v3.4.2  |   27   |  45   |
+| v3.4.2  |   28   |  45   |
 
 ## By operating system:
 
@@ -51,7 +51,7 @@
 | `reuse_puppet_certs`| Y |
 | `rolemap` | no |
 | `searchpeers`| Y |
-| `service` | no |
+| `service` | Y |
 | `shclustering  => { mode => 'deployer'`| Y |
 | `shclustering  => { mode => 'searchhead'`| Y |
 | `splunk_bindip` | no |
