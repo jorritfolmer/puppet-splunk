@@ -167,6 +167,17 @@ describe 'splunk' do
     it { should_not contain_file('/opt/splunkforwarder/etc/apps/puppet_indexer_cluster_pass4symmkey_base/local/server.conf') }
   end
 
+  context 'with universalforwarder, tcpout == indexer_discovery but without cm' do
+    let(:params) { 
+      {
+        :type => 'uf',
+        :tcpout => 'indexer_discovery',
+        :admin => { 'hash' => 'zzzz', 'fn' => 'yyyy', 'email' => 'wwww', },
+      }
+    }
+    it { should compile.and_raise_error(/please set cluster master when using indexer_discovery/) }
+  end
+
   context 'with searchpeers as array' do
     let(:params) { 
       {
