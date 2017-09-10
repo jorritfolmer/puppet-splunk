@@ -1,5 +1,6 @@
 # vim: ts=2 sw=2 et
 class splunk::outputs (
+  $type = $splunk::type,
   $tcpout = $splunk::tcpout,
   $clustering = $splunk::clustering,
   $splunk_os_user = $splunk::real_splunk_os_user,
@@ -13,8 +14,10 @@ class splunk::outputs (
   $sslrootcapath   = $splunk::sslrootcapath,
   $sslcertpath   = $splunk::sslcertpath
 ){
-  if $clustering[cm] == undef {
+  if $clustering[cm] == undef and $type == undef {
     $cm = "${::fqdn}:8089"
+  } elsif $clustering[cm] == undef and $type == 'uf' and $tcpout == 'indexer_discovery' {
+    fail 'please set cluster master when using indexer_discovery'
   } else {
     $cm = $clustering[cm]
   }

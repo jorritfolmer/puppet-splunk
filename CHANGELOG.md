@@ -1,3 +1,7 @@
+### 3.4.3
+
+- Added explicit error when using indexer_discovery without setting cm
+
 ### 3.4.2
 
 - Fixed service status confusion (Issue #16)
