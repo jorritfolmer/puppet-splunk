@@ -361,6 +361,19 @@ describe 'splunk' do
     it { should contain_file('/opt/splunk/etc/apps/puppet_common_auth_ldap_base/local/authentication.conf').with_content(/bindDN = CN=sa_splunk,CN=Service Accounts,DC=internal,DC=corp,DC=tld/) }
   end
 
+  context 'with ldap auth and nestedgroups enabled' do
+    let(:params) { 
+      {
+        :auth  => { 'authtype' => 'LDAP', 'ldap_host' => 'dc01.internal.corp.tld', 'ldap_binddn' => 'CN=sa_splunk,CN=Service Accounts,DC=internal,DC=corp,DC=tld', 'ldap_binddnpassword' => 'changeme', 'ldap_nestedgroups' => 1},
+        :admin => { 'hash' => 'zzzz', 'fn' => 'yyyy', 'email' => 'wwww', },
+        :dontruncmds => true,
+      }
+    }
+    it { should contain_class('splunk::installed') }
+    it { should contain_package('splunk') }
+    it { should contain_file('/opt/splunk/etc/apps/puppet_common_auth_ldap_base/local/authentication.conf').with_content(/nestedGroups = 1/) }
+  end
+
   context 'with license server' do
     let(:params) { 
       {

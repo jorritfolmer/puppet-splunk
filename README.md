@@ -866,6 +866,7 @@ node 'some-server.internal.corp.tld' {
   - `ldap_groupmemberattribute`
   - `ldap_groupnameattribute`
   - `ldap_realnameattribute`
+  - `ldap_nestedgroups`: optional, set to 1 if you want Splunk to expand nested groups
 
 #### `requireclientcert`
 
