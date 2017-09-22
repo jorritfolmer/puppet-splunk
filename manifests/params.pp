@@ -56,6 +56,7 @@ class splunk::params (
     'ldap_realnameattribute'    => 'cn',
     'ldap_groupnameattribute'   => 'cn',
     'ldap_groupmemberattribute' => 'member',
+    'ldap_nestedgroups'         => undef,
   }
   $rolemap = {
     'admin'     => 'Domain Admins',
