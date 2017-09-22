@@ -1,3 +1,7 @@
+### 3.5.0
+
+- Added the optional 'nestedGroups' setting for LDAP authentication.
+
 ### 3.4.3
 
 - Added explicit error when using indexer_discovery without setting cm
