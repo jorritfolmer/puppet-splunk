@@ -32,7 +32,8 @@ class splunk::server::clustering (
       $site_search_factor = $clustering[site_search_factor]
       file { [
         "${splunk_home}/etc/apps/${splunk_app_name}_slave_base",
-        "${splunk_home}/etc/apps/${splunk_app_name}_searchhead_base", ]:
+        "${splunk_home}/etc/apps/${splunk_app_name}_searchhead_base",
+        "${splunk_home}/etc/apps/${splunk_app_name}_forwarder_base", ]:
         ensure  => absent,
         recurse => true,
         purge   => true,
@@ -74,7 +75,8 @@ class splunk::server::clustering (
       $thissite = $clustering[thissite]
       file { [
         "${splunk_home}/etc/apps/${splunk_app_name}_master_base",
-        "${splunk_home}/etc/apps/${splunk_app_name}_searchhead_base", ]:
+        "${splunk_home}/etc/apps/${splunk_app_name}_searchhead_base",
+        "${splunk_home}/etc/apps/${splunk_app_name}_forwarder_base", ]:
         ensure  => absent,
         recurse => true,
         purge   => true,
@@ -116,7 +118,8 @@ class splunk::server::clustering (
       $thissite = $clustering[thissite]
       file { [
         "${splunk_home}/etc/apps/${splunk_app_name}_master_base",
-        "${splunk_home}/etc/apps/${splunk_app_name}_slave_base", ]:
+        "${splunk_home}/etc/apps/${splunk_app_name}_slave_base",
+        "${splunk_home}/etc/apps/${splunk_app_name}_forwarder_base", ]:
         ensure  => absent,
         recurse => true,
         purge   => true,
@@ -151,6 +154,26 @@ class splunk::server::clustering (
         content => template("splunk/${splunk_app_name}_searchhead_base/local/server.conf"),
       }
 
+    }
+    'forwarder': {
+      $thissite = $clustering[thissite]
+      file { [
+        "${splunk_home}/etc/apps/${splunk_app_name}_master_base",
+        "${splunk_home}/etc/apps/${splunk_app_name}_slave_base",
+        "${splunk_home}/etc/apps/${splunk_app_name}_searchhead_base", ]:
+        ensure  => absent,
+        recurse => true,
+        purge   => true,
+        force   => true,
+      }
+      -> file { [
+        "${splunk_home}/etc/apps/${splunk_app_name}_forwarder_base",
+        "${splunk_home}/etc/apps/${splunk_app_name}_forwarder_base/${splunk_app_precedence_dir}", ]:
+        ensure => directory,
+        owner  => $splunk_os_user,
+        group  => $splunk_os_group,
+        mode   => $splunk_dir_mode,
+      }
     }
     default: {
       # without clustering, remove all clustering config apps
