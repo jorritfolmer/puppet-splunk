@@ -174,6 +174,15 @@ class splunk::server::clustering (
         group  => $splunk_os_group,
         mode   => $splunk_dir_mode,
       }
+      -> file { "${splunk_home}/etc/apps/${splunk_app_name}_forwarder_base/${splunk_app_precedence_dir}/server.conf":
+        ensure  => present,
+        owner   => $splunk_os_user,
+        group   => $splunk_os_group,
+        mode    => $splunk_file_mode,
+        replace => $splunk_app_replace,
+        content => template("splunk/${splunk_app_name}_forwarder_base/local/server.conf"),
+      }
+
     }
     default: {
       # without clustering, remove all clustering config apps
