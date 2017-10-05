@@ -810,13 +810,14 @@ node 'some-server.internal.corp.tld' {
 
 #### `clustering`
 
-  Optional. Used to configure Splunk indexer clustering. This is a hash with 4 members:
+  Optional. Used to configure Splunk indexer clustering. This is a hash with 6 members:
 
-  - `mode` (can be one of `master`,`searchhead`,`slave`)
+  - `mode` (can be one of `master`,`searchhead`,`slave`, or `forwarder`)
   - `replication_factor`
   - `search_factor`
   - `cm` (points to cluster master in case of searchhead,slave, or forwarder in case of indexer discovery)
   - `indexer_discovery` (enables indexer discovery on the master node)
+  - `forwarder_site_failover` (Configures sites that fowarders are allowed to fail over to. `site1:site` allows fowarders in site1 to fail over to indexers in site2 if the local indexers are unavailable.)
 
   For multisite indexer clustering:
 
