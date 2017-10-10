@@ -931,3 +931,11 @@ Moved to TEST_COVERAGE.md
 - Search head pooling
 - Managing apps or inputs on Splunkforwarders, see principle 1.
  
+## Contributers
+
+These people haves contributed pull requests, issues, ideas or otherwise spent time improving this module:
+
+- jsushetski
+- Dimitri Tischenko (timidri)
+- Nate McCurdy (natemccurdy)
+

@@ -1,3 +1,7 @@
+### 3.6.0
+
+- Add settings to allow forwarders to fail over between indexers in multiple sites.
+
 ### 3.5.0
 
 - Added the optional 'nestedGroups' setting for LDAP authentication.
