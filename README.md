@@ -685,6 +685,12 @@ node 'some-server.internal.corp.tld' {
   Optional. When omitted, it will not start an Splunk2Splunk listener.
   Set `kvstoreport => 9997` if you do want to use this instance as an indexer.
 
+#### `mgmthostport`
+
+  Optional. When omitted, Splunk defaults apply and Splunk will use the default 8089 port.
+  Set `mgmthostport => '127.0.0.1:9991' if you want to move the 8089 port to 9991` 
+  Set `mgmthostport => 'disable' if you want to disable the Splunk management port, for example on Universal Forwarders
+
 #### `tcpout`
 
   Optional. When omitted, it will not forward events to a Splunk indexer.

@@ -26,6 +26,7 @@ class splunk::params (
   $sslrootcapath = 'certs/ca.crt'
   $httpport     = undef
   $kvstoreport = undef
+  $mgmthostport = undef
   $tcpout      = undef
   # set to some string instead of undef to prevent 'Missing title' errors in Puppet 4.x
   $searchpeers = 'empty'

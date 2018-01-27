@@ -29,6 +29,7 @@ class splunk (
   $inputport                  = $splunk::params::inputport,
   $httpport                   = $splunk::params::httpport,
   $kvstoreport                = $splunk::params::kvstoreport,
+  $mgmthostport               = $splunk::params::mgmthostport,
   $tcpout                     = $splunk::params::tcpout,
   $searchpeers                = $splunk::params::searchpeers,
   $admin                      = $splunk::params::admin,
@@ -133,6 +134,7 @@ class splunk (
   include splunk::passwd
   include splunk::authentication
   include splunk::secret
+  include splunk::mgmtport
   include splunk::first_time_run
   include splunk::service
 
@@ -156,6 +158,7 @@ class splunk (
   -> Class['splunk::passwd']
   -> Class['splunk::authentication']
   -> Class['splunk::secret']
+  -> Class['splunk::mgmtport']
   -> Class['splunk::first_time_run']
   -> Class['splunk::service']
   -> splunk::addsearchpeers { $searchpeers: }

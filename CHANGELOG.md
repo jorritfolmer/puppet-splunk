@@ -1,5 +1,6 @@
 ### 3.7.0
 - Add setting to control splunk.secret. (Issue #18)
+- Add setting to control mgmtHostPort or disable the default Splunk management port (8089/tcp) entirely, e.g. on Universal Forwarders
 
 ### 3.6.0
 

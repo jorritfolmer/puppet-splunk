@@ -440,6 +440,30 @@ describe 'splunk' do
     it { should contain_file('/opt/splunk/etc/apps/puppet_common_ssl_base/local/server.conf').with_content(/sslRootCAPath = \/opt\/splunk\/etc\/auth\/cacert.pem/) }
   end
 
+  context 'with nonstandard mgmthostport' do
+    let(:params) { 
+      {
+        :dontruncmds => true,
+        :mgmthostport => '127.0.0.1:9991',
+      }
+    }
+    it { should contain_class('splunk::installed') }
+    it { should contain_package('splunk') }
+    it { should contain_file('/opt/splunk/etc/apps/puppet_common_mgmtport_base/local/web.conf').with_content(/\[settings\]\nmgmtHostPort = 127.0.0.1:9991/) }
+  end
+
+  context 'with mgmtport disable' do
+    let(:params) { 
+      {
+        :dontruncmds => true,
+        :mgmthostport => 'disable',
+      }
+    }
+    it { should contain_class('splunk::installed') }
+    it { should contain_package('splunk') }
+    it { should contain_file('/opt/splunk/etc/apps/puppet_common_mgmtport_disabled/local/server.conf').with_content(/\[httpServer\]\ndisableDefaultPort = true/) }
+  end
+
   context 'with cluster master role' do
     let(:params) { 
       {

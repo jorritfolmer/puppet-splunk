@@ -10,13 +10,13 @@
 | v3.4.0  |   26   |  45   |
 | v3.4.1  |   27   |  45   |
 | v3.4.2  |   28   |  45   |
-| v3.7.0  |   29   |  46   |
+| v3.7.0  |   30   |  47   |
 
 ## By operating system:
 
 | os      | tested | total |
 |---------|--------|-------|
-| linux   |   29   |  46   |
+| linux   |   30   |  47   |
 | windows |   0    |  47   |
 
 ## By parameter:
@@ -42,6 +42,7 @@
 | `inputport`| Y |
 | `kvstoreport`| Y |
 | `lm`| Y |
+| `mgmthostport` | Y |
 | `minfreespace` | no |
 | `package_source` | yes |
 | `pass4symmkey` | no |
