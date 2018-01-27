@@ -76,6 +76,7 @@ class splunk::authentication
 
     }
     'LDAP':      {
+      $auth_defaults = $splunk::params::auth
       file {"${splunk_home}/etc/apps/${splunk_app_name}_saml_base":
         ensure  => absent,
         recurse => true,

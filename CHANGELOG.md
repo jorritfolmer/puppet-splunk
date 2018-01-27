@@ -2,6 +2,7 @@
 - Add setting to control splunk.secret. (Issue #18)
 - Add setting to control mgmtHostPort or disable the default Splunk management port (8089/tcp) entirely, e.g. on Universal Forwarders
 - Add setting to control SPLUNK_DB. (Issue #5)
+- Add additional LDAP authentication fields. (Issue #8)
 
 ### 3.6.0
 
