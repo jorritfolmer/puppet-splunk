@@ -387,6 +387,31 @@ describe 'splunk' do
     it { should contain_file('/opt/splunk/etc/apps/puppet_common_license_client_base/local/server.conf').with_content(/master_uri = https:\/\/lm.internal.corp.tld:8089/) }
   end
 
+  context 'with splunk secret' do
+    let(:params) { 
+      {
+        :secret  => 'somebase64string',
+        :dontruncmds => true,
+      }
+    }
+    it { should contain_class('splunk::installed') }
+    it { should contain_package('splunk') }
+    it { should contain_file('/opt/splunk/etc/auth/splunk.secret').with_content(/somebase64string/) }
+  end
+
+  context 'with splunk secret for uf' do
+    let(:params) { 
+      {
+        :secret  => 'somebase64string',
+        :type  => 'uf',
+        :dontruncmds => true,
+      }
+    }
+    it { should contain_class('splunk::installed') }
+    it { should contain_package('splunkforwarder') }
+    it { should contain_file('/opt/splunkforwarder/etc/auth/splunk.secret').with_content(/somebase64string/) }
+  end
+
   context 'with default strong ssl' do
     let(:params) { 
       {

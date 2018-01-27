@@ -10,13 +10,14 @@
 | v3.4.0  |   26   |  45   |
 | v3.4.1  |   27   |  45   |
 | v3.4.2  |   28   |  45   |
+| v3.7.0  |   29   |  46   |
 
 ## By operating system:
 
 | os      | tested | total |
 |---------|--------|-------|
-| linux   |   27   |  45   |
-| windows |   0    |  45   |
+| linux   |   29   |  46   |
+| windows |   0    |  47   |
 
 ## By parameter:
 
@@ -51,6 +52,7 @@
 | `reuse_puppet_certs`| Y |
 | `rolemap` | no |
 | `searchpeers`| Y |
+| `secret`| Y |
 | `service` | Y |
 | `shclustering  => { mode => 'deployer'`| Y |
 | `shclustering  => { mode => 'searchhead'`| Y |

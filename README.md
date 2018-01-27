@@ -890,6 +890,15 @@ node 'some-server.internal.corp.tld' {
   requireclientcert => 'inputs',
   ```
 
+#### `secret`
+
+  Optional. Specifies the contents for the $SPLUNK_HOME/etc/auth/splunk.secret file. This can be helpful when distributing prehashed passwords across multiple Splunk instances.
+
+  Example:
+
+  ```
+  secret => 'kGzHMGUe7GH0ZlOOIMVKkuEpDx1i1PKgq3E4p2ibmXuCKqJAKCENvY5a4QijxyrYt5Spt4T0.Qda5az6CDBvoTiYjMKsvz/p/ey/eLWOC6GQIEzARBUDasl84v9PIo6TA4AF4SxdygKGjbBekm9kV4UL2uMLnUGpQ5d.yIqBxqpHy8lgQhCTEIwQPxKRu9UMnBmEjnAmakn7Rmd3kMKq/.fnJdMgHhIZIK1ZcT6jm2vllL3sE42DBHy1DoRnYK'
+  ```
 
 #### `rolemap`
 

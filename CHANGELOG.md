@@ -1,3 +1,6 @@
+### 3.7.0
+- Add setting to control splunk.secret. (Issue #18)
+
 ### 3.6.0
 
 - Add settings to allow forwarders to fail over between indexers in multiple sites.

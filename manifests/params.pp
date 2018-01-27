@@ -66,5 +66,6 @@ class splunk::params (
   $dontruncmds = false
   $minfreespace = undef
   $pass4symmkey = 'changeme'
+  $secret = undef
 }
 

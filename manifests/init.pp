@@ -45,7 +45,8 @@ class splunk (
   $dontruncmds                = $splunk::params::dontruncmds,
   $pass4symmkey               = $splunk::params::pass4symmkey,
   $minfreespace               = $splunk::params::minfreespace,
-  $phonehomeintervalinsec     = $splunk::params::phonehomeintervalinsec
+  $phonehomeintervalinsec     = $splunk::params::phonehomeintervalinsec,
+  $secret                     = $splunk::params::secret
   ) inherits splunk::params {
 
   case $::osfamily {
@@ -131,6 +132,7 @@ class splunk (
   include splunk::distsearch
   include splunk::passwd
   include splunk::authentication
+  include splunk::secret
   include splunk::first_time_run
   include splunk::service
 
@@ -153,14 +155,10 @@ class splunk (
   -> Class['splunk::distsearch']
   -> Class['splunk::passwd']
   -> Class['splunk::authentication']
+  -> Class['splunk::secret']
   -> Class['splunk::first_time_run']
   -> Class['splunk::service']
   -> splunk::addsearchpeers { $searchpeers: }
   anchor { 'splunk_last': }
 }
-
-# ISSUES
-# 1) 10-18-2015 17:04:22.364 +0200 WARN  main - The hard fd limit is lower than
-# the recommended value. The hard limit is '4096' The recommended value is
-# '64000'.
 
