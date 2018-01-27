@@ -727,6 +727,14 @@ node 'some-server.internal.corp.tld' {
   Optional. Used if you're running Splunk outside of /opt/splunk or
   /opt/splunkforwarder.
 
+#### `splunk_db`
+
+  Optional. Used to set the location where Splunk stores its indexes. Unsupported on Windows instances.
+
+  For 3.x releases of Puppet-Splunk this will only change the SPLUNK_DB variable in etc/splunk-launch.conf if set. If unset, it will not remove the setting to prevent surprises when it has been previously set manually.
+
+  For 4.x future releases this may change.
+
 #### `lm`
 
   Optional. Used to point to a Splunk license manager.

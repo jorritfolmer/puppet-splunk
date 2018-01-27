@@ -11,6 +11,7 @@ class splunk (
   $splunk_os_user             = $splunk::params::splunk_os_user,
   $splunk_os_group            = $splunk::params::splunk_os_group,
   $splunk_bindip              = $splunk::params::splunk_bindip,
+  $splunk_db                  = $splunk::params::splunk_db,
   $lm                         = $splunk::params::lm,
   $ds                         = $splunk::params::ds,
   $sslcompatibility           = $splunk::params::sslcompatibility,

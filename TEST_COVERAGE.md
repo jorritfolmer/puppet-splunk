@@ -10,14 +10,14 @@
 | v3.4.0  |   26   |  45   |
 | v3.4.1  |   27   |  45   |
 | v3.4.2  |   28   |  45   |
-| v3.7.0  |   30   |  47   |
+| v3.7.0  |   30   |  48   |
 
 ## By operating system:
 
 | os      | tested | total |
 |---------|--------|-------|
-| linux   |   30   |  47   |
-| windows |   0    |  47   |
+| linux   |   30   |  48   |
+| windows |   0    |  48   |
 
 ## By parameter:
 
@@ -58,6 +58,7 @@
 | `shclustering  => { mode => 'deployer'`| Y |
 | `shclustering  => { mode => 'searchhead'`| Y |
 | `splunk_bindip` | no |
+| `splunk_db` | no |
 | `splunk_os_user` | no |
 | `splunk_os_group` | no |
 | `sslcertpath`| Y |
@@ -66,7 +67,7 @@
 | `sslversions_intermediate` | no |
 | `sslversions_modern` | no |
 | `tcpout` | Y |
-| `tcpout` => 'indexer_discovery'| Y |
+| `tcpout` => 'indexer_discovery'`| Y |
 | `type => 'uf'` | Y |
 | `use_ack` | yes |
 | `version` | no | 
