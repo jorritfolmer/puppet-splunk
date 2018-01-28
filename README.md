@@ -1,36 +1,29 @@
-# Puppet module to deploy Splunk into any imaginable topology on Windows and Linux.
+# Splunk deployments with Puppet
+
 
 [![Travis CI build status](https://travis-ci.org/jorritfolmer/puppet-splunk.svg?branch=master)](https://travis-ci.org/jorritfolmer/puppet-splunk)
 
-This Puppet module can be used on Windows and Linux to create and arrange the following Splunk instances into simple, distributed or (multisite) clustered topologies:
-
-- Splunk indexers
-- Splunk search heads
-- Splunk cluster masters
-- Splunk search head deployers
-- Splunk deployment servers
-- Splunk heavy forwarders
-- Splunk universal forwarders
-
-It does so with the following principles in mind:
+This Puppet module deploys Splunk instances on Windows and Linux in simple, distributed or (multisite) clustered topologies. It is used in production by organisations large and small, but can also be used to quickly validate solution architectures. For example on a 2016 MacBook Pro, setting up a multisite indexer cluster, a cluster master, a search head cluster, a search head deployer, LDAP authentication, etc, takes less than an hour.
 
 ## Principles
 
-1. **Splunk above Puppet.** Puppet is only used to configure the running skeleton of a Splunk constellation. It tries to keep away from Splunk administration as much as possible. For example, why deploy Splunk apps to forwarders through Puppet if you can use Splunk's multi-platform deployment server?
-2. **Power to the Splunkers.** A Splunk installation should typically not be administered by the IT or IT-infra teams. This Puppet module should smooth the path to implementing segregation of duties between administrators and watch(wo)men (ISO 27002 12.4.3 or BIR 10.10.3).
-3. **Secure by default**.
+Development of this module is done with the following principles in mind:
+
+1. **Technical Management** Puppet is used to configure the technical infrastructure of a Splunk deployment. It tries to keep away from Splunk functional administration as much as possible. For example, deploying Splunk apps to forwarders is best left to Splunk's multi-platform deployment server.
+2. **Power to the Splunkers.** A Splunk installation used for security monitoring should typically not be administered by the same IT or IT-infra teams it's supposed to be monitoring. This Puppet module should smooth the path towards implementing segregation of duties between administrators and watch(wo)men (ISO 27002 12.4.3 or BIR 10.10.3).
+3. **Supports any topology.** Single server? Redundant multi-site clustering? Heavy forwarder in a DMZ?
+4. **Secure by default**.
   - Splunk runs as user splunk instead of root.
   - No services are listening by default except the bare minimum (8089/tcp)
   - TLSv1.1 and TLSv1.2 are enabled by default
   - Perfect Forward Secrecy (PFS) using Elliptic curve Diffie-Hellman (ECDH)
   - Ciphers are set to [modern compatibility](https://wiki.mozilla.org/Security/Server_Side_TLS)
   - Admin password can be set using its SHA512 hash in the Puppet manifests instead of plain-text.
-4. **Supports any topology.** Single server? Redundant multi-site clustering? Heavy forwarder in a DMZ?
 
 ## Prerequisites
 
-1. A running Puppet master
-2. A running repository server with splunk and splunkforwarder packages. See below if you need help setting it up.
+1. A Puppet master
+2. A repository server with splunk and splunkforwarder packages. See "Setting up a Splunk repository" if you need help setting it up for Red Hat, Debian or Windows environments
 
 ## Quick-start
 
@@ -64,84 +57,21 @@ node 'splunk-server.internal.corp.tld' {
 See the other examples below for more elaborate topologies.
 
 
-### Splunk YUM repository (Red Hat based)
-
-If you don't already have a local repository server, the quickest way is to install Apache on the Puppet master and have this serve the yum repository.
-
-1. `yum install httpd`
-2. `yum install createrepo`
-3. `mkdir /var/www/html/splunk`
-4. `cd /var/www/html/splunk`
-5. download splunk-x.y.x.rpm
-6. download splunk-forwarder-x.y.x.rpm
-7. `createrepo .`
-8. make sure Apache allows directory index listing
-9. surf to http://your.repo.server/splunk and check if you get a directory listing
-
-Then add something like this to every node definition in site.pp, and require it from the splunk class so it it evaluated before the splunk class.
-
-```
-yumrepo { "splunk":
-  baseurl => "http://your.repo.server/splunk",
-  descr => "Splunk repo",
-  enabled => 1,
-  gpgcheck => 0
-}
-```
-
-### Splunk APT repository (Debian/Ubuntu based)
-
-If you don't already have a local repository server, the quickest way is to install Apache on the Puppet master and have this serve the APT repository.
-
-1. `apt-get install apache2`
-2. `apt-get install dpkg-dev`
-3. `mkdir /var/www/html/splunk`
-4. `cd /var/www/html/splunk`
-5. download splunk-x.y.x.deb
-6. download splunk-forwarder-x.y.x.deb
-7. `dpkg-scanpackages . /dev/null |gzip -c > Packages.gz`
-8. make sure Apache allows directory index listing
-9. surf to http://your.rhel-repo.server/splunk and check if you get a directory listing
-
-Then add something like this to every node definition in site.pp, and make sure to require these files from the splunk class so they are evaluated before the splunk class. Because the APT repository above isn't signed, puppet won't be able to install splunk or splunkforwarder, except when setting `APT::Get::AllowUnauthenticated` somewhere in `/etc/apt/apt.conf.d/`. You may have to run apt-get update before the Splunk repository is available in apt-get.
-
-```
-file { "/etc/apt/apt.conf.d/99allowunsigned":
-  ensure => present,
-  content => "APT::Get::AllowUnauthenticated "true";\n",
-}
-file { "/etc/apt/sources.list.d/splunk.list":
-  ensure => present,
-  content => "deb http://your.apt-repo.server/splunk ./\n",
-}
-```
-
-### CIFS share with .msi files (Windows based)
-
-For Windows installations just put the .msi Splunk installation files for
-Windows on a share that is accessible from all your Windows servers.
-
-1. create a share that can be accessed by all your Windows servers
-2. download the relevant Splunk .msi files from the Splunk website into this share
-3. specify `package_source` and point to one of these .msi files
-
-
 ## Puppet-Splunk installation
 
 1. SSH to your Puppet master
 2. `cd /etc/puppet/modules` or `cd /etc/puppetlabs/code/environments/production/modules`, depending on your Puppet version
 3. `puppet module install jorritfolmer-splunk` or `git clone https://github.com/jorritfolmer/puppet-splunk.git; mv puppet-splunk splunk`
-4. Create your Splunk topology, see below for examples.
+4. Put the Splunk .rpm, .deb or .msi files in a repository, see "Setting up a Splunk repository"
+5. Create your Splunk topology, see below for examples.
 
 ## Usage
 
-To give this module a try, you don't necessarily have to setup a Certiticate Authority for the various SSL certificates that Splunk uses.
+By default, this module uses the Puppet client SSL key (4096 bits) and client certificates. By reusing the existing Puppet Certificate Authority, we don't have to set up a parallel CA. 
 
-By default, this module reuses the Puppet client SSL key (4096 bits) and client certificate, so we can save us the trouble of setting up and maintaining our own certificate authority. 
+For quick testing in heterogeneous non-production environments you can revert to using the Splunk provides certs and CA with `reuse_puppet_certs => false`. Or you can point to your own key and certificates with `sslcertpath` and `sslrootcapath` if you are planning a zero-trust architecture.
 
-For quick testing in heterogeneous non-production environments you can revert to using the Splunk provides certs and CA with `reuse_puppet_certs => false`. Or you can point to your own certificates with `sslcertpath` and `sslrootcapath`.
-
-The Splunk module doesn't manage the state of the splunk service, except configure to start Splunk or Splunkforwarder at boot time. However, if you do want Puppet to interfere while performing a cluster rolling restart or an indexer restart, have a look at the `service` parameter. 
+The Splunk module doesn't manage the state of the splunk service, except to configure Splunk or Splunkforwarder at boot time. However, if you do want Puppet to interfere while performing a cluster rolling restart or an indexer restart, have a look at the `service` parameter. 
 
 ### Example 1: 
 
@@ -222,7 +152,6 @@ node 'some-server.internal.corp.tld' {
   }
 }
 ```
-
 
 ### Example 2b: 
 
@@ -659,6 +588,68 @@ node 'some-server.internal.corp.tld' {
 
 ```
 
+## Setting up a Splunk repository
+
+### Red Hat/CentOS (YUM)
+
+If you don't already have a local repository server, the quickest way is to install Apache on the Puppet master and have this serve the yum repository.
+
+1. `yum install httpd`
+2. `yum install createrepo`
+3. `mkdir /var/www/html/splunk`
+4. `cd /var/www/html/splunk`
+5. download splunk-x.y.x.rpm
+6. download splunk-forwarder-x.y.x.rpm
+7. `createrepo .`
+8. make sure Apache allows directory index listing
+9. surf to http://your.repo.server/splunk and check if you get a directory listing
+
+Then add something like this to every node definition in site.pp, and require it from the splunk class so it it evaluated before the splunk class.
+
+```
+yumrepo { "splunk":
+  baseurl => "http://your.repo.server/splunk",
+  descr => "Splunk repo",
+  enabled => 1,
+  gpgcheck => 0
+}
+```
+
+### Debian/Ubuntu (APT)
+
+If you don't already have a local repository server, the quickest way is to install Apache on the Puppet master and have this serve the APT repository.
+
+1. `apt-get install apache2`
+2. `apt-get install dpkg-dev`
+3. `mkdir /var/www/html/splunk`
+4. `cd /var/www/html/splunk`
+5. download splunk-x.y.x.deb
+6. download splunk-forwarder-x.y.x.deb
+7. `dpkg-scanpackages . /dev/null |gzip -c > Packages.gz`
+8. make sure Apache allows directory index listing
+9. surf to http://your.rhel-repo.server/splunk and check if you get a directory listing
+
+Then add something like this to every node definition in site.pp, and make sure to require these files from the splunk class so they are evaluated before the splunk class. Because the APT repository above isn't signed, puppet won't be able to install splunk or splunkforwarder, except when setting `APT::Get::AllowUnauthenticated` somewhere in `/etc/apt/apt.conf.d/`. You may have to run apt-get update before the Splunk repository is available in apt-get.
+
+```
+file { "/etc/apt/apt.conf.d/99allowunsigned":
+  ensure => present,
+  content => "APT::Get::AllowUnauthenticated "true";\n",
+}
+file { "/etc/apt/sources.list.d/splunk.list":
+  ensure => present,
+  content => "deb http://your.apt-repo.server/splunk ./\n",
+}
+```
+
+### Windows CIFS share (MSI)
+
+For Windows installations just put the .msi Splunk installation files for
+Windows on a share that is accessible from all your Windows servers.
+
+1. create a share that can be accessed by all your Windows servers
+2. download the relevant Splunk .msi files from the Splunk website into this share
+3. specify `package_source` and point to one of these .msi files
 
 
 ## Parameters
@@ -962,3 +953,6 @@ These people haves contributed pull requests, issues, ideas or otherwise spent t
 - Dimitri Tischenko (timidri)
 - Nate McCurdy (natemccurdy)
 
+## Support
+
+This is an open source project without warranty of any kind. No support is provided. However, a public repository and issue tracker are available at [https://github.com/jorritfolmer/puppet-splunk](https://github.com/jorritfolmer/puppet-splunk)
