@@ -1,4 +1,8 @@
 # vim: ts=2 sw=2 et
+#
+# Copyright (c) 2016-2018 Jorrit Folmer
+#
+
 class splunk::params (
 ) {
   $type           = undef
@@ -72,5 +76,7 @@ class splunk::params (
   $minfreespace = undef
   $pass4symmkey = 'changeme'
   $secret = undef
+  $maxbackupindex = 1
+  $maxfilesize = 10000000
 }
 

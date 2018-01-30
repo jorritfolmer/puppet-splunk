@@ -29,7 +29,7 @@ Development of this module is done with the following principles in mind:
 
 Define a single standalone Splunk instance on Linux that you can use to index and search, for example with the trial license:
 
-![Example 1a](example1.png)
+![Standalone Splunk instance](https://github.com/jorritfolmer/puppet-splunk/example1.png)
 
 ```puppet
 node 'splunk-server.internal.corp.tld' {
@@ -78,7 +78,7 @@ The Splunk module doesn't manage the state of the splunk service, except to conf
 Define a single standalone Splunk instance that you can use to index and search, for example with the trial license.
 This time use the Splunk provided non-production testing certificates instead of reusing the ones signed by the Puppet CA, for example for testing in heterogeneous environments with non-Puppetized Splunk forwarders.
 
-![Example 1b](example1.png)
+![Splunk instance standalone](https://github.com/jorritfolmer/puppet-splunk/example1.png)
 
 ```puppet
 node 'splunk-server.internal.corp.tld' {
@@ -113,7 +113,7 @@ node 'splunk-server.internal.corp.tld' {
 
 Extends the example above with a node that will run the Splunk universal forwarder. It uses the first server as Deployment Server (`ds =>`) where apps, inputs and outputs can be managed and deployed through Forwarder Management.
 
-![Example 2](example2.png)
+![Splunk instance with forwarder](https://github.com/jorritfolmer/puppet-splunk/example2.png)
 
 ```puppet
 node 'splunk-server.internal.corp.tld' {
@@ -159,7 +159,7 @@ Almost identical to example 2a, except with some SSL downgrading, not suitable f
 This will allow non-Puppetized Splunk clients to connect to the various servicessince the default Splunk config isn't compatible with modern compability. Setting the deploymentserver to intermediate compatibility will allow these clients to make the initial connection, after which you can deploy a common_ssl_base config app to them with modern ssl compatibility.
 The manifest below will also use the Splunk provided non-production certificates, instead of the ones signed by the Puppet CA.
 
-![Example 2](example2.png)
+![Splunk instance with forwarder in hybrid environments](https://github.com/jorritfolmer/puppet-splunk/example2.png)
 
 ```puppet
 node 'splunk-server.internal.corp.tld' {
@@ -193,7 +193,7 @@ indexer needs to be running **before** the search head manifest is executed.
 This means that you'll have to manage intra-node dependencies manually or
 through an orchestration tool like Terraform.
 
-![Example 3](example3.png)
+![Splunk topology with indexer, search head and deployment server](https://github.com/jorritfolmer/puppet-splunk/example3.png)
 
 ```puppet
 node 'splunk-ds.internal.corp.tld' {
@@ -275,7 +275,7 @@ node 'splunk-idx1.internal.corp.tld', 'splunk-idx2.internal.corp.tld' {
 A Splunk indexer cluster consisting of one deployment/license/searchhead server, a cluster master, and three cluster peers.
 The cluster master also acts as license master.
 
-![Example 4](example4.png)
+![Splunk indexer cluster](https://github.com/jorritfolmer/puppet-splunk/example4.png)
 
 ```puppet
 node 'splunk-sh.internal.corp.tld' {
@@ -360,7 +360,7 @@ On the ADFS side:
 
 1. Add a new claim rule to map Active Directory attributes to new claims
    
-   ![ADFS get attributes claim rule for Splunk](adfs_claim_rules_get_attrs.png)
+   ![ADFS get attributes claim rule for Splunk](https://github.com/jorritfolmer/puppet-splunk/adfs_claim_rules_get_attrs.png)
 
 1. import the Splunk Root CA (/opt/splunk/etc/auth/cacert.pem) in the Trusted Root Certificates store of the Windows server,
 1. If you're using your own certificates: `Set-ADFSRelyingPartyTrust -TargetIdentifier splunk-sh1.internal.corp.tld -EncryptionCertificateRevocationCheck none`
@@ -905,6 +905,16 @@ Windows on a share that is accessible from all your Windows servers.
   secret => 'kGzHMGUe7GH0ZlOOIMVKkuEpDx1i1PKgq3E4p2ibmXuCKqJAKCENvY5a4QijxyrYt5Spt4T0.Qda5az6CDBvoTiYjMKsvz/p/ey/eLWOC6GQIEzARBUDasl84v9PIo6TA4AF4SxdygKGjbBekm9kV4UL2uMLnUGpQ5d.yIqBxqpHy8lgQhCTEIwQPxKRu9UMnBmEjnAmakn7Rmd3kMKq/.fnJdMgHhIZIK1ZcT6jm2vllL3sE42DBHy1DoRnYK'
   ```
 
+#### `maxbackupindex`
+
+  Optional. Specifies the number of rotated log files in $SPLUNK_HOME/var/log/splunk to keep around.
+  Defaults to 1.
+
+#### `maxfilesize`
+
+  Optional. Specifies the max file size of log files in $SPLUNK_HOME/var/log/splunk.
+  Defaults to 10MB.
+
 #### `rolemap`
 
   Optional. Specifies the role mapping for SAML and LDAP
@@ -952,6 +962,16 @@ These people haves contributed pull requests, issues, ideas or otherwise spent t
 - jsushetski
 - Dimitri Tischenko (timidri)
 - Nate McCurdy (natemccurdy)
+
+## License
+
+Copyright (c) 2016-2018 Jorrit Folmer
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ## Support
 

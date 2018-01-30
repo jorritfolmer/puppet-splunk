@@ -1,4 +1,8 @@
 # vim: ts=2 sw=2 et
+#
+# Copyright (c) 2016-2018 Jorrit Folmer
+#
+
 class splunk::installed (
   $package = $splunk::package,
   $package_source = $splunk::package_source,

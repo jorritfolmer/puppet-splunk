@@ -1,4 +1,8 @@
 # vim: ts=2 sw=2 et
+#
+# Copyright (c) 2016-2018 Jorrit Folmer
+#
+
 class splunk::secret (
   $splunk_home = $splunk::splunk_home,
   $splunk_secret = $splunk::secret,

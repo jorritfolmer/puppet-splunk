@@ -1,4 +1,9 @@
+### 3.8.0
+
+- Add settings to control maxfilesize and rotation in log-local.cfg
+
 ### 3.7.0
+
 - Add setting to control splunk.secret. (Issue #18)
 - Add setting to control mgmtHostPort or disable the default Splunk management port (8089/tcp) entirely, e.g. on Universal Forwarders
 - Add setting to control SPLUNK_DB. (Issue #5)

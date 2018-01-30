@@ -11,13 +11,14 @@
 | v3.4.1  |   27   |  45   |
 | v3.4.2  |   28   |  45   |
 | v3.7.0  |   30   |  48   |
+| v3.8.0  |   30   |  50   |
 
 ## By operating system:
 
 | os      | tested | total |
 |---------|--------|-------|
-| linux   |   30   |  48   |
-| windows |   0    |  48   |
+| linux   |   30   |  50   |
+| windows |   0    |  50   |
 
 ## By parameter:
 
@@ -42,6 +43,8 @@
 | `inputport`| Y |
 | `kvstoreport`| Y |
 | `lm`| Y |
+| `maxbackupindex`| n |
+| `maxfilesize`| n |
 | `mgmthostport` | Y |
 | `minfreespace` | no |
 | `package_source` | yes |
