@@ -65,7 +65,8 @@ class splunk (
   $phonehomeintervalinsec     = $splunk::params::phonehomeintervalinsec,
   $secret                     = $splunk::params::secret,
   $maxbackupindex             = $splunk::params::maxbackupindex,
-  $maxfilesize                = $splunk::params::maxfilesize
+  $maxfilesize                = $splunk::params::maxfilesize,
+  $maxkbps                    = $splunk::params::maxkbps
   ) inherits splunk::params {
 
   case $::osfamily {
@@ -155,6 +156,7 @@ class splunk (
   include splunk::mgmtport
   include splunk::first_time_run
   include splunk::loglocal
+  include splunk::limits
   include splunk::service
 
   # make sure classes are properly ordered and contained
@@ -180,6 +182,7 @@ class splunk (
   -> Class['splunk::mgmtport']
   -> Class['splunk::first_time_run']
   -> Class['splunk::loglocal']
+  -> Class['splunk::limits']
   -> Class['splunk::service']
   -> splunk::addsearchpeers { $searchpeers: }
   anchor { 'splunk_last': }

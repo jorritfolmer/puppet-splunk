@@ -1,3 +1,7 @@
+### 3.9.0
+
+- Add setting to control maxKBps in limits.conf
+
 ### 3.8.0
 
 - Add settings to control maxfilesize and rotation in log-local.cfg

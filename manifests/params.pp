@@ -78,5 +78,6 @@ class splunk::params (
   $secret = undef
   $maxbackupindex = 1
   $maxfilesize = 10000000
+  $maxkbps = undef
 }
 

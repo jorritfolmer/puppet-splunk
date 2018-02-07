@@ -12,13 +12,14 @@
 | v3.4.2  |   28   |  45   |
 | v3.7.0  |   30   |  48   |
 | v3.8.0  |   30   |  50   |
+| v3.9.0  |   31   |  51   |
 
 ## By operating system:
 
 | os      | tested | total |
 |---------|--------|-------|
-| linux   |   30   |  50   |
-| windows |   0    |  50   |
+| linux   |   31   |  51   |
+| windows |   0    |  51   |
 
 ## By parameter:
 
@@ -45,6 +46,7 @@
 | `lm`| Y |
 | `maxbackupindex`| n |
 | `maxfilesize`| n |
+| `maxkbps`| y |
 | `mgmthostport` | Y |
 | `minfreespace` | no |
 | `package_source` | yes |

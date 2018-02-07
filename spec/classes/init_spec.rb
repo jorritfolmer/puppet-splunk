@@ -608,4 +608,16 @@ describe 'splunk' do
     it { should contain_file('/opt/splunk/etc/apps/puppet_common_deploymentclient_base/local/deploymentclient.conf').with_content(/repositoryLocation = \/opt\/splunk\/etc\/deployment-apps/) }
   end
 
+  context 'with maxkbps set' do
+    let(:params) { 
+      {
+        :type => 'uf',
+        :maxkbps => 5000,
+      }
+    }
+    it { should contain_class('splunk::installed') }
+    it { should contain_package('splunkforwarder') }
+    it { should contain_file('/opt/splunkforwarder/etc/apps/puppet_common_thruput_base/local/limits.conf').with_content(/\[thruput\]\nmaxKBps = 5000/) }
+  end
+
 end

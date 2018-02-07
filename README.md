@@ -928,6 +928,11 @@ Windows on a share that is accessible from all your Windows servers.
   }
   ```
 
+#### `maxKBps`
+
+  Optional. Specifies the max throughput rate for outgoing data.
+
+
 ## Compatibility
 
 Set sslcompatibility in these cases:
