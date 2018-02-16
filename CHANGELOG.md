@@ -1,6 +1,8 @@
 ### 3.9.0
 
 - Add setting to control maxKBps in limits.conf
+- Add setting to control sslpassword plaintext or hashed
+- Add setting to control sslverifyservercert for outputs and splunkd
 
 ### 3.8.0
 

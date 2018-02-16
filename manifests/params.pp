@@ -29,17 +29,19 @@ class splunk::params (
   $reuse_puppet_certs = true
   $sslcertpath   = 'certs/s2s.pem'
   $sslrootcapath = 'certs/ca.crt'
+  $sslpassword  = undef
+  $sslverifyservercert = undef
   $httpport     = undef
-  $kvstoreport = undef
+  $kvstoreport  = undef
   $mgmthostport = undef
-  $tcpout      = undef
+  $tcpout       = undef
   # set to some string instead of undef to prevent 'Missing title' errors in Puppet 4.x
-  $searchpeers = 'empty'
-  $admin       = undef
-  $clustering  = { }
+  $searchpeers  = 'empty'
+  $admin        = undef
+  $clustering   = { }
   $replication_port = 9887
-  $shclustering  = { }
-  $service     = {
+  $shclustering = { }
+  $service      = {
     enable => true,
     ensure => undef,
   }
@@ -47,7 +49,7 @@ class splunk::params (
   $ds_intermediate = undef
   $phonehomeintervalinsec = 60
   $repositorylocation = undef
-  $version     = undef
+  $version      = undef
   $auth                         = {
     'type'                      => 'Splunk',
     'saml_idptype'              => undef,
@@ -72,12 +74,12 @@ class splunk::params (
     'power'     => 'Power Users',
     'user'      => 'Domain Users',
   }
-  $dontruncmds = false
+  $dontruncmds  = false
   $minfreespace = undef
   $pass4symmkey = 'changeme'
-  $secret = undef
+  $secret       = undef
   $maxbackupindex = 1
-  $maxfilesize = 10000000
-  $maxkbps = undef
+  $maxfilesize  = 10000000
+  $maxkbps      = undef
 }
 

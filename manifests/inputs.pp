@@ -16,8 +16,9 @@ class splunk::inputs (
   $splunk_os_group = $splunk::real_splunk_os_group,
   $splunk_dir_mode = $splunk::real_splunk_dir_mode,
   $splunk_file_mode = $splunk::real_splunk_file_mode,
-  $sslrootcapath   = $splunk::sslrootcapath,
-  $sslcertpath   = $splunk::sslcertpath
+  $sslrootcapath = $splunk::sslrootcapath,
+  $sslpassword = $splunk::sslpassword,
+  $sslcertpath = $splunk::sslcertpath
 ){
   $splunk_app_name = 'puppet_common_ssl_inputs'
   if $inputport == undef {

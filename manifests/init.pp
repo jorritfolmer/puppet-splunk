@@ -42,6 +42,8 @@ class splunk (
   $reuse_puppet_certs         = $splunk::params::reuse_puppet_certs,
   $sslcertpath                = $splunk::params::sslcertpath,
   $sslrootcapath              = $splunk::params::sslrootcapath,
+  $sslpassword                = $splunk::params::sslpassword,
+  $sslverifyservercert        = $splunk::params::sslverifyservercert,
   $inputport                  = $splunk::params::inputport,
   $httpport                   = $splunk::params::httpport,
   $kvstoreport                = $splunk::params::kvstoreport,

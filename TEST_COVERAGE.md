@@ -12,14 +12,14 @@
 | v3.4.2  |   28   |  45   |
 | v3.7.0  |   30   |  48   |
 | v3.8.0  |   30   |  50   |
-| v3.9.0  |   31   |  51   |
+| v3.9.0  |   33   |  53   |
 
 ## By operating system:
 
 | os      | tested | total |
 |---------|--------|-------|
-| linux   |   31   |  51   |
-| windows |   0    |  51   |
+| linux   |   33   |  53   |
+| windows |   0    |  53   |
 
 ## By parameter:
 
@@ -68,7 +68,9 @@
 | `splunk_os_group` | no |
 | `sslcertpath`| Y |
 | `sslcompatibility` | no |
+| `sslpassword` | Y |
 | `sslrootcapath` | Y |
+| `sslverifyservercert` | Y |
 | `sslversions_intermediate` | no |
 | `sslversions_modern` | no |
 | `tcpout` | Y |

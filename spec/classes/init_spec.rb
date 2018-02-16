@@ -620,4 +620,37 @@ describe 'splunk' do
     it { should contain_file('/opt/splunkforwarder/etc/apps/puppet_common_thruput_base/local/limits.conf').with_content(/\[thruput\]\nmaxKBps = 5000/) }
   end
 
+  context 'with sslpassword set' do
+    let(:params) { 
+      {
+        :inputport => 9997,
+        :reuse_puppet_certs => false,
+        :sslcertpath => 'server.pem',
+        :sslrootcapath => 'cacert.pem',
+        :sslpassword => 'password',
+      }
+    }
+    it { should contain_class('splunk::installed') }
+    it { should contain_package('splunk') }
+    it { should contain_file('/opt/splunk/etc/apps/puppet_common_ssl_inputs/local/inputs.conf').with_content(/sslPassword = password/) }
+    it { should contain_file('/opt/splunk/etc/apps/puppet_common_ssl_base/local/server.conf').with_content(/sslPassword = password/) }
+  end
+
+  context 'with sslverifyservercert set' do
+    let(:params) { 
+      {
+        :type => 'uf',
+        :tcpout => 'server:9997',
+        :sslcertpath => 'server.pem',
+        :sslrootcapath => 'cacert.pem',
+        :sslpassword => 'password',
+        :sslverifyservercert => ['splunkd', 'outputs'],
+      }
+    }
+    it { should contain_class('splunk::installed') }
+    it { should contain_package('splunkforwarder') }
+    it { should contain_file('/opt/splunkforwarder/etc/apps/puppet_common_ssl_outputs/local/outputs.conf').with_content(/sslVerifyServerCert = true/) }
+    it { should contain_file('/opt/splunkforwarder/etc/apps/puppet_common_ssl_base/local/server.conf').with_content(/sslVerifyServerCert = true/) }
+  end
+
 end

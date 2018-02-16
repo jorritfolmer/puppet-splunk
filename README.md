@@ -89,6 +89,7 @@ node 'splunk-server.internal.corp.tld' {
     reuse_puppet_certs => false,
     sslcertpath        => 'server.pem',
     sslrootcapath      => 'cacert.pem',
+    sslpassword        => 'password',
   }
 }
 ```
@@ -105,6 +106,7 @@ node 'splunk-server.internal.corp.tld' {
     reuse_puppet_certs => false,
     sslcertpath        => 'server.pem',
     sslrootcapath      => 'cacert.pem',
+    sslpassword        => 'password',
   }
 }
 ```
@@ -171,6 +173,7 @@ node 'splunk-server.internal.corp.tld' {
     reuse_puppet_certs => false,
     sslcertpath        => 'server.pem',
     sslrootcapath      => 'cacert.pem',
+    sslpassword        => 'password',
   }
 }
 
@@ -181,6 +184,7 @@ node 'some-server.internal.corp.tld' {
     reuse_puppet_certs => false,
     sslcertpath        => 'server.pem',
     sslrootcapath      => 'cacert.pem',
+    sslpassword        => 'password',
   }
 }
 ```
@@ -782,6 +786,10 @@ Windows on a share that is accessible from all your Windows servers.
 
    Note that the path is relative to $SPLUNK_HOME/etc/auth/
 
+#### `sslpassword`
+
+   Optional. Specify the password for the RSA key. Can be plaintext or a Splunk hash. For a Splunk hash you should also specify the Splunk secret.
+
 #### `admin`
 
   Optional. Used to create a local admin user with predefined hash, full
@@ -893,6 +901,27 @@ Windows on a share that is accessible from all your Windows servers.
 
   ```
   requireclientcert => 'inputs',
+  ```
+
+#### `sslverifyservercert`
+
+  Optional. Used on a client to require servers to present an SSL certificate from the same CA as the client.
+  Can be an array with:
+
+  - `outputs`: require servers to present a certificate when sending data to Splunk
+  - `splunkd`: require deployment servers and search peers to present a certificate from the same CA
+
+
+  For example require both splunkd and outputs connections to present a certificate from the same CA:
+
+  ```
+  sslverifyservercert => ['splunkd','outputs'],
+  ```
+
+  Or only require Splunk indexers to present a certificate with the same CA when sending data;
+
+  ```
+  sslverifyservercert => 'outputs',
   ```
 
 #### `secret`
