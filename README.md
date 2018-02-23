@@ -995,14 +995,15 @@ These people haves contributed pull requests, issues, ideas or otherwise spent t
 
 - Chris Bowles (cbowlesUT)
 - Dimitri Tischenko (timidri)
+- dkangel37
 - FlorinTar
 - jsushetski
 - Michael Fyffe (TraGicCode)
 - Miro (mirogta)
 - Nate McCurdy (natemccurdy)
 - negast
-- Steve Myers (stmyers)
 - RampentPotato
+- Steve Myers (stmyers)
 - TheChuckMo
 
 ## License

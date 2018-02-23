@@ -1,3 +1,7 @@
+### 3.9.1
+
+- Fixed issue where splunk first time run would happen before install
+
 ### 3.9.0
 
 - Add setting to control maxKBps in limits.conf
