@@ -1,3 +1,7 @@
+### 3.9.2
+
+- Added section to configure Splunk class in Puppet Enterprise web interface
+
 ### 3.9.1
 
 - Fixed issue where splunk first time run would happen before install

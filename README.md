@@ -134,6 +134,13 @@ node 'some-server.internal.corp.tld' {
 }
 ```
 
+If you're using the Puppet Enterprise web interface, type "splunk" at the Add
+new class input and configure the parameters like httpport, inputport etc like
+in the screenshot below:
+
+![Using Puppet enterprise web interface to add Splunk class](https://raw.githubusercontent.com/jorritfolmer/puppet-splunk/master/puppet_enterprise_add_splunk_class.png)
+
+
 The equivalent for Windows environments:
 
 ```puppet
