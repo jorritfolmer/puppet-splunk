@@ -1,6 +1,8 @@
 ### 3.9.2
 
 - Added section to configure Splunk class in Puppet Enterprise web interface
+- Removed documentation reference to unimplemented splunk_home parameter
+- Fixed server.conf template spacing issue causing restart loops when notifying an Exec
 
 ### 3.9.1
 

@@ -724,11 +724,6 @@ Windows on a share that is accessible from all your Windows servers.
 
   Optional. Bind to this specific IP instead of 0.0.0.0
 
-#### `splunk_home`
-
-  Optional. Used if you're running Splunk outside of /opt/splunk or
-  /opt/splunkforwarder.
-
 #### `splunk_db`
 
   Optional. Used to set the location where Splunk stores its indexes. Unsupported on Windows instances.
@@ -1010,6 +1005,7 @@ These people haves contributed pull requests, issues, ideas or otherwise spent t
 - Nate McCurdy (natemccurdy)
 - negast
 - RampentPotato
+- Ryan (vidkun)
 - Steve Myers (stmyers)
 - TheChuckMo
 
