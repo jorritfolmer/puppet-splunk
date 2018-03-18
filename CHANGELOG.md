@@ -1,3 +1,7 @@
+### 3.9.3
+
+- Fixed authentication.conf template spacing issue causing restart loopt when notifying an Exec
+
 ### 3.9.2
 
 - Added section to configure Splunk class in Puppet Enterprise web interface
