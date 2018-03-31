@@ -373,11 +373,8 @@ On the ADFS side:
    
    ![ADFS get attributes claim rule for Splunk](https://raw.githubusercontent.com/jorritfolmer/puppet-splunk/master/adfs_claim_rules_get_attrs.png)
 
-1. import the Splunk Root CA (/opt/splunk/etc/auth/cacert.pem) in the Trusted Root Certificates store of the Windows server,
-1. If you're using your own certificates: `Set-ADFSRelyingPartyTrust -TargetIdentifier splunk-sh1.internal.corp.tld -EncryptionCertificateRevocationCheck none`
-1. If you're using your own certificates: `Set-ADFSRelyingPartyTrust -TargetIdentifier splunk-sh1.internal.corp.tld -SigningCertificateRevocationCheck none`
-1. `Set-ADFSRelyingPartyTrust -TargetIdentifier splunk-sh1.internal.corp.tld -EncryptClaims $False`
-1. `Set-ADFSRelyingPartyTrust -TargetIdentifier splunk-sh1.internal.corp.tld -SignedSamlRequestsRequired $False`, otherwise you'll find messages like these in the Windows Eventlog: `System.NotSupportedException: ID6027: Enveloped Signature Transform cannot be the last transform in the chain.`
+1. Disable EncryptClaims on the ADFS side: Splunk only supports signed SAML responses: `Set-ADFSRelyingPartyTrust -TargetIdentifier splunk-sh1.internal.corp.tld -EncryptClaims $False`
+1. Disable SigningCertificateRevocationCheck on the ADFS side if you're using your own self signed certificates without CRL: `Set-ADFSRelyingPartyTrust -TargetIdentifier splunk-sh1.internal.corp.tld -SigningCertificateRevocationCheck none`
 
 You can use the SAML tracer Firefox plugin to see what gets posted to Splunk via ADFS after a succesful authentication. The relevant part should look something like this:
 
@@ -414,6 +411,33 @@ You can use the SAML tracer Firefox plugin to see what gets posted to Splunk via
         ...
 ```
 
+#### ADFS troubleshooting
+
+The Splunk provided SPMetadata.xml only covers the main parameters for a Relaying Party Trust. This means there is a possibility for settings between Splunk and ADFS to diverge. For example regarding hashing with SHA-1 or SHA-256, CRL checking, Claim encryption etc.
+
+Get the ADFS relaying party trust settings from the ADFS server, e.g. through powershell: `Get-AdfsRelyingPartyTrust -Identifier host11.testlab.local`. Configuration settings to check:
+
+- SigningCertificateRevocationCheck: should be None for self-signed certs
+- EncryptClaims: should be $false because Splunk only supports signed claims
+- Identifier: should match the entityId in Splunk's authentication.conf
+- SignedSamlRequestsRequired: should be $true if you don't want your samlrequests to be man-in-the-middled
+- SignatureAlgorithm: should match the one in Splunk's authentication.conf, defaults to SHA-1, on ADFS defaults to SHA-256
+
+These are some error conditions you may encounter with Splunk and ASFS 3.0 on Server 2012R2 or ADFS 4.0 on Server 2016:
+
+| Splunk | ADFS | Error | Solution
+|--------|------|-------|-----------
+|  X     |      | IDP failed to authenticate request. Status Message="" Status Code="Responder" | Splunk received a "urn:oasis:names:tc:SAML:2.0:status:Responder" code in the SAML response. Check the AD FS/Admin event log channel on the AD FS server.
+|  X     |      | The '/samlp:Response/saml:Assertion' field in the saml response from the IdP does not match the configuration. Ensure the configuration in Splunk matches the configuration in the IdP. | Disable EncryptClaims on the ADFS side. Splunk only supports signed SAML responses, non encrypted ones.
+|       |   X   | SamlProtocolSignatureAlgorithmMismatchExeption: MSIS7093: The message is not signed with expected signature algorithm. Message is signed with signature algorithm http://www.w3.org/2000/09/xmldsig#rsa sha1. Expected signature algorithm http://www.w3.org/2001/04/xmldsig-more#rsa-sha256. | AD FS expects a SHA256 hash in the SAML request, but probably gets a SHA1 which is the Splunk default. Change the hash to SHA1 in the AD FS Relaying Trust properties -> Advanced. Or upgrade the `signatureAlgorithm` in Splunk's authentication.conf
+|        |  X   | "An error occurred"  with RequestFailedException: MSIS7065: There are no registered protocol handlers on path /adfs/ls to process the incoming request. | Don't use a private browser window
+|        |  X   |  "An error occurred" with AD FS / Admin / Event ID 364: Exception details: System.UriFormatException: Invalid URI: The format of the URI could not be determined. | There is a mismatch between the entityId as declared in Splunks authentication.conf and AD FS Relaying Party Identifier. They should be the same.
+|        |  X   | Exception details: System.ArgumentOutOfRangeException: Not a valid Win32 FileTime. Parameter name: fileTime | This appears to happen when a user logs in with the canonical domain name e.g. ad\user, instead of user@ad.org.tld or ad.org.tld\user. Authentication succeeds in all 3 cases, but only 2 without error.
+|        |  X   | SamlProtocolSignatureVerificationException: MSIS7085: The server requires a signed SAML authentication request but no signature is present. | Splunk doesn't sign SAML requests but the IdP requires it.
+|        |  X   | On logout "An error occurred" with AD FS / Admin / Event ID 364:System.ArgumentNullException: Value cannot be null. Parameter name: collection | This happens on ADFS 4.0 servers and is supposed to be fixed with a june 2017 Microsoft KB
+|        |  X   | RevocationValidationException: MSIS3015: The signing certificate of the claims provider trust 'somehost' identified by thumbprint '33BC4ABFF11151559240DE9CA2C95C632C3E321B' is not valid | If you're using self-signed certificates disable signing certificate revocation checking
+|        |  X   | System.NotSupportedException: ID6027: Enveloped Signature Transform cannot be the last transform in the chain. | Set Splunk to NOT sign outgoing SAML requests, and require ADFS to not require signed requests. This happened on older Splunk versions that sent malformed signatures.
+|   X    |      | Verification of SAML assertion using the IDP's certificate provided failed. Unknown signer of SAML response | Splunk doesn't use the right certificate to validate SAML responses. Splunk should have the ADFS "Token signing certificate" to verify assertions. Specify this certificate in authentication.conf under `idpCertPath`
 
 ### Example 6
 

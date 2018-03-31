@@ -1,3 +1,8 @@
+### 3.10.0
+
+- Added ADFS troubleshooting
+- Changed defaults to require signing outgoing requests, and receiving signed responses
+
 ### 3.9.3
 
 - Fixed authentication.conf template spacing issue causing restart loopt when notifying an Exec

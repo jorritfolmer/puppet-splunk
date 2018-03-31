@@ -1,6 +1,6 @@
 {
   "name": "jorritfolmer-splunk",
-  "version": "3.9.3",
+  "version": "3.10.0",
   "author": "Jorrit Folmer",
   "summary": "Deploy Splunk indexers, search heads and universal forwarders into any imaginable topology, distributed or (multisite) clustered.",
   "license": "MIT",

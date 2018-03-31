@@ -42,13 +42,7 @@ class splunk::authentication
           $idpslourl                  = "${auth['saml_idpurl']}?wa=wsignout1.0"
           $idpssourl                  = $auth['saml_idpurl']
           $idpcertpath                = "${splunk_home}/etc/auth/idpcert.crt"
-          # sending signed AuthnRequests from Splunk to ADFS needs to be
-          # disabled, otherwise the EventLog will greet you with erorrs like
-          # ID6027: Enveloped Signature Transform cannot be the last transform
-          # in the chain.
-          $signauthnrequest           = false
-          # luckily, Splunk is able to process incoming signed assertions,
-          # through, on the ADFS side claim encryption needs to be disabled
+          $signauthnrequest           = true
           $signedassertion            = true
         }
         default:    {
