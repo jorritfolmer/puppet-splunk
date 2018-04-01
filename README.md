@@ -438,6 +438,7 @@ These are some error conditions you may encounter with Splunk and ASFS 3.0 on Se
 |        |  X   | RevocationValidationException: MSIS3015: The signing certificate of the claims provider trust 'somehost' identified by thumbprint '33BC4ABFF11151559240DE9CA2C95C632C3E321B' is not valid | If you're using self-signed certificates disable signing certificate revocation checking
 |        |  X   | System.NotSupportedException: ID6027: Enveloped Signature Transform cannot be the last transform in the chain. | Set Splunk to NOT sign outgoing SAML requests, and require ADFS to not require signed requests. This happened on older Splunk versions that sent malformed signatures.
 |   X    |      | Verification of SAML assertion using the IDP's certificate provided failed. Unknown signer of SAML response | Splunk doesn't use the right certificate to validate SAML responses. Splunk should have the ADFS "Token signing certificate" to verify assertions. Specify this certificate in authentication.conf under `idpCertPath`
+|   X    |      | The 'NotBefore' condition could not be verified successfully. The saml response is not valid. | Splunk received a SAML response with a NotBefore data in the future. Ensure NTP is deployed and working on all participating systems. If NTP is deployed but there is a small subsecond drift, you could also adjust the NotBeforeSkew setting with Powershell on the ADFS side to 1 minute. Even if `ntpq -pn` show a positive drift of only 100 ms, this will become an issue because the SAML response includes a NotBefore with millisecond resolution.
 
 ### Example 6
 
@@ -896,6 +897,9 @@ Windows on a share that is accessible from all your Windows servers.
   - `authtype` (can be one of `Splunk`,`LDAP`,`SAML`)
   - `saml_idptype` (specifies the SAML identity provider type to use, currently only supports `ADFS`)
   - `saml_idpurl` (specifies the base url for the identity provider, for ADFS IdP's this will be something like https://sso.corp.tld/adfs/ls )
+  - `saml_signauthnrequest` (sign outgoing SAML requests to ADFS: defaults to true)
+  - `saml_signedassertion` (expect assertions from ADFS to be signed: defaults to true)
+  - `saml_signaturealgorithm`: (specifies the signature algorithm to hash requests to ADFS with, and support responses from ADFS.)
   - `ldap_host`
   - `ldap_binddn`
   - `ldap_binddnpassword`

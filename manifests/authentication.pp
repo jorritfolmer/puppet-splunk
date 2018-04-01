@@ -33,17 +33,14 @@ class splunk::authentication
     }
 
     'SAML':         {
+      $auth_defaults = $splunk::params::auth
       case $auth['saml_idptype'] {
         'ADFS':     {
-          $attributequerysoappassword = 'unimportant'
-          $attributequerysoapusername = 'unimportant'
           $entityid                   = $::fqdn
           $idpattributequeryurl       = $auth['saml_idpurl']
           $idpslourl                  = "${auth['saml_idpurl']}?wa=wsignout1.0"
           $idpssourl                  = $auth['saml_idpurl']
-          $idpcertpath                = "${splunk_home}/etc/auth/idpcert.crt"
-          $signauthnrequest           = true
-          $signedassertion            = true
+          # other parameters are set in the erb template
         }
         default:    {
           fail 'Unsupported Identity Provider' }
