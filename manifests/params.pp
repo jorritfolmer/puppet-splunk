@@ -57,6 +57,8 @@ class splunk::params (
     'saml_signauthnrequest'     => true,
     'saml_signedassertion'      => true,
     'saml_signaturealgorithm'   => 'RSA-SHA256',
+    'saml_fqdn'                 => undef,
+    'saml_entityid'             => undef,
     'ldap_anonymousreferrals'   => undef,
     'ldap_binddn'               => undef,
     'ldap_binddnpassword'       => undef,

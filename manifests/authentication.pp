@@ -36,7 +36,6 @@ class splunk::authentication
       $auth_defaults = $splunk::params::auth
       case $auth['saml_idptype'] {
         'ADFS':     {
-          $entityid                   = $::fqdn
           $idpattributequeryurl       = $auth['saml_idpurl']
           $idpslourl                  = "${auth['saml_idpurl']}?wa=wsignout1.0"
           $idpssourl                  = $auth['saml_idpurl']

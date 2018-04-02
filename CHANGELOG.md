@@ -1,3 +1,7 @@
+### 3.10.1
+
+- Added SAML parameters to configure Search Head Clustering with ADFS
+
 ### 3.10.0
 
 - Added ADFS troubleshooting

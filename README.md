@@ -361,6 +361,24 @@ node 'splunk-sh.internal.corp.tld' {
 }
 ```
 
+To enable ADFS SAML authentication in a Search Head Clustering, add fqdn and entityid parameters:
+
+```
+node 'splunk-sh01.internal.corp.tld' {
+  class { 'splunk':
+    ...
+    auth            => { 
+      authtype      => 'SAML',
+      saml_idptype  => 'ADFS',
+      saml_idpurl   => 'https://sso.internal.corp.tld/adfs/ls',
+      saml_fqdn     => 'https://splunk.internal.corp.tld:8000',
+      sqml_entityid => 'splunk.internal.corp.tld',
+    },
+    ...
+  }
+}
+```
+
 On the ADFS side:
 
 1. Add a new Relying Party Trust, by importing the XML from `https://splunk-sh.internal.corp.tld/saml/spmetadata`. Since this metadata is kept behind a Splunk login, you'll have to:
