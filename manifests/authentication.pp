@@ -36,10 +36,7 @@ class splunk::authentication
       $auth_defaults = $splunk::params::auth
       case $auth['saml_idptype'] {
         'ADFS':     {
-          $idpattributequeryurl       = $auth['saml_idpurl']
-          $idpslourl                  = "${auth['saml_idpurl']}?wa=wsignout1.0"
-          $idpssourl                  = $auth['saml_idpurl']
-          # other parameters are set in the erb template
+          # parameters are set in the erb template
         }
         default:    {
           fail 'Unsupported Identity Provider' }
