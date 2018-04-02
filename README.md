@@ -41,6 +41,18 @@ node 'splunk-server.internal.corp.tld' {
 }
 ```
 
+(The equivalent in Hiera YAML format:)
+
+```yaml
+---
+classes:
+  - splunk
+
+splunk::httpport:         8000
+splunk::kvstoreport:      8191
+splunk::inputport:        9997
+```
+
 Or define a single standalone Splunk instance on Windows with:
 
 ```puppet
@@ -54,10 +66,24 @@ node 'splunk-server.internal.corp.tld' {
 }
 ```
 
+(The equivalent in Hiera YAML format:)
+
+```yaml
+---
+classes:
+  - splunk
+
+splunk::httpport:         8000
+splunk::kvstoreport:      8191
+splunk::inputport:        9997
+splunk::package_source:   //dc01/Company/splunk-6.6.1-aeae3fe0c5af-x64-release.msi
+```
+
+
 See the other examples below for more elaborate topologies.
 
 
-## Puppet-Splunk installation
+## Installation
 
 1. SSH to your Puppet master
 2. `cd /etc/puppet/modules` or `cd /etc/puppetlabs/code/environments/production/modules`, depending on your Puppet version
@@ -134,13 +160,6 @@ node 'some-server.internal.corp.tld' {
 }
 ```
 
-If you're using the Puppet Enterprise web interface, type "splunk" at the Add
-new class input and configure the parameters like httpport, inputport etc like
-in the screenshot below:
-
-![Using Puppet enterprise web interface to add Splunk class](https://raw.githubusercontent.com/jorritfolmer/puppet-splunk/master/puppet_enterprise_add_splunk_class.png)
-
-
 The equivalent for Windows environments:
 
 ```puppet
@@ -165,7 +184,7 @@ node 'some-server.internal.corp.tld' {
 ### Example 2b: 
 
 Almost identical to example 2a, except with some SSL downgrading, not suitable for production.
-This will allow non-Puppetized Splunk clients to connect to the various servicessince the default Splunk config isn't compatible with modern compability. Setting the deploymentserver to intermediate compatibility will allow these clients to make the initial connection, after which you can deploy a common_ssl_base config app to them with modern ssl compatibility.
+This will allow non-Puppetized Splunk clients to connect to the various services since the default Splunk config isn't compatible with SSL modern compability. Setting the deployment server to intermediate compatibility will allow these clients to make the initial connection, after which you can deploy a common_ssl_base config app to them with modern ssl compatibility.
 The manifest below will also use the Splunk provided non-production certificates, instead of the ones signed by the Puppet CA.
 
 ![Splunk instance with forwarder in hybrid environments](https://raw.githubusercontent.com/jorritfolmer/puppet-splunk/master/example2.png)
@@ -198,11 +217,11 @@ node 'some-server.internal.corp.tld' {
 
 ### Example 3: 
 
-One deployment/license server, one search head, and two indexers.
+This example deploys one deployment/license server, one search head, and two indexers.
 Note that for the search head to add the indexer as its search peer, the
 indexer needs to be running **before** the search head manifest is executed.
 This means that you'll have to manage intra-node dependencies manually or
-through an orchestration tool like Terraform.
+through an orchestration tool like Terraform or Ansible.
 
 ![Splunk topology with indexer, search head and deployment server](https://raw.githubusercontent.com/jorritfolmer/puppet-splunk/master/example3.png)
 
@@ -345,7 +364,7 @@ node 'splunk-idx1.internal.corp.tld',
 
 ### Example 5
 
-Enabling Single Sign-On through Active Directory Federation Services (ADFS) as an Identity provider:
+This snippet enables Single Sign-On on the Search Head through Active Directory Federation Services (ADFS) as an Identity provider. See the chapter "Splunk with ADFS" for more details and troubleshooting.
 
 ```
 node 'splunk-sh.internal.corp.tld' {
@@ -361,7 +380,7 @@ node 'splunk-sh.internal.corp.tld' {
 }
 ```
 
-To enable ADFS SAML authentication in a Search Head Clustering, add fqdn and entityid parameters:
+To enable ADFS SAML authentication in a Search Head Cluster, add fqdn and entityid parameters:
 
 ```
 node 'splunk-sh01.internal.corp.tld' {
@@ -379,88 +398,9 @@ node 'splunk-sh01.internal.corp.tld' {
 }
 ```
 
-On the ADFS side:
-
-1. Add a new Relying Party Trust, by importing the XML from `https://splunk-sh.internal.corp.tld/saml/spmetadata`. Since this metadata is kept behind a Splunk login, you'll have to:
-
-    - first browse to `https://splunk-sh.internal.corp.tld/account/login?loginType=Splunk`
-    - then browse to `https://splunk-sh.internal.corp.tld/saml/spmetadata`, and copy/paste the SAML metadata XML to the Windows server. 
-    - import the SAML metadata XML from the relying party (Splunk) from a file
-
-1. Add a new claim rule to map Active Directory attributes to new claims
-   
-   ![ADFS get attributes claim rule for Splunk](https://raw.githubusercontent.com/jorritfolmer/puppet-splunk/master/adfs_claim_rules_get_attrs.png)
-
-1. Disable EncryptClaims on the ADFS side: Splunk only supports signed SAML responses: `Set-ADFSRelyingPartyTrust -TargetIdentifier splunk-sh1.internal.corp.tld -EncryptClaims $False`
-1. Disable SigningCertificateRevocationCheck on the ADFS side if you're using your own self signed certificates without CRL: `Set-ADFSRelyingPartyTrust -TargetIdentifier splunk-sh1.internal.corp.tld -SigningCertificateRevocationCheck none`
-
-You can use the SAML tracer Firefox plugin to see what gets posted to Splunk via ADFS after a succesful authentication. The relevant part should look something like this:
-
-```
-        ...
-        <Subject>
-            <NameID>jfolmer@testlab.local</NameID>
-            <SubjectConfirmation Method="urn:oasis:names:tc:SAML:2.0:cm:bearer">
-                <SubjectConfirmationData InResponseTo="host15.testlab.local.12.AF9F4C1A-EAEA-4EF5-A501-E57AB33D7776"
-                                         NotOnOrAfter="2016-11-04T21:23:34.597Z"
-                                         Recipient="https://host15.testlab.local:8000/saml/acs"
-                                         />
-            </SubjectConfirmation>
-        </Subject>
-        <Conditions NotBefore="2016-11-04T21:18:34.581Z"
-                    NotOnOrAfter="2016-11-04T22:18:34.581Z"
-                    >
-            <AudienceRestriction>
-                <Audience>host15.testlab.local</Audience>
-            </AudienceRestriction>
-        </Conditions>
-        <AttributeStatement>
-            <Attribute Name="http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name">
-                <AttributeValue>Jorrit Folmer</AttributeValue>
-            </Attribute>
-            <Attribute Name="http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress">
-                <AttributeValue>jfolmer@testlab.local</AttributeValue>
-            </Attribute>
-            <Attribute Name="http://schemas.microsoft.com/ws/2008/06/identity/claims/role">
-                <AttributeValue>Domain Users</AttributeValue>
-                <AttributeValue>Splunk Admins</AttributeValue>
-            </Attribute>
-        </AttributeStatement>
-        ...
-```
-
-#### ADFS troubleshooting
-
-The Splunk provided SPMetadata.xml only covers the main parameters for a Relaying Party Trust. This means there is a possibility for settings between Splunk and ADFS to diverge. For example regarding hashing with SHA-1 or SHA-256, CRL checking, Claim encryption etc.
-
-Get the ADFS relaying party trust settings from the ADFS server, e.g. through powershell: `Get-AdfsRelyingPartyTrust -Identifier host11.testlab.local`. Configuration settings to check:
-
-- SigningCertificateRevocationCheck: should be None for self-signed certs
-- EncryptClaims: should be $false because Splunk only supports signed claims
-- Identifier: should match the entityId in Splunk's authentication.conf
-- SignedSamlRequestsRequired: should be $true if you don't want your samlrequests to be man-in-the-middled
-- SignatureAlgorithm: should match the one in Splunk's authentication.conf, defaults to SHA-1, on ADFS defaults to SHA-256
-
-These are some error conditions you may encounter with Splunk and ASFS 3.0 on Server 2012R2 or ADFS 4.0 on Server 2016:
-
-| Splunk | ADFS | Error | Solution
-|--------|------|-------|-----------
-|  X     |      | IDP failed to authenticate request. Status Message="" Status Code="Responder" | Splunk received a "urn:oasis:names:tc:SAML:2.0:status:Responder" code in the SAML response. Check the AD FS/Admin event log channel on the AD FS server.
-|  X     |      | The '/samlp:Response/saml:Assertion' field in the saml response from the IdP does not match the configuration. Ensure the configuration in Splunk matches the configuration in the IdP. | Disable EncryptClaims on the ADFS side. Splunk only supports signed SAML responses, non encrypted ones.
-|       |   X   | SamlProtocolSignatureAlgorithmMismatchExeption: MSIS7093: The message is not signed with expected signature algorithm. Message is signed with signature algorithm http://www.w3.org/2000/09/xmldsig#rsa sha1. Expected signature algorithm http://www.w3.org/2001/04/xmldsig-more#rsa-sha256. | AD FS expects a SHA256 hash in the SAML request, but probably gets a SHA1 which is the Splunk default. Change the hash to SHA1 in the AD FS Relaying Trust properties -> Advanced. Or upgrade the `signatureAlgorithm` in Splunk's authentication.conf
-|        |  X   | "An error occurred"  with RequestFailedException: MSIS7065: There are no registered protocol handlers on path /adfs/ls to process the incoming request. | Don't use a private browser window
-|        |  X   |  "An error occurred" with AD FS / Admin / Event ID 364: Exception details: System.UriFormatException: Invalid URI: The format of the URI could not be determined. | There is a mismatch between the entityId as declared in Splunks authentication.conf and AD FS Relaying Party Identifier. They should be the same.
-|        |  X   | Exception details: System.ArgumentOutOfRangeException: Not a valid Win32 FileTime. Parameter name: fileTime | This appears to happen when a user logs in with the canonical domain name e.g. ad\user, instead of user@ad.org.tld or ad.org.tld\user. Authentication succeeds in all 3 cases, but only 2 without error.
-|        |  X   | SamlProtocolSignatureVerificationException: MSIS7085: The server requires a signed SAML authentication request but no signature is present. | Splunk doesn't sign SAML requests but the IdP requires it.
-|        |  X   | On logout "An error occurred" with AD FS / Admin / Event ID 364:System.ArgumentNullException: Value cannot be null. Parameter name: collection | This happens on ADFS 4.0 servers and is supposed to be fixed with a june 2017 Microsoft KB
-|        |  X   | RevocationValidationException: MSIS3015: The signing certificate of the claims provider trust 'somehost' identified by thumbprint '33BC4ABFF11151559240DE9CA2C95C632C3E321B' is not valid | If you're using self-signed certificates disable signing certificate revocation checking
-|        |  X   | System.NotSupportedException: ID6027: Enveloped Signature Transform cannot be the last transform in the chain. | Set Splunk to NOT sign outgoing SAML requests, and require ADFS to not require signed requests. This happened on older Splunk versions that sent malformed signatures.
-|   X    |      | Verification of SAML assertion using the IDP's certificate provided failed. Unknown signer of SAML response | Splunk doesn't use the right certificate to validate SAML responses. Splunk should have the ADFS "Token signing certificate" to verify assertions. Specify this certificate in authentication.conf under `idpCertPath`
-|   X    |      | The 'NotBefore' condition could not be verified successfully. The saml response is not valid. | Splunk received a SAML response with a NotBefore data in the future. Ensure NTP is deployed and working on all participating systems. If NTP is deployed but there is a small subsecond drift, you could also adjust the NotBeforeSkew setting with Powershell on the ADFS side to 1 minute. Even if `ntpq -pn` show a positive drift of only 100 ms, this will become an issue because the SAML response includes a NotBefore with millisecond resolution.
-
 ### Example 6
 
-Use LDAP as an authentication provider, e.g. with Active Directory. The example below also maps 2 groups in AD to Splunk admin, and 1 group to Splunk user.
+This snippet enables LDAP authentication on a Search Head, e.g. with Active Directory. The example below also maps 2 groups in AD to Splunk admin, and 1 group to Splunk user.
 
 ```
 node 'splunk-sh.internal.corp.tld' {
@@ -524,8 +464,10 @@ node 'splunk-shd.internal.corp.tld' {
 Steps:
 
 1. Do a puppet run on the SH deployer and SH cluster nodes, but don't start Splunk yet.
-2. Copy the $SPLUNK_HOME/etc/apps/puppet_* directories created by Puppet from a SH cluster node to etc/shcluster/apps/ on the SH deployer
+2. Copy the $SPLUNK_HOME/etc/apps/puppet_* directories created by Puppet from one of the Search Head Cluster nodes to etc/shcluster/apps/ on the Search Head Deployer
+3. Disable Puppet on the Search Head Cluster nodes to prevent Puppet from interfering with the configuration bundle pushes from the Search Head Deployer.
 3. Start the SH deployer and the SH cluster nodes
+4. Do an apply shcluster-bundle on the Search Head Deployer
 4. Perform a `splunk bootstrap shcluster-captain -servers_list "https://splunk-sh1.internal.corp.tld:8089,https://splunk-sh2.internal.corp.tld:8089,https://splunk-sh1.internal.corp.tld:8089" -auth admin:changemeagain
 
 ### Example 8
@@ -642,6 +584,97 @@ node 'some-server.internal.corp.tld' {
 
 ```
 
+## Puppet Enterprise
+
+If you're using the Puppet Enterprise web interface, type "splunk" at the Add
+new class input and configure the parameters like httpport, inputport etc like
+in the screenshot below:
+
+![Using Puppet enterprise web interface to add Splunk class](https://raw.githubusercontent.com/jorritfolmer/puppet-splunk/master/puppet_enterprise_add_splunk_class.png)
+
+## Splunk with ADFS 
+
+### Setup
+
+1. Add a new Relying Party Trust in AD FS Management Console, by importing the XML from `https://splunk-sh.internal.corp.tld/saml/spmetadata`. Since this metadata is kept behind a Splunk login, you'll have to:
+
+    - first browse to `https://splunk-sh.internal.corp.tld/account/login?loginType=Splunk`
+    - then browse to `https://splunk-sh.internal.corp.tld/saml/spmetadata`, and copy/paste the SAML metadata XML to the Windows server. 
+    - import the SAML metadata XML from the relying party (Splunk) from a file
+
+1. Add a new claim rule to map Active Directory attributes to new claims
+   
+   ![ADFS get attributes claim rule for Splunk](https://raw.githubusercontent.com/jorritfolmer/puppet-splunk/master/adfs_claim_rules_get_attrs.png)
+
+1. Disable EncryptClaims on the ADFS side: Splunk only supports signed SAML responses: `Set-ADFSRelyingPartyTrust -TargetIdentifier splunk-sh1.internal.corp.tld -EncryptClaims $False`
+1. Disable SigningCertificateRevocationCheck on the ADFS side if you're using your own self signed certificates without CRL: `Set-ADFSRelyingPartyTrust -TargetIdentifier splunk-sh1.internal.corp.tld -SigningCertificateRevocationCheck none`
+
+You can use the SAML tracer Firefox plugin to see what gets posted to Splunk via ADFS after a succesful authentication. The relevant part should look something like this:
+
+```
+        ...
+        <Subject>
+            <NameID>jfolmer@testlab.local</NameID>
+            <SubjectConfirmation Method="urn:oasis:names:tc:SAML:2.0:cm:bearer">
+                <SubjectConfirmationData InResponseTo="host15.testlab.local.12.AF9F4C1A-EAEA-4EF5-A501-E57AB33D7776"
+                                         NotOnOrAfter="2016-11-04T21:23:34.597Z"
+                                         Recipient="https://host15.testlab.local:8000/saml/acs"
+                                         />
+            </SubjectConfirmation>
+        </Subject>
+        <Conditions NotBefore="2016-11-04T21:18:34.581Z"
+                    NotOnOrAfter="2016-11-04T22:18:34.581Z"
+                    >
+            <AudienceRestriction>
+                <Audience>host15.testlab.local</Audience>
+            </AudienceRestriction>
+        </Conditions>
+        <AttributeStatement>
+            <Attribute Name="http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name">
+                <AttributeValue>Jorrit Folmer</AttributeValue>
+            </Attribute>
+            <Attribute Name="http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress">
+                <AttributeValue>jfolmer@testlab.local</AttributeValue>
+            </Attribute>
+            <Attribute Name="http://schemas.microsoft.com/ws/2008/06/identity/claims/role">
+                <AttributeValue>Domain Users</AttributeValue>
+                <AttributeValue>Splunk Admins</AttributeValue>
+            </Attribute>
+        </AttributeStatement>
+        ...
+```
+
+### ADFS troubleshooting
+
+Steps:
+
+1. Get the ADFS relaying party trust settings from the ADFS server, e.g. through powershell: `Get-AdfsRelyingPartyTrust -Identifier host11.testlab.local`. Configuration settings to check:
+    - SigningCertificateRevocationCheck: should be None for self-signed certs
+    - EncryptClaims: should be $false because Splunk only supports signed claims
+    - Identifier: should match the entityId in Splunk's authentication.conf
+    - SignedSamlRequestsRequired: should be $true if you don't want your samlrequests to be man-in-the-middled
+    - SignatureAlgorithm: should match the one in Splunk's authentication.conf, defaults to SHA-1, on ADFS defaults to SHA-256
+2. Check the ADFS/Admin channel in the Windows Event Log for errors.
+
+The Splunk provided SPMetadata.xml only covers some parameters for a Relaying Party Trust. This means there is a possibility for settings between Splunk and ADFS to diverge. For example regarding hashing with SHA-1 or SHA-256, CRL checking, Claim encryption etc.
+
+Errors you may encounter with Splunk and ASFS 3.0 on Server 2012R2 or ADFS 4.0 on Server 2016:
+
+| Splunk | ADFS | Error | Solution
+|--------|------|-------|-----------
+|  X     |      | IDP failed to authenticate request. Status Message="" Status Code="Responder" | Splunk received a "urn:oasis:names:tc:SAML:2.0:status:Responder" code in the SAML response. Check the AD FS/Admin event log channel on the AD FS server.
+|  X     |      | The '/samlp:Response/saml:Assertion' field in the saml response from the IdP does not match the configuration. Ensure the configuration in Splunk matches the configuration in the IdP. | Disable EncryptClaims on the ADFS side. Splunk only supports signed SAML responses, non encrypted ones.
+|       |   X   | SamlProtocolSignatureAlgorithmMismatchExeption: MSIS7093: The message is not signed with expected signature algorithm. Message is signed with signature algorithm http://www.w3.org/2000/09/xmldsig#rsa sha1. Expected signature algorithm http://www.w3.org/2001/04/xmldsig-more#rsa-sha256. | AD FS expects a SHA256 hash in the SAML request, but probably gets a SHA1 which is the Splunk default. Change the hash to SHA1 in the AD FS Relaying Trust properties -> Advanced. Or upgrade the `signatureAlgorithm` in Splunk's authentication.conf
+|        |  X   | "An error occurred"  with RequestFailedException: MSIS7065: There are no registered protocol handlers on path /adfs/ls to process the incoming request. | Don't use a private browser window
+|        |  X   |  "An error occurred" with AD FS / Admin / Event ID 364: Exception details: System.UriFormatException: Invalid URI: The format of the URI could not be determined. | There is a mismatch between the entityId as declared in Splunks authentication.conf and AD FS Relaying Party Identifier. They should be the same.
+|        |  X   | Exception details: System.ArgumentOutOfRangeException: Not a valid Win32 FileTime. Parameter name: fileTime | Although the error message suggests time issues, this appears to happen only in some environments when a user logs in with the canonical domain name e.g. ad\user, instead of user@ad.org.tld or ad.org.tld\user. Authentication succeeds in all 3 cases, but only 2 without error.
+|        |  X   | SamlProtocolSignatureVerificationException: MSIS7085: The server requires a signed SAML authentication request but no signature is present. | Splunk doesn't sign SAML requests but the IdP requires it.
+|        |  X   | On logout "An error occurred" with AD FS / Admin / Event ID 364:System.ArgumentNullException: Value cannot be null. Parameter name: collection | This happens on ADFS 4.0 servers and is supposed to be fixed with a june 2017 Microsoft KB
+|        |  X   | RevocationValidationException: MSIS3015: The signing certificate of the claims provider trust 'somehost' identified by thumbprint '33BC4ABFF11151559240DE9CA2C95C632C3E321B' is not valid | If you're using self-signed certificates disable signing certificate revocation checking
+|        |  X   | System.NotSupportedException: ID6027: Enveloped Signature Transform cannot be the last transform in the chain. | Set Splunk to NOT sign outgoing SAML requests, and require ADFS to not require signed requests. This happened on older Splunk versions that sent malformed signatures.
+|   X    |      | Verification of SAML assertion using the IDP's certificate provided failed. Unknown signer of SAML response | Splunk doesn't use the right certificate to validate SAML responses. Splunk should have the ADFS "Token signing certificate" to verify assertions. Specify this certificate in authentication.conf under `idpCertPath`
+|   X    |      | The 'NotBefore' condition could not be verified successfully. The saml response is not valid. | Splunk received a SAML response with a NotBefore data in the future. Ensure NTP is deployed and working on all participating systems. If NTP is deployed but there is a small subsecond drift, you could also adjust the NotBeforeSkew setting with Powershell on the ADFS side to 1 minute. Even if `ntpq -pn` show a positive drift of only 100 ms, this will become an issue because the SAML response includes a NotBefore with millisecond resolution.
+
 ## Setting up a Splunk repository
 
 ### Red Hat/CentOS (YUM)
@@ -708,307 +741,297 @@ Windows on a share that is accessible from all your Windows servers.
 
 ## Parameters
 
-### Main splunk class
+### `admin`
 
-#### `type`
+Optional. Used to create a local admin user with predefined hash, full
+name and email This is a hash with 3 members:
 
-  Optional. When omitted it installs the Splunk server type.
-  Use `type => "uf"` if you want to have a Splunk Universal Forwarder.
-
-#### `httpport`
-
-  Optional. When omitted, it will not start Splunk web.
-  Set `httpport => 8000` if you do want to have Splunk web available.
-
-#### `kvstoreport`
-
-  Optional. When omitted, it will not start Mongodb.
-  Set `kvstoreport => 8191` if you do want to have KVstore available.
-
-#### `inputport`
-
-  Optional. When omitted, it will not start an Splunk2Splunk listener.
-  Set `kvstoreport => 9997` if you do want to use this instance as an indexer.
-
-#### `mgmthostport`
-
-  Optional. When omitted, Splunk defaults apply and Splunk will use the default 8089 port.
-  Set `mgmthostport => '127.0.0.1:9991' if you want to move the 8089 port to 9991` 
-  Set `mgmthostport => 'disable' if you want to disable the Splunk management port, for example on Universal Forwarders
-
-#### `tcpout`
-
-  Optional. When omitted, it will not forward events to a Splunk indexer.
-
-  Set `tcpout => 'splunk-idx1.internal.corp.tld:9997'` if you do want to
-  forward events to a Splunk indexer. 
-
-  Set `tcpout => 'indexer_discovery' if you want to use indexer discovery instead of specifying indexers manually. Requires specifying a cluster master through:
-
-  ```
-  clustering => {
-     cm      => 'splunk-cm.internal.corp.tld:8089'
-  }
-  ```
-
-#### `package_source`
-
-  Optional
-
-  * For Windows: Use this to point to the .msi installation file.
-  This can be a UNC path like \\DC01\Company\splunkforwarder-6.6.1-aeae3fe0c5af-x64-release.msi
-  * For Linux: Use this to point to the URL of a Splunk RPM file. WARNING: this will cause the entire RPM file to be downloaded at *every* Puppet run by the package provider, even though it is already installed. Create your own local repository if you don't want this.
-
-#### `splunk_os_user`
-
-  Optional. Run the Splunk instance as this user. Defaults to `splunk`
-
-#### `splunk_bindip`
-
-  Optional. Bind to this specific IP instead of 0.0.0.0
-
-#### `splunk_db`
-
-  Optional. Used to set the location where Splunk stores its indexes. Unsupported on Windows instances.
-
-  For 3.x releases of Puppet-Splunk this will only change the SPLUNK_DB variable in etc/splunk-launch.conf if set. If unset, it will not remove the setting to prevent surprises when it has been previously set manually.
-
-  For 4.x future releases this may change.
-
-#### `lm`
-
-  Optional. Used to point to a Splunk license manager.
-
-#### `ds`
-
-  Optional. Used to point to a Splunk deployment server
-
-#### `ds_intermediate`
-
-  Optional. Used to configure the deployment server as a deploymentclient.
-  This is useful if you want to retain one central deployment server instead of
-  multiple, for example one for each DMZ.  Defaults to undef.
-
-#### `repositorylocation`
-
-  Optional. Used to configure the location on the deployment client where the
-  incoming apps from the deployment server are stored. Use `master-apps` or
-  `shcluster/apps` if you want to use the deployment server to also deploy to
-  intermediate locations on the cluster master or search head deployer.
-
-#### `phonehomeintervalinsec`
-
-  Optional. Unsed to configure the phonehomeinterval of the deploymentclient.
-  Defaults to undef.
-
-#### `sslcompatibility`
-
-  Optional. Used to configure the SSL compatibility level as defined by
-  Mozilla Labs:  
-
-  - `modern` (default)
-  - `intermediate`
-  - `old`
-
-  Also see the Compatibility section below.
-
-#### `reuse_puppet_certs`
-
-   Optional. By default the certificates signed by the Puppet CA will be reused. However if you want to do some quick testing with non-Puppetized nodes, set this to `false`, and make sure to point `sslcertpath => 'server.pem'` and `sslrootcapath => 'cacert.pem'` to the default Splunk testing certs.
-
-   - `true` (default)
-   - `false`
-
-#### `sslcertpath`
-
-   Optional. Can be together with `reuse_puppet_certs => false` to point to either your own certificates, or to the default Splunk provided testing certficates.
-
-   Note that the path is relative to $SPLUNK_HOME/etc/auth/
-
-#### `sslrootcapath`
-
-   Optional. Can be together with `reuse_puppet_certs => false` to point to either your own CA certificates, or to the default Splunk provided testing CA certficates. 
-
-   Note that the path is relative to $SPLUNK_HOME/etc/auth/
-
-#### `sslpassword`
-
-   Optional. Specify the password for the RSA key. Can be plaintext or a Splunk hash. For a Splunk hash you should also specify the Splunk secret.
-
-#### `admin`
-
-  Optional. Used to create a local admin user with predefined hash, full
-  name and email This is a hash with 3 members:
-
-  - `hash` (SHA512 hash of the admin password. To generate the hash use one of:
-
+- `hash` (SHA512 hash of the admin password. To generate the hash use one of:
      -  `grub-crypt --sha-512` (RHEL/CENTOS)
      -  `mkpasswd -m sha-512`  (Debian)
      -  `python -c 'import crypt,getpass; print(crypt.crypt(getpass.getpass(), crypt.mksalt(crypt.METHOD_SHA512)))'`
+- `pass` (Plaintext password, only used for search heads to add search peers in distributed search)
+- `fn`   (Full name)
+- `email` (Email address)
 
-  - `pass` (Plaintext password, only used for search heads to add search peers in distributed search)
-  - `fn`   (Full name)
-  - `email` (Email address)
+  
+### `auth`
 
-#### `minfreespace`
+Optional. Used to configure Splunk authentication. 
+Currently supports 'Splunk' (default), 'SAML' and 'LDAP'.
+This is a hash with the following members:
 
-  Optional. Used to specify the minimum amount of freespace in kb before Splunk stops indexing data.
+- `authtype` (can be one of `Splunk`,`LDAP`,`SAML`)
+- `saml_idptype` (specifies the SAML identity provider type to use, currently only supports `ADFS`)
+- `saml_idpurl` (specifies the base url for the identity provider, for ADFS IdP's this will be something like https://sso.corp.tld/adfs/ls )
+- `saml_signauthnrequest` (sign outgoing SAML requests to ADFS: defaults to true)
+- `saml_signedassertion` (expect assertions from ADFS to be signed: defaults to true)
+- `saml_signaturealgorithm` (specifies the signature algorithm to hash requests to ADFS with, and support responses from ADFS.)
+- `saml_entityid` (defaults to $fqdn, override in search head clustering setups to make every search head use the same Relaying Party Trust in ADFS)
+- `saml_fqdn` (not present by default, override in search head clustering setups to have ADFS redirect to this URL which should normally be the URL handled by a load balancer. If you omit this, ADFS will redirect to the individual search head that make de SAML request which isn't what you want in SHC)
+- `ldap_host`
+- `ldap_binddn`
+- `ldap_binddnpassword`
+- `ldap_userbasedn`
+- `ldap_groupbasedn`
+- `ldap_sslenabled`
+- `ldap_usernameattribute`
+- `ldap_groupmemberattribute`
+- `ldap_groupnameattribute`
+- `ldap_realnameattribute`
+- `ldap_nestedgroups`: optional, set to 1 if you want Splunk to expand nested groups
 
-#### `service`
+### `clustering`
 
-  Optional. Used to manage the running and startup state of the
-  Splunk/Splunkforwarder service. This is a hash with 2 members: 
+Optional. Used to configure Splunk indexer clustering. This is a hash with 6 members:
 
-  - `ensure` (not enabled by default)
-  - `enable` (defaults to true)
+- `mode` (can be one of `master`,`searchhead`,`slave`, or `forwarder`)
+- `replication_factor`
+- `search_factor`
+- `cm` (points to cluster master in case of searchhead,slave, or forwarder in case of indexer discovery)
+- `indexer_discovery` (enables indexer discovery on the master node)
+- `forwarder_site_failover` (Configures sites that fowarders are allowed to fail over to. `site1:site` allows fowarders in site1 to fail over to indexers in site2 if the local indexers are unavailable.)
 
-#### `searchpeers`
+For multisite indexer clustering:
 
-  Optional. Used to point a Splunk search head to (a) Splunk indexer(s)
+- `thissite` (assigns this node to a site, value can be site1..site63. `site` is a reserved word in Puppet 4.x hence the choice for `thissite`)
 
-#### `clustering`
+For cluster masters of multisite indexer clusters:
 
-  Optional. Used to configure Splunk indexer clustering. This is a hash with 6 members:
+- `available_sites` (e.g. 'site1,site2')
+- `site_replication_factor` (e.g. 'origin:1, total:2')
+- `site_search_factor` (e.g. 'origin:1, total:2')
 
-  - `mode` (can be one of `master`,`searchhead`,`slave`, or `forwarder`)
-  - `replication_factor`
-  - `search_factor`
-  - `cm` (points to cluster master in case of searchhead,slave, or forwarder in case of indexer discovery)
-  - `indexer_discovery` (enables indexer discovery on the master node)
-  - `forwarder_site_failover` (Configures sites that fowarders are allowed to fail over to. `site1:site` allows fowarders in site1 to fail over to indexers in site2 if the local indexers are unavailable.)
+### `ds`
 
-  For multisite indexer clustering:
+Optional. Used to point to a Splunk deployment server
 
-  - `thissite` (assigns this node to a site, value can be site1..site63. `site` is a reserved word in Puppet 4.x hence the choice for `thissite`)
+### `ds_intermediate`
 
-  For cluster masters of multisite indexer clusters:
+Optional. Used to configure the deployment server as a deploymentclient.
+This is useful if you want to retain one central deployment server instead of
+multiple, for example one for each DMZ.  Defaults to undef.
 
-  - `available_sites` (e.g. 'site1,site2')
-  - `site_replication_factor` (e.g. 'origin:1, total:2')
-  - `site_search_factor` (e.g. 'origin:1, total:2')
+### `httpport`
 
+Optional. When omitted, it will not start Splunk web.
+Set `httpport => 8000` if you do want to have Splunk web available.
 
-#### `shclustering`
+### `inputport`
 
-  Optional. Used to configure Splunk search head clustering. This is a hash with 3 members:
+Optional. When omitted, it will not start an Splunk2Splunk listener.
+Set `kvstoreport => 9997` if you do want to use this instance as an indexer.
 
-  - `mode` (can be one of `searchhead`,`deployer`)
-  - `replication_factor`
-  - `shd` (points to search head deployer, but see caveat in Example 7)
+### `kvstoreport`
 
-#### `use_ack`
+Optional. When omitted, it will not start Mongodb.
+Set `kvstoreport => 8191` if you do want to have KVstore available.
 
-  Optional. Used to request indexer acknowlegement when sending data.
-  Defaults to false.
+### `lm`
 
-#### `version`
+Optional. Used to point to a Splunk license manager.
+  
+### `maxbackupindex`
 
-  Optional. Specify the Splunk version to use.
-  For example to install the 6.2.2 version: `verion => '6.2.2-255606'`.
+Optional. Specifies the number of rotated log files in `$SPLUNK_HOME/var/log/splunk` to keep around.
+Defaults to 1.
+  
+### `maxfilesize`
 
-#### `auth`
+Optional. Specifies the max file size of log files in `$SPLUNK_HOME/var/log/splunk`.
+Defaults to 10MB.
+  
+### `maxKBps`
 
-  Optional. Used to configure Splunk authentication. 
-  Currently supports 'Splunk' (default) 'SAML' and 'LDAP'.
-  This is a hash with the following members:
+Optional. Specifies the max throughput rate for outgoing data.
 
-  - `authtype` (can be one of `Splunk`,`LDAP`,`SAML`)
-  - `saml_idptype` (specifies the SAML identity provider type to use, currently only supports `ADFS`)
-  - `saml_idpurl` (specifies the base url for the identity provider, for ADFS IdP's this will be something like https://sso.corp.tld/adfs/ls )
-  - `saml_signauthnrequest` (sign outgoing SAML requests to ADFS: defaults to true)
-  - `saml_signedassertion` (expect assertions from ADFS to be signed: defaults to true)
-  - `saml_signaturealgorithm`: (specifies the signature algorithm to hash requests to ADFS with, and support responses from ADFS.)
-  - `ldap_host`
-  - `ldap_binddn`
-  - `ldap_binddnpassword`
-  - `ldap_userbasedn`
-  - `ldap_groupbasedn`
-  - `ldap_sslenabled`
-  - `ldap_usernameattribute`
-  - `ldap_groupmemberattribute`
-  - `ldap_groupnameattribute`
-  - `ldap_realnameattribute`
-  - `ldap_nestedgroups`: optional, set to 1 if you want Splunk to expand nested groups
+### `mgmthostport`
 
-#### `requireclientcert`
+Optional. When omitted, Splunk defaults apply and Splunk will use the default 8089 port.
+Set `mgmthostport => '127.0.0.1:9991' if you want to move the 8089 port to 9991` 
+Set `mgmthostport => 'disable' if you want to disable the Splunk management port, for example on Universal Forwarders
+  
+### `minfreespace`
 
-  Optional. Used on a server to require clients to present an SSL certificate.
-  Can be an array with:
+Optional. Used to specify the minimum amount of freespace in kb before Splunk stops indexing data.
 
-  - `inputs`: require clients to present a certificate when sending data to Splunk
-  - `splunkd`: require deployment clients and search peers to present a certificate when 
+### `package_source`
 
+Optional.
 
-  For example require both splunkd and inputs connections to present a certificate:
+* For Windows: Use this to point to the .msi installation file. This can be a UNC path like \\DC01\Company\splunkforwarder-6.6.1-aeae3fe0c5af-x64-release.msi
+* For Linux: Use this to point to the URL of a Splunk RPM file. WARNING: this will cause the entire RPM file to be downloaded at *every* Puppet run by the package provider, even though it is already installed. Create your own local repository if you don't want this.
 
-  ```
-  requireclientcert => ['splunkd','inputs'],
-  ```
+### `phonehomeintervalinsec`
 
-  Or only require forwarders to present a certificate when sending data;
+Optional. Unsed to configure the phonehomeinterval of the deploymentclient.
+Defaults to undef.
+  
+### `repositorylocation`
 
-  ```
-  requireclientcert => 'inputs',
-  ```
+Optional. Used to configure the location on the deployment client where the incoming apps from the deployment server are stored. Use `master-apps` or `shcluster/apps` if you want to use the deployment server to also deploy to intermediate locations on the cluster master or search head deployer.
+  
+### `reuse_puppet_certs`
 
-#### `sslverifyservercert`
+Optional. By default the certificates signed by the Puppet CA will be reused. However if you want to do some quick testing with non-Puppetized nodes, set this to `false`, and make sure to point `sslcertpath => 'server.pem'` and `sslrootcapath => 'cacert.pem'` to the default Splunk testing certs.
 
-  Optional. Used on a client to require servers to present an SSL certificate from the same CA as the client.
-  Can be an array with:
+- `true` (default)
+- `false`
 
-  - `outputs`: require servers to present a certificate when sending data to Splunk
-  - `splunkd`: require deployment servers and search peers to present a certificate from the same CA
+### `requireclientcert`
+
+Optional. Used on a server to require clients to present an SSL certificate.
+Can be an array with:
+
+- `inputs`: require clients to present a certificate when sending data to Splunk
+- `splunkd`: require deployment clients and search peers to present a certificate when 
 
 
-  For example require both splunkd and outputs connections to present a certificate from the same CA:
+For example require both splunkd and inputs connections to present a certificate:
 
-  ```
-  sslverifyservercert => ['splunkd','outputs'],
-  ```
+```
+requireclientcert => ['splunkd','inputs'],
+```
 
-  Or only require Splunk indexers to present a certificate with the same CA when sending data;
+Or only require forwarders to present a certificate when sending data;
 
-  ```
-  sslverifyservercert => 'outputs',
-  ```
+```
+requireclientcert => 'inputs',
+```
 
-#### `secret`
+### `rolemap`
 
-  Optional. Specifies the contents for the $SPLUNK_HOME/etc/auth/splunk.secret file. This can be helpful when distributing prehashed passwords across multiple Splunk instances.
+Optional. Specifies the role mapping for SAML and LDAP
+Defaults to:
 
-  Example:
+```
+{ 
+  'admin' => 'Domain Admins', 
+  'power' => 'Power Users', 
+  'user'  => 'Domain Users',
+}
+```
 
-  ```
-  secret => 'kGzHMGUe7GH0ZlOOIMVKkuEpDx1i1PKgq3E4p2ibmXuCKqJAKCENvY5a4QijxyrYt5Spt4T0.Qda5az6CDBvoTiYjMKsvz/p/ey/eLWOC6GQIEzARBUDasl84v9PIo6TA4AF4SxdygKGjbBekm9kV4UL2uMLnUGpQ5d.yIqBxqpHy8lgQhCTEIwQPxKRu9UMnBmEjnAmakn7Rmd3kMKq/.fnJdMgHhIZIK1ZcT6jm2vllL3sE42DBHy1DoRnYK'
-  ```
+### `service`
 
-#### `maxbackupindex`
+Optional. Used to manage the running and startup state of the Splunk/Splunkforwarder service. This is a hash with 2 members: 
 
-  Optional. Specifies the number of rotated log files in $SPLUNK_HOME/var/log/splunk to keep around.
-  Defaults to 1.
+- `ensure` (not enabled by default)
+- `enable` (defaults to true)
 
-#### `maxfilesize`
+### `searchpeers`
 
-  Optional. Specifies the max file size of log files in $SPLUNK_HOME/var/log/splunk.
-  Defaults to 10MB.
+Optional. Used to point a Splunk search head to (a) Splunk indexer(s)
+  
+### `secret`
 
-#### `rolemap`
+Optional. Specifies the contents for the `$SPLUNK_HOME/etc/auth/splunk.secret` file. This can be helpful when distributing prehashed passwords across multiple Splunk instances.
 
-  Optional. Specifies the role mapping for SAML and LDAP
-  Defaults to:
+Example:
 
-  ```
-  { 
-    'admin' => 'Domain Admins', 
-    'power' => 'Power Users', 
-    'user'  => 'Domain Users',
+```
+secret => 'kGzHMGUe7GH0ZlOOIMVKkuEpDx1i1PKgq3E4p2ibmXuCKqJAKCENvY5a4QijxyrYt5Spt4T0.Qda5az6CDBvoTiYjMKsvz/p/ey/eLWOC6GQIEzARBUDasl84v9PIo6TA4AF4SxdygKGjbBekm9kV4UL2uMLnUGpQ5d.yIqBxqpHy8lgQhCTEIwQPxKRu9UMnBmEjnAmakn7Rmd3kMKq/.fnJdMgHhIZIK1ZcT6jm2vllL3sE42DBHy1DoRnYK'
+```
+
+### `shclustering`
+
+Optional. Used to configure Splunk search head clustering. This is a hash with 3 members:
+
+- `mode` (can be one of `searchhead`,`deployer`)
+- `replication_factor`
+- `shd` (points to search head deployer, but see caveat in Example 7)
+
+### `sslcompatibility`
+
+Optional. Used to configure the SSL compatibility level as defined by Mozilla Labs:  
+
+- `modern` (default)
+- `intermediate`
+- `old`
+
+Also see the Compatibility section below.
+
+### `splunk_os_user`
+
+Optional. Run the Splunk instance as this user. Defaults to `splunk`
+
+### `splunk_bindip`
+
+Optional. Bind to this specific IP instead of 0.0.0.0
+
+### `splunk_db`
+
+Optional. Used to set the location where Splunk stores its indexes. Unsupported on Windows instances.
+
+For 3.x releases of Puppet-Splunk this will only change the SPLUNK_DB variable in etc/splunk-launch.conf if set. If unset, it will not remove the setting to prevent surprises when it has been previously set manually.
+
+For 4.x future releases this may change.
+
+### `sslcertpath`
+
+Optional. Can be together with `reuse_puppet_certs => false` to point to either your own certificates, or to the default Splunk provided testing certficates.
+
+Note that the path is relative to `$SPLUNK_HOME/etc/auth/`
+
+### `sslrootcapath`
+
+Optional. Can be together with `reuse_puppet_certs => false` to point to either your own CA certificates, or to the default Splunk provided testing CA certficates. 
+
+Note that the path is relative to `$SPLUNK_HOME/etc/auth/`
+   
+### `sslpassword`
+
+Optional. Specify the password for the RSA key. Can be plaintext or a Splunk hash. For a Splunk hash you should also specify the Splunk secret.
+
+### `sslverifyservercert`
+
+Optional. Used on a client to require servers to present an SSL certificate from the same CA as the client.
+Can be an array with:
+
+- `outputs`: require servers to present a certificate when sending data to Splunk
+- `splunkd`: require deployment servers and search peers to present a certificate from the same CA
+
+
+For example require both splunkd and outputs connections to present a certificate from the same CA:
+
+```
+sslverifyservercert => ['splunkd','outputs'],
+```
+
+Or only require Splunk indexers to present a certificate with the same CA when sending data;
+
+```
+sslverifyservercert => 'outputs',
+```
+  
+### `type`
+
+Optional. When omitted it installs the Splunk server type.
+Use `type => "uf"` if you want to have a Splunk Universal Forwarder.
+  
+### `tcpout`
+
+Optional. When omitted, it will not forward events to a Splunk indexer.
+
+Set `tcpout => 'splunk-idx1.internal.corp.tld:9997'` if you do want to forward events to a Splunk indexer. 
+
+Set `tcpout => 'indexer_discovery' if you want to use indexer discovery instead of specifying indexers manually. Requires specifying a cluster master through:
+
+```
+  clustering => {
+     cm      => 'splunk-cm.internal.corp.tld:8089'
   }
-  ```
+```
 
-#### `maxKBps`
+### `use_ack`
 
-  Optional. Specifies the max throughput rate for outgoing data.
+Optional. Used to request indexer acknowlegement when sending data.
+Defaults to false.
 
+### `version`
+
+Optional. Specify the Splunk version to use.
+For example to install the 6.2.2 version: `verion => '6.2.2-255606'`.
 
 ## Compatibility
 
