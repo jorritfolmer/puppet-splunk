@@ -346,6 +346,10 @@ describe 'splunk' do
     it { should contain_class('splunk::installed') }
     it { should contain_package('splunk') }
     it { should contain_file('/opt/splunk/etc/apps/puppet_common_auth_saml_base/local/authentication.conf').with_content(/idpSLOUrl = https:\/\/sso.internal.corp.tld\/adfs\/ls\?wa=wsignout1.0/) }
+    it { should contain_file('/opt/splunk/etc/apps/puppet_common_auth_saml_base/local/authentication.conf').with_content(/idpSSOUrl = https:\/\/sso.internal.corp.tld\/adfs\/ls/) }
+    it { should contain_file('/opt/splunk/etc/apps/puppet_common_auth_saml_base/local/authentication.conf').with_content(/signatureAlgorithm = RSA-SHA256/) }
+    it { should contain_file('/opt/splunk/etc/apps/puppet_common_auth_saml_base/local/authentication.conf').with_content(/signAuthnRequest = true/) }
+    it { should contain_file('/opt/splunk/etc/apps/puppet_common_auth_saml_base/local/authentication.conf').with_content(/signedAssertion = true/) }
   end
 
   context 'with ldap auth' do
