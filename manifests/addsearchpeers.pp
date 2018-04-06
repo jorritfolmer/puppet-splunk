@@ -8,14 +8,14 @@ define splunk::addsearchpeers {
     $package = $splunk::package
     $splunk_home = $splunk::splunk_home
     $admin = $splunk::admin
-    $adminpass = $admin[pass]
     $dontruncmds = $splunk::dontruncmds
 
-    if $adminpass == undef {
-      err('Plaintext admin password not set, skipping addition of search peers to search head')
+    if $admin[pass] == undef {
+      fail('Plaintext admin password is not set but required for adding search peers')
     } elsif $dontruncmds == true {
       notice('Skipping splunk add search-server due to $dontruncmds=true')
     } else {
+      $adminpass = $admin[pass]
       exec { "splunk add search-server ${title}":
         command     => "splunk add search-server -host ${title} -auth admin:${adminpass} -remoteUsername admin -remotePassword ${adminpass} && touch ${splunk_home}/etc/auth/distServerKeys/${title}.done",
         path        => ["${splunk_home}/bin", '/bin', '/sbin', '/usr/bin', '/usr/sbin'],
@@ -28,4 +28,3 @@ define splunk::addsearchpeers {
     }
   }
 }
-

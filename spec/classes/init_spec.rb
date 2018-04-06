@@ -178,7 +178,7 @@ describe 'splunk' do
     it { should compile.and_raise_error(/please set cluster master when using indexer_discovery/) }
   end
 
-  context 'with searchpeers as array' do
+  context 'with searchpeers as array but without plaintext admin pass' do
     let(:params) { 
       {
         :searchpeers => [ 'splunk-idx1.internal.corp.tld:9997', 'splunk-idx2.internal.corp.tld:9997',],
@@ -186,15 +186,14 @@ describe 'splunk' do
         :dontruncmds => true,
       }
     }
-    it { should contain_class('splunk::installed') }
-    it { should contain_package('splunk') }
+    it { should compile.and_raise_error(/Plaintext admin password is not set but required for adding search peers/) }
   end
 
-  context 'with searchpeers as string' do
+  context 'with searchpeers as string and plaintext admin pass' do
     let(:params) { 
       {
         :searchpeers => 'splunk-idx1.internal.corp.tld:9997',
-        :admin => { 'hash' => 'zzzz', 'fn' => 'yyyy', 'email' => 'wwww', },
+        :admin => { 'pass' => 'plaintext', 'hash' => 'zzzz', 'fn' => 'yyyy', 'email' => 'wwww', },
         :dontruncmds => true,
       }
     }

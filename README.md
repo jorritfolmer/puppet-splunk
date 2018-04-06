@@ -921,7 +921,16 @@ Optional. Used to manage the running and startup state of the Splunk/Splunkforwa
 
 ### `searchpeers`
 
-Optional. Used to point a Splunk search head to (a) Splunk indexer(s)
+Optional. Used to add a search peer to the current Splunk instance.
+
+This parameter requires the admin password to be present in plain text as the 'pass' member of the auth parameter.
+Best practice is to remove this plaintext and searchpeer parameter after adding all the required search peers.
+
+You can use this to: 
+- add one or more indexers to a search head
+- add a Splunk instance so the Monitoring Console can monitor it, for example if you're montoring a clustered Splunk deloyment from the cluster master. In this case the search head isn't automatically present in the MC overview, so you have to add the search head as a search peer.
+
+After adding the search peeer, an empty `hostname:8090.done` file in created in`$SPLUNK_HOME/etc/auth/distServerKeys`, so the Puppet module knows not to run the add search peer command again and again. Remove this file if you want to re-add the same search peer.
   
 ### `secret`
 
