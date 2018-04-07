@@ -20,6 +20,18 @@ describe 'splunk' do
     it { should contain_file('/opt/splunk/etc/passwd') }
   end
 
+  context 'with admin hash only ' do
+    let(:params) { 
+      {
+        :admin => { 'hash' => 'zzzz', },
+      }
+    }
+    it { should contain_class('splunk::installed') }
+    it { should contain_package('splunk') }
+    it { should contain_file('/opt/splunk/etc/.ui_login') }
+    it { should contain_file('/opt/splunk/etc/passwd') }
+  end
+
   context 'with service ensured running' do
     let(:params) { 
       {
@@ -172,7 +184,7 @@ describe 'splunk' do
       {
         :type => 'uf',
         :tcpout => 'indexer_discovery',
-        :admin => { 'hash' => 'zzzz', 'fn' => 'yyyy', 'email' => 'wwww', },
+        :admin => { 'hash' => 'zzzz', },
       }
     }
     it { should compile.and_raise_error(/please set cluster master when using indexer_discovery/) }
@@ -182,18 +194,30 @@ describe 'splunk' do
     let(:params) { 
       {
         :searchpeers => [ 'splunk-idx1.internal.corp.tld:9997', 'splunk-idx2.internal.corp.tld:9997',],
-        :admin => { 'hash' => 'zzzz', 'fn' => 'yyyy', 'email' => 'wwww', },
+        :admin => { 'hash' => 'zzzz', },
         :dontruncmds => true,
       }
     }
     it { should compile.and_raise_error(/Plaintext admin password is not set but required for adding search peers/) }
   end
 
-  context 'with searchpeers as string and plaintext admin pass' do
+  context 'with searchpeers as string and plaintext admin pass and hash' do
     let(:params) { 
       {
         :searchpeers => 'splunk-idx1.internal.corp.tld:9997',
-        :admin => { 'pass' => 'plaintext', 'hash' => 'zzzz', 'fn' => 'yyyy', 'email' => 'wwww', },
+        :admin => { 'pass' => 'plaintext', 'hash' => 'zzzz', },
+        :dontruncmds => true,
+      }
+    }
+    it { should contain_class('splunk::installed') }
+    it { should contain_package('splunk') }
+  end
+
+  context 'with searchpeers as string and plaintext admin pass without hash' do
+    let(:params) { 
+      {
+        :searchpeers => 'splunk-idx1.internal.corp.tld:9997',
+        :admin => { 'pass' => 'plaintext', },
         :dontruncmds => true,
       }
     }
@@ -205,7 +229,7 @@ describe 'splunk' do
     let(:params) { 
       {
         :ds => 'splunk-ds.internal.corp.tld:8089',
-        :admin => { 'hash' => 'zzzz', 'fn' => 'yyyy', 'email' => 'wwww', },
+        :admin => { 'hash' => 'zzzz', },
         :dontruncmds => true,
       }
     }

@@ -18,29 +18,37 @@ class splunk::passwd (
     }
     default: {
       if $admin != undef {
-        $hash  = $admin[hash]
-        $fn    = $admin[fn]
-        $email = $admin[email]
-        file { "${splunk_home}/etc/passwd":
-          ensure  => present,
-          owner   => $splunk_os_user,
-          group   => $splunk_os_group,
-          mode    => $splunk_dir_mode,
-          content => ':admin:::',
-          replace => 'no',
-        }
-        -> exec { 'set admin passwd':
-          command => "sed -i -e 's#^:admin:.*$#:admin:${hash}::${fn}:admin:${email}::#g' ${splunk_home}/etc/passwd",
-          unless  => "grep -qe '^:admin:${hash}' ${splunk_home}/etc/passwd",
-          path    => ['/bin', '/sbin', '/usr/bin', '/usr/sbin'],
-        }
-        -> file { "${splunk_home}/etc/.ui_login":
-          ensure  => present,
-          owner   => $splunk_os_user,
-          group   => $splunk_os_group,
-          mode    => $splunk_file_mode,
-          content => '',
-          replace => 'no',
+        if $admin[hash] != undef {
+          $hash  = $admin[hash]
+          $fn    = $admin[fn] ? {
+            undef   => '',
+            default => $admin[fn]
+          }
+          $email = $admin[email] ? {
+            undef   => '',
+            default => $admin[email]
+          }
+          file { "${splunk_home}/etc/passwd":
+            ensure  => present,
+            owner   => $splunk_os_user,
+            group   => $splunk_os_group,
+            mode    => $splunk_dir_mode,
+            content => ':admin:::',
+            replace => 'no',
+          }
+          -> exec { 'set admin passwd':
+            command => "sed -i -e 's#^:admin:.*$#:admin:${hash}::${fn}:admin:${email}::#g' ${splunk_home}/etc/passwd",
+            unless  => "grep -qe '^:admin:${hash}' ${splunk_home}/etc/passwd",
+            path    => ['/bin', '/sbin', '/usr/bin', '/usr/sbin'],
+          }
+          -> file { "${splunk_home}/etc/.ui_login":
+            ensure  => present,
+            owner   => $splunk_os_user,
+            group   => $splunk_os_group,
+            mode    => $splunk_file_mode,
+            content => '',
+            replace => 'no',
+          }
         }
       }
     }
