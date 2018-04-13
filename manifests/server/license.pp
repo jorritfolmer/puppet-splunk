@@ -5,6 +5,7 @@
 
 class splunk::server::license (
   $lm = $splunk::lm,
+  $pool_suggestion = $splunk::pool_suggestion,
   $splunk_os_user = $splunk::real_splunk_os_user,
   $splunk_os_group = $splunk::real_splunk_os_group,
   $splunk_dir_mode = $splunk::real_splunk_dir_mode,

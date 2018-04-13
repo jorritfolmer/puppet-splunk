@@ -1,3 +1,7 @@
+### 3.11.0
+
+- Added pool_suggestion parameter
+
 ### 3.10.2
 
 - Improved searchpeer documentation and error handling

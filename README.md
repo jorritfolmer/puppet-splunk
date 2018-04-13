@@ -864,8 +864,12 @@ Optional.
 
 ### `phonehomeintervalinsec`
 
-Optional. Unsed to configure the phonehomeinterval of the deploymentclient.
+Optional. Used to configure the phonehomeinterval of the deploymentclient.
 Defaults to undef.
+
+### `pool_suggestion`
+
+Optional. Used to perform license pool management at the indexers instead of at the licence master.
   
 ### `repositorylocation`
 

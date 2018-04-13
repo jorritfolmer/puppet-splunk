@@ -414,6 +414,20 @@ describe 'splunk' do
     it { should contain_file('/opt/splunk/etc/apps/puppet_common_license_client_base/local/server.conf').with_content(/master_uri = https:\/\/lm.internal.corp.tld:8089/) }
   end
 
+  context 'with license server and pool suggestion' do
+    let(:params) { 
+      {
+        :lm  => 'lm.internal.corp.tld:8089',
+        :pool_suggestion => 'prodpool',
+        :admin => { 'hash' => 'zzzz', 'fn' => 'yyyy', 'email' => 'wwww', },
+        :dontruncmds => true,
+      }
+    }
+    it { should contain_class('splunk::installed') }
+    it { should contain_package('splunk') }
+    it { should contain_file('/opt/splunk/etc/apps/puppet_common_license_client_base/local/server.conf').with_content(/master_uri = https:\/\/lm.internal.corp.tld:8089\npool_suggestion = prodpool/) }
+  end
+
   context 'with splunk secret' do
     let(:params) { 
       {

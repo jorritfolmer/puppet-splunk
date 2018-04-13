@@ -13,13 +13,14 @@
 | v3.7.0  |   30   |  48   |
 | v3.8.0  |   30   |  50   |
 | v3.9.0  |   33   |  53   |
+| v3.11.0 |   34   |  54   |
 
 ## By operating system:
 
 | os      | tested | total |
 |---------|--------|-------|
-| linux   |   33   |  53   |
-| windows |   0    |  53   |
+| linux   |   34   |  54   |
+| windows |   0    |  54   |
 
 ## By parameter:
 
@@ -52,6 +53,7 @@
 | `package_source` | yes |
 | `pass4symmkey` | no |
 | `phonehomeintervalinsec` | no |
+| `pool_suggestion` | Y |
 | `replication_port`| Y |
 | `repositorylocation`| Y |
 | `requireclientcert`| Y |
