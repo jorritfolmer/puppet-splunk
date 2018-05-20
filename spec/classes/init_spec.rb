@@ -84,19 +84,19 @@ describe 'splunk' do
   context 'with tcpout as string' do
     let(:params) { 
       {
-        :tcpout => 'splunk-idx.internal.corp.tld:9997',
+        :tcpout => 'splunk-idx.internal.corp.example:9997',
         :admin => { 'hash' => 'zzzz', 'fn' => 'yyyy', 'email' => 'wwww', },
       }
     }
     it { should contain_class('splunk::installed') }
     it { should contain_package('splunk') }
-    it { should contain_file('/opt/splunk/etc/apps/puppet_common_ssl_outputs/local/outputs.conf').with_content(/server = splunk-idx.internal.corp.tld:9997/) }
+    it { should contain_file('/opt/splunk/etc/apps/puppet_common_ssl_outputs/local/outputs.conf').with_content(/server = splunk-idx.internal.corp.example:9997/) }
   end
 
   context 'with tcpout as string and use_ack' do
     let(:params) { 
       {
-        :tcpout => 'splunk-idx.internal.corp.tld:9997',
+        :tcpout => 'splunk-idx.internal.corp.example:9997',
         :use_ack => true,
         :admin => { 'hash' => 'zzzz', 'fn' => 'yyyy', 'email' => 'wwww', },
       }
@@ -110,7 +110,7 @@ describe 'splunk' do
   context 'with tcpout as string and revert to default splunk cert instead of puppet cert reuse' do
     let(:params) { 
       {
-        :tcpout => 'splunk-idx.internal.corp.tld:9997',
+        :tcpout => 'splunk-idx.internal.corp.example:9997',
         :admin => { 'hash' => 'zzzz', 'fn' => 'yyyy', 'email' => 'wwww', },
         :reuse_puppet_certs => false,
         :sslcertpath => 'server.pem',
@@ -120,34 +120,34 @@ describe 'splunk' do
     it { should contain_class('splunk::installed') }
     it { should contain_package('splunk') }
     it { should contain_file('/opt/splunk/etc/apps/puppet_common_ssl_base/local/server.conf').with_content(/sslRootCAPath = \/opt\/splunk\/etc\/auth\/cacert.pem/) }
-    it { should contain_file('/opt/splunk/etc/apps/puppet_common_ssl_outputs/local/outputs.conf').with_content(/server = splunk-idx.internal.corp.tld:9997/) }
+    it { should contain_file('/opt/splunk/etc/apps/puppet_common_ssl_outputs/local/outputs.conf').with_content(/server = splunk-idx.internal.corp.example:9997/) }
     it { should contain_file('/opt/splunk/etc/apps/puppet_common_ssl_outputs/local/outputs.conf').with_content(/sslCertPath = \/opt\/splunk\/etc\/auth\/server.pem/) }
   end
 
   context 'with tcpout as array' do
     let(:params) { 
       {
-        :tcpout => [ 'splunk-idx1.internal.corp.tld:9997', 'splunk-idx2.internal.corp.tld:9997',],
+        :tcpout => [ 'splunk-idx1.internal.corp.example:9997', 'splunk-idx2.internal.corp.example:9997',],
         :admin => { 'hash' => 'zzzz', 'fn' => 'yyyy', 'email' => 'wwww', },
       }
     }
     it { should contain_class('splunk::installed') }
     it { should contain_package('splunk') }
-    it { should contain_file('/opt/splunk/etc/apps/puppet_common_ssl_outputs/local/outputs.conf').with_content(/server = splunk-idx1.internal.corp.tld:9997, splunk-idx2.internal.corp.tld:9997/) }
+    it { should contain_file('/opt/splunk/etc/apps/puppet_common_ssl_outputs/local/outputs.conf').with_content(/server = splunk-idx1.internal.corp.example:9997, splunk-idx2.internal.corp.example:9997/) }
   end
 
   context 'with tcpout == indexer_discovery' do
     let(:params) { 
       {
         :tcpout => 'indexer_discovery',
-        :clustering  => { 'pass4symmkey' => 'changeme', 'cm' => 'splunk-cm.internal.corp.tld:8089' },
+        :clustering  => { 'pass4symmkey' => 'changeme', 'cm' => 'splunk-cm.internal.corp.example:8089' },
         :admin => { 'hash' => 'zzzz', 'fn' => 'yyyy', 'email' => 'wwww', },
       }
     }
     it { should contain_class('splunk::installed') }
     it { should contain_package('splunk') }
     it { should contain_file('/opt/splunk/etc/apps/puppet_common_ssl_outputs/local/outputs.conf').with_content(/indexerDiscovery = cluster/) }
-    it { should contain_file('/opt/splunk/etc/apps/puppet_common_ssl_outputs/local/outputs.conf').with_content(/master_uri = https:\/\/splunk-cm.internal.corp.tld:8089/) }
+    it { should contain_file('/opt/splunk/etc/apps/puppet_common_ssl_outputs/local/outputs.conf').with_content(/master_uri = https:\/\/splunk-cm.internal.corp.example:8089/) }
     it { should_not contain_file('/opt/splunk/etc/apps/puppet_indexer_cluster_pass4symmkey_base/local/server.conf') }
   end
 
@@ -168,14 +168,14 @@ describe 'splunk' do
       {
         :type => 'uf',
         :tcpout => 'indexer_discovery',
-        :clustering  => { 'pass4symmkey' => 'changeme', 'cm' => 'splunk-cm.internal.corp.tld:8089' },
+        :clustering  => { 'pass4symmkey' => 'changeme', 'cm' => 'splunk-cm.internal.corp.example:8089' },
         :admin => { 'hash' => 'zzzz', 'fn' => 'yyyy', 'email' => 'wwww', },
       }
     }
     it { should contain_class('splunk::installed') }
     it { should contain_package('splunkforwarder') }
     it { should contain_file('/opt/splunkforwarder/etc/apps/puppet_common_ssl_outputs/local/outputs.conf').with_content(/indexerDiscovery = cluster/) }
-    it { should contain_file('/opt/splunkforwarder/etc/apps/puppet_common_ssl_outputs/local/outputs.conf').with_content(/master_uri = https:\/\/splunk-cm.internal.corp.tld:8089/) }
+    it { should contain_file('/opt/splunkforwarder/etc/apps/puppet_common_ssl_outputs/local/outputs.conf').with_content(/master_uri = https:\/\/splunk-cm.internal.corp.example:8089/) }
     it { should_not contain_file('/opt/splunkforwarder/etc/apps/puppet_indexer_cluster_pass4symmkey_base/local/server.conf') }
   end
 
@@ -193,7 +193,7 @@ describe 'splunk' do
   context 'with searchpeers as array but without plaintext admin pass' do
     let(:params) { 
       {
-        :searchpeers => [ 'splunk-idx1.internal.corp.tld:9997', 'splunk-idx2.internal.corp.tld:9997',],
+        :searchpeers => [ 'splunk-idx1.internal.corp.example:9997', 'splunk-idx2.internal.corp.example:9997',],
         :admin => { 'hash' => 'zzzz', },
         :dontruncmds => true,
       }
@@ -204,7 +204,7 @@ describe 'splunk' do
   context 'with searchpeers as string and plaintext admin pass and hash' do
     let(:params) { 
       {
-        :searchpeers => 'splunk-idx1.internal.corp.tld:9997',
+        :searchpeers => 'splunk-idx1.internal.corp.example:9997',
         :admin => { 'pass' => 'plaintext', 'hash' => 'zzzz', },
         :dontruncmds => true,
       }
@@ -216,7 +216,7 @@ describe 'splunk' do
   context 'with searchpeers as string and plaintext admin pass without hash' do
     let(:params) { 
       {
-        :searchpeers => 'splunk-idx1.internal.corp.tld:9997',
+        :searchpeers => 'splunk-idx1.internal.corp.example:9997',
         :admin => { 'pass' => 'plaintext', },
         :dontruncmds => true,
       }
@@ -228,14 +228,14 @@ describe 'splunk' do
   context 'with deploymentserver' do
     let(:params) { 
       {
-        :ds => 'splunk-ds.internal.corp.tld:8089',
+        :ds => 'splunk-ds.internal.corp.example:8089',
         :admin => { 'hash' => 'zzzz', },
         :dontruncmds => true,
       }
     }
     it { should contain_class('splunk::installed') }
     it { should contain_package('splunk') }
-    it { should contain_file('/opt/splunk/etc/apps/puppet_common_deploymentclient_base/local/deploymentclient.conf').with_content(/targetUri = splunk-ds.internal.corp.tld:8089/) }
+    it { should contain_file('/opt/splunk/etc/apps/puppet_common_deploymentclient_base/local/deploymentclient.conf').with_content(/targetUri = splunk-ds.internal.corp.example:8089/) }
   end
 
   context 'with inputs' do
@@ -361,15 +361,15 @@ describe 'splunk' do
   context 'with saml auth' do
     let(:params) { 
       {
-        :auth  => { 'authtype' => 'SAML', 'saml_idptype' => 'ADFS', 'saml_idpurl' => 'https://sso.internal.corp.tld/adfs/ls', },
+        :auth  => { 'authtype' => 'SAML', 'saml_idptype' => 'ADFS', 'saml_idpurl' => 'https://sso.internal.corp.example/adfs/ls', },
         :admin => { 'hash' => 'zzzz', 'fn' => 'yyyy', 'email' => 'wwww', },
         :dontruncmds => true,
       }
     }
     it { should contain_class('splunk::installed') }
     it { should contain_package('splunk') }
-    it { should contain_file('/opt/splunk/etc/apps/puppet_common_auth_saml_base/local/authentication.conf').with_content(/idpSLOUrl = https:\/\/sso.internal.corp.tld\/adfs\/ls\?wa=wsignout1.0/) }
-    it { should contain_file('/opt/splunk/etc/apps/puppet_common_auth_saml_base/local/authentication.conf').with_content(/idpSSOUrl = https:\/\/sso.internal.corp.tld\/adfs\/ls/) }
+    it { should contain_file('/opt/splunk/etc/apps/puppet_common_auth_saml_base/local/authentication.conf').with_content(/idpSLOUrl = https:\/\/sso.internal.corp.example\/adfs\/ls\?wa=wsignout1.0/) }
+    it { should contain_file('/opt/splunk/etc/apps/puppet_common_auth_saml_base/local/authentication.conf').with_content(/idpSSOUrl = https:\/\/sso.internal.corp.example\/adfs\/ls/) }
     it { should contain_file('/opt/splunk/etc/apps/puppet_common_auth_saml_base/local/authentication.conf').with_content(/signatureAlgorithm = RSA-SHA256/) }
     it { should contain_file('/opt/splunk/etc/apps/puppet_common_auth_saml_base/local/authentication.conf').with_content(/signAuthnRequest = true/) }
     it { should contain_file('/opt/splunk/etc/apps/puppet_common_auth_saml_base/local/authentication.conf').with_content(/signedAssertion = true/) }
@@ -378,7 +378,7 @@ describe 'splunk' do
   context 'with ldap auth' do
     let(:params) { 
       {
-        :auth  => { 'authtype' => 'LDAP', 'ldap_host' => 'dc01.internal.corp.tld', 'ldap_binddn' => 'CN=sa_splunk,CN=Service Accounts,DC=internal,DC=corp,DC=tld', 'ldap_binddnpassword' => 'changeme'},
+        :auth  => { 'authtype' => 'LDAP', 'ldap_host' => 'dc01.internal.corp.example', 'ldap_binddn' => 'CN=sa_splunk,CN=Service Accounts,DC=internal,DC=corp,DC=tld', 'ldap_binddnpassword' => 'changeme'},
         :admin => { 'hash' => 'zzzz', 'fn' => 'yyyy', 'email' => 'wwww', },
         :dontruncmds => true,
       }
@@ -391,7 +391,7 @@ describe 'splunk' do
   context 'with ldap auth and nestedgroups enabled' do
     let(:params) { 
       {
-        :auth  => { 'authtype' => 'LDAP', 'ldap_host' => 'dc01.internal.corp.tld', 'ldap_binddn' => 'CN=sa_splunk,CN=Service Accounts,DC=internal,DC=corp,DC=tld', 'ldap_binddnpassword' => 'changeme', 'ldap_nestedgroups' => 1},
+        :auth  => { 'authtype' => 'LDAP', 'ldap_host' => 'dc01.internal.corp.example', 'ldap_binddn' => 'CN=sa_splunk,CN=Service Accounts,DC=internal,DC=corp,DC=tld', 'ldap_binddnpassword' => 'changeme', 'ldap_nestedgroups' => 1},
         :admin => { 'hash' => 'zzzz', 'fn' => 'yyyy', 'email' => 'wwww', },
         :dontruncmds => true,
       }
@@ -404,20 +404,20 @@ describe 'splunk' do
   context 'with license server' do
     let(:params) { 
       {
-        :lm  => 'lm.internal.corp.tld:8089',
+        :lm  => 'lm.internal.corp.example:8089',
         :admin => { 'hash' => 'zzzz', 'fn' => 'yyyy', 'email' => 'wwww', },
         :dontruncmds => true,
       }
     }
     it { should contain_class('splunk::installed') }
     it { should contain_package('splunk') }
-    it { should contain_file('/opt/splunk/etc/apps/puppet_common_license_client_base/local/server.conf').with_content(/master_uri = https:\/\/lm.internal.corp.tld:8089/) }
+    it { should contain_file('/opt/splunk/etc/apps/puppet_common_license_client_base/local/server.conf').with_content(/master_uri = https:\/\/lm.internal.corp.example:8089/) }
   end
 
   context 'with license server and pool suggestion' do
     let(:params) { 
       {
-        :lm  => 'lm.internal.corp.tld:8089',
+        :lm  => 'lm.internal.corp.example:8089',
         :pool_suggestion => 'prodpool',
         :admin => { 'hash' => 'zzzz', 'fn' => 'yyyy', 'email' => 'wwww', },
         :dontruncmds => true,
@@ -425,7 +425,7 @@ describe 'splunk' do
     }
     it { should contain_class('splunk::installed') }
     it { should contain_package('splunk') }
-    it { should contain_file('/opt/splunk/etc/apps/puppet_common_license_client_base/local/server.conf').with_content(/master_uri = https:\/\/lm.internal.corp.tld:8089\npool_suggestion = prodpool/) }
+    it { should contain_file('/opt/splunk/etc/apps/puppet_common_license_client_base/local/server.conf').with_content(/master_uri = https:\/\/lm.internal.corp.example:8089\npool_suggestion = prodpool/) }
   end
 
   context 'with splunk secret' do
@@ -522,21 +522,21 @@ describe 'splunk' do
   context 'with cluster slave role' do
     let(:params) { 
       {
-        :clustering  => { 'mode' => 'slave', 'pass4symmkey' => 'changeme', 'cm' => 'splunk-cm.internal.corp.tld:8089' },
+        :clustering  => { 'mode' => 'slave', 'pass4symmkey' => 'changeme', 'cm' => 'splunk-cm.internal.corp.example:8089' },
         :admin => { 'hash' => 'zzzz', 'fn' => 'yyyy', 'email' => 'wwww', },
         :dontruncmds => true,
       }
     }
     it { should contain_class('splunk::installed') }
     it { should contain_package('splunk') }
-    it { should contain_file('/opt/splunk/etc/apps/puppet_indexer_cluster_slave_base/local/server.conf').with_content(/master_uri = https:\/\/splunk-cm.internal.corp.tld:8089/) }
+    it { should contain_file('/opt/splunk/etc/apps/puppet_indexer_cluster_slave_base/local/server.conf').with_content(/master_uri = https:\/\/splunk-cm.internal.corp.example:8089/) }
     it { should contain_file('/opt/splunk/etc/apps/puppet_indexer_cluster_pass4symmkey_base/local/server.conf').with_content(/pass4SymmKey = changeme/) }
   end
 
   context 'with cluster slave role and custom replication_port' do
     let(:params) { 
       {
-        :clustering  => { 'mode' => 'slave', 'pass4symmkey' => 'changeme', 'cm' => 'splunk-cm.internal.corp.tld:8089' },
+        :clustering  => { 'mode' => 'slave', 'pass4symmkey' => 'changeme', 'cm' => 'splunk-cm.internal.corp.example:8089' },
         :admin => { 'hash' => 'zzzz', 'fn' => 'yyyy', 'email' => 'wwww', },
         :dontruncmds => true,
         :replication_port => 12345,
@@ -544,7 +544,7 @@ describe 'splunk' do
     }
     it { should contain_class('splunk::installed') }
     it { should contain_package('splunk') }
-    it { should contain_file('/opt/splunk/etc/apps/puppet_indexer_cluster_slave_base/local/server.conf').with_content(/master_uri = https:\/\/splunk-cm.internal.corp.tld:8089/) }
+    it { should contain_file('/opt/splunk/etc/apps/puppet_indexer_cluster_slave_base/local/server.conf').with_content(/master_uri = https:\/\/splunk-cm.internal.corp.example:8089/) }
     it { should contain_file('/opt/splunk/etc/apps/puppet_indexer_cluster_pass4symmkey_base/local/server.conf').with_content(/pass4SymmKey = changeme/) }
     it { should contain_file('/opt/splunk/etc/apps/puppet_indexer_cluster_slave_base/local/server.conf').with_content(/\[replication_port:\/\/12345\]\ndisabled = false\n/) }
   end
@@ -552,28 +552,28 @@ describe 'splunk' do
   context 'with cluster searchhead role' do
     let(:params) { 
       {
-        :clustering  => { 'mode' => 'searchhead', 'pass4symmkey' => 'changeme', 'cm' => 'splunk-cm.internal.corp.tld:8089' },
+        :clustering  => { 'mode' => 'searchhead', 'pass4symmkey' => 'changeme', 'cm' => 'splunk-cm.internal.corp.example:8089' },
         :admin => { 'hash' => 'zzzz', 'fn' => 'yyyy', 'email' => 'wwww', },
         :dontruncmds => true,
       }
     }
     it { should contain_class('splunk::installed') }
     it { should contain_package('splunk') }
-    it { should contain_file('/opt/splunk/etc/apps/puppet_indexer_cluster_searchhead_base/local/server.conf').with_content(/master_uri = https:\/\/splunk-cm.internal.corp.tld:8089/) }
+    it { should contain_file('/opt/splunk/etc/apps/puppet_indexer_cluster_searchhead_base/local/server.conf').with_content(/master_uri = https:\/\/splunk-cm.internal.corp.example:8089/) }
     it { should contain_file('/opt/splunk/etc/apps/puppet_indexer_cluster_pass4symmkey_base/local/server.conf').with_content(/pass4SymmKey = changeme/) }
   end
 
   context 'with search head clustering' do
     let(:params) { 
       {
-        :shclustering  => { 'mode' => 'searchhead', 'shd' => 'splunk-shd.internal.corp.tld:8089', 'label' => 'SHC' },
+        :shclustering  => { 'mode' => 'searchhead', 'shd' => 'splunk-shd.internal.corp.example:8089', 'label' => 'SHC' },
         :admin => { 'hash' => 'zzzz', 'fn' => 'yyyy', 'email' => 'wwww', },
         :dontruncmds => true,
       }
     }
     it { should contain_class('splunk::installed') }
     it { should contain_package('splunk') }
-    it { should contain_file('/opt/splunk/etc/apps/puppet_search_shcluster_base/default/server.conf').with_content(/conf_deploy_fetch_url = https:\/\/splunk-shd.internal.corp.tld:8089/) }
+    it { should contain_file('/opt/splunk/etc/apps/puppet_search_shcluster_base/default/server.conf').with_content(/conf_deploy_fetch_url = https:\/\/splunk-shd.internal.corp.example:8089/) }
     it { should contain_file('/opt/splunk/etc/apps/puppet_search_shcluster_base/default/server.conf').with_content(/\[replication_port:/) }
     it { should contain_file('/opt/splunk/etc/apps/puppet_search_shcluster_base/default/server.conf').with_content(/shcluster_label = SHC/) }
     it { should contain_file('/opt/splunk/etc/apps/puppet_search_shcluster_pass4symmkey_base/default/server.conf').with_content(/pass4SymmKey = /) }
@@ -623,7 +623,7 @@ describe 'splunk' do
   context 'with custom repositorylocation' do
     let(:params) { 
       {
-        :ds => 'splunk-ds.internal.corp.tld:8089',
+        :ds => 'splunk-ds.internal.corp.example:8089',
         :ds_intermediate => true,
         :repositorylocation => 'master-apps',
         :admin => { 'hash' => 'zzzz', 'fn' => 'yyyy', 'email' => 'wwww', },
@@ -638,7 +638,7 @@ describe 'splunk' do
   context 'with ds_intermediate set' do
     let(:params) { 
       {
-        :ds => 'splunk-ds.internal.corp.tld:8089',
+        :ds => 'splunk-ds.internal.corp.example:8089',
         :ds_intermediate => true,
         :admin => { 'hash' => 'zzzz', 'fn' => 'yyyy', 'email' => 'wwww', },
         :dontruncmds => true,

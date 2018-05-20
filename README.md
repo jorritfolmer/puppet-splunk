@@ -1,9 +1,10 @@
 # Splunk deployments with Puppet
 
-
 [![Travis CI build status](https://travis-ci.org/jorritfolmer/puppet-splunk.svg?branch=master)](https://travis-ci.org/jorritfolmer/puppet-splunk)
 
 This Puppet module deploys Splunk instances on Windows and Linux in simple, distributed or (multisite) clustered topologies. It is used in production by organisations large and small, but can also be used to quickly validate solution architectures. For example on a 2016 MacBook Pro, setting up a multisite indexer cluster, a cluster master, a search head cluster, a search head deployer, LDAP authentication, etc, takes less than an hour.
+
+Project homepage is at [https://github.com/jorritfolmer/puppet-splunk](https://github.com/jorritfolmer/puppet-splunk)
 
 ## Principles
 
@@ -32,7 +33,7 @@ Define a single standalone Splunk instance on Linux that you can use to index an
 ![Standalone Splunk instance](https://raw.githubusercontent.com/jorritfolmer/puppet-splunk/master/example1.png)
 
 ```puppet
-node 'splunk-server.internal.corp.tld' {
+node 'splunk-server.internal.corp.example' {
   class { 'splunk':
     httpport     => 8000,
     kvstoreport  => 8191,
@@ -56,7 +57,7 @@ splunk::inputport:        9997
 Or define a single standalone Splunk instance on Windows with:
 
 ```puppet
-node 'splunk-server.internal.corp.tld' {
+node 'splunk-server.internal.corp.example' {
   class { 'splunk':
     package_source => '//dc01/Company/splunk-6.6.1-aeae3fe0c5af-x64-release.msi',
     httpport       => 8000,
@@ -107,7 +108,7 @@ This time use the Splunk provided non-production testing certificates instead of
 ![Splunk instance standalone](https://raw.githubusercontent.com/jorritfolmer/puppet-splunk/master/example1.png)
 
 ```puppet
-node 'splunk-server.internal.corp.tld' {
+node 'splunk-server.internal.corp.example' {
   class { 'splunk':
     httpport           => 8000,
     kvstoreport        => 8191,
@@ -123,7 +124,7 @@ node 'splunk-server.internal.corp.tld' {
 To define a standalone Splunk instance running on Windows:
 
 ```puppet
-node 'splunk-server.internal.corp.tld' {
+node 'splunk-server.internal.corp.example' {
   class { 'splunk':
     package_source     => '//dc01/Company/splunk-6.6.1-aeae3fe0c5af-x64-release.msi',
     httpport           => 8000,
@@ -144,7 +145,7 @@ Extends the example above with a node that will run the Splunk universal forward
 ![Splunk instance with forwarder](https://raw.githubusercontent.com/jorritfolmer/puppet-splunk/master/example2.png)
 
 ```puppet
-node 'splunk-server.internal.corp.tld' {
+node 'splunk-server.internal.corp.example' {
   class { 'splunk':
     httpport     => 8000,
     kvstoreport  => 8191,
@@ -152,10 +153,10 @@ node 'splunk-server.internal.corp.tld' {
   }
 }
 
-node 'some-server.internal.corp.tld' {
+node 'some-server.internal.corp.example' {
   class { 'splunk':
     type => 'uf',
-    ds   => 'splunk-server.internal.corp.tld:8089',
+    ds   => 'splunk-server.internal.corp.example:8089',
   }
 }
 ```
@@ -163,7 +164,7 @@ node 'some-server.internal.corp.tld' {
 The equivalent for Windows environments:
 
 ```puppet
-node 'splunk-server.internal.corp.tld' {
+node 'splunk-server.internal.corp.example' {
   class { 'splunk':
     package_source => '//dc01/Company/splunk-6.6.1-aeae3fe0c5af-x64-release.msi',
     httpport       => 8000,
@@ -172,11 +173,11 @@ node 'splunk-server.internal.corp.tld' {
   }
 }
 
-node 'some-server.internal.corp.tld' {
+node 'some-server.internal.corp.example' {
   class { 'splunk':
     package_source => '//dc01/Company/splunkforwarder-6.6.1-aeae3fe0c5af-x64-release.msi',
     type           => 'uf',
-    ds             => 'splunk-server.internal.corp.tld:8089',
+    ds             => 'splunk-server.internal.corp.example:8089',
   }
 }
 ```
@@ -190,7 +191,7 @@ The manifest below will also use the Splunk provided non-production certificates
 ![Splunk instance with forwarder in hybrid environments](https://raw.githubusercontent.com/jorritfolmer/puppet-splunk/master/example2.png)
 
 ```puppet
-node 'splunk-server.internal.corp.tld' {
+node 'splunk-server.internal.corp.example' {
   class { 'splunk':
     httpport           => 8000,
     kvstoreport        => 8191,
@@ -203,10 +204,10 @@ node 'splunk-server.internal.corp.tld' {
   }
 }
 
-node 'some-server.internal.corp.tld' {
+node 'some-server.internal.corp.example' {
   class { 'splunk':
     type => 'uf',
-    ds   => 'splunk-server.internal.corp.tld:8089',
+    ds   => 'splunk-server.internal.corp.example:8089',
     reuse_puppet_certs => false,
     sslcertpath        => 'server.pem',
     sslrootcapath      => 'cacert.pem',
@@ -226,7 +227,7 @@ through an orchestration tool like Terraform or Ansible.
 ![Splunk topology with indexer, search head and deployment server](https://raw.githubusercontent.com/jorritfolmer/puppet-splunk/master/example3.png)
 
 ```puppet
-node 'splunk-ds.internal.corp.tld' {
+node 'splunk-ds.internal.corp.example' {
   class { 'splunk':
     admin        => {
       # Set the admin password to changemeagain
@@ -238,8 +239,8 @@ node 'splunk-ds.internal.corp.tld' {
     httpport     => 8000,
     # Use the best-practice to forward all local events to the indexers
     tcpout       => [
-      'splunk-idx1.internal.corp.tld:9997', 
-      'splunk-idx2.internal.corp.tld:9997',
+      'splunk-idx1.internal.corp.example:9997', 
+      'splunk-idx2.internal.corp.example:9997',
     ],
     service      => {
       ensure     => running,
@@ -248,7 +249,7 @@ node 'splunk-ds.internal.corp.tld' {
   }
 }
 
-node 'splunk-sh.internal.corp.tld' {
+node 'splunk-sh.internal.corp.example' {
   class { 'splunk':
     admin        => {
       # A plaintext password needed to be able to add search peers,
@@ -262,15 +263,15 @@ node 'splunk-sh.internal.corp.tld' {
     httpport     => 8000,
     kvstoreport  => 8191,
     # Use a License Master and Deployment Server
-    lm           => 'splunk-ds.internal.corp.tld:8089',
-    ds           => 'splunk-ds.internal.corp.tld:8089',
+    lm           => 'splunk-ds.internal.corp.example:8089',
+    ds           => 'splunk-ds.internal.corp.example:8089',
     tcpout       => [ 
-      'splunk-idx1.internal.corp.tld:9997', 
-      'splunk-idx2.internal.corp.tld:9997', ],
+      'splunk-idx1.internal.corp.example:9997', 
+      'splunk-idx2.internal.corp.example:9997', ],
     # Use these search peers
     searchpeers  => [ 
-      'splunk-idx1.internal.corp.tld:8089', 
-      'splunk-idx2.internal.corp.tld:8089', ],
+      'splunk-idx1.internal.corp.example:8089', 
+      'splunk-idx2.internal.corp.example:8089', ],
     # splunk must be running to be able add search peers, 
     # you can remove this if everything is up and running:
     service      => {
@@ -280,7 +281,7 @@ node 'splunk-sh.internal.corp.tld' {
   }
 }
 
-node 'splunk-idx1.internal.corp.tld', 'splunk-idx2.internal.corp.tld' {
+node 'splunk-idx1.internal.corp.example', 'splunk-idx2.internal.corp.example' {
   class { 'splunk':
     admin        => {
       hash       => '$6$MR9IJFF7RBnVA.k1$/30EBSzy0EJKZ94SjHFIUHjQjO3/P/4tx0JmWCp/En47MJceaXsevhBLE2w/ibjHlAUkD6k0U.PmY/noe9Jok0',
@@ -288,8 +289,8 @@ node 'splunk-idx1.internal.corp.tld', 'splunk-idx2.internal.corp.tld' {
       email      => 'changemeagain@example.com',
     },
     inputport    => 9997,
-    lm           => 'splunk-ds.internal.corp.tld:8089',
-    ds           => 'splunk-ds.internal.corp.tld:8089',
+    lm           => 'splunk-ds.internal.corp.example:8089',
+    ds           => 'splunk-ds.internal.corp.example:8089',
     # splunk must be running for it to be added as search peer,
     # you can remove this if everything is up and running
     service      => {
@@ -308,7 +309,7 @@ The cluster master also acts as license master.
 ![Splunk indexer cluster](https://raw.githubusercontent.com/jorritfolmer/puppet-splunk/master/example4.png)
 
 ```puppet
-node 'splunk-sh.internal.corp.tld' {
+node 'splunk-sh.internal.corp.example' {
   class { 'splunk':
     admin        => {
       hash       => '$6$MR9IJFF7RBnVA.k1$/30EBSzy0EJKZ94SjHFIUHjQjO3/P/4tx0JmWCp/En47MJceaXsevhBLE2w/ibjHlAUkD6k0U.PmY/noe9Jok0',
@@ -317,16 +318,16 @@ node 'splunk-sh.internal.corp.tld' {
     },
     httpport     => 8000,
     kvstoreport  => 8191,
-    lm           => 'splunk-cm.internal.corp.tld:8089',
-    tcpout       => [ 'splunk-idx1.internal.corp.tld:9997', 'splunk-idx2.internal.corp.tld:9997', ],
+    lm           => 'splunk-cm.internal.corp.example:8089',
+    tcpout       => [ 'splunk-idx1.internal.corp.example:9997', 'splunk-idx2.internal.corp.example:9997', ],
     clustering   => {
       mode       => 'searchhead',
-      cm         => 'splunk-cm.internal.corp.tld:8089',
+      cm         => 'splunk-cm.internal.corp.example:8089',
     }
   }
 }
 
-node 'splunk-cm.internal.corp.tld' {
+node 'splunk-cm.internal.corp.example' {
   class { 'splunk':
     admin        => {
       hash       => '$6$MR9IJFF7RBnVA.k1$/30EBSzy0EJKZ94SjHFIUHjQjO3/P/4tx0JmWCp/En47MJceaXsevhBLE2w/ibjHlAUkD6k0U.PmY/noe9Jok0',
@@ -334,7 +335,7 @@ node 'splunk-cm.internal.corp.tld' {
       email      => 'changemeagain@example.com',
     },
     httpport     => 8000,
-    tcpout       => [ 'splunk-idx1.internal.corp.tld:9997', 'splunk-idx2.internal.corp.tld:9997', ],
+    tcpout       => [ 'splunk-idx1.internal.corp.example:9997', 'splunk-idx2.internal.corp.example:9997', ],
     clustering   => {
       mode               => 'master',
       replication_factor => 2,
@@ -343,9 +344,9 @@ node 'splunk-cm.internal.corp.tld' {
   }
 }
 
-node 'splunk-idx1.internal.corp.tld', 
-     'splunk-idx2.internal.corp.tld',
-     'splunk-idx3.internal.corp.tld' {
+node 'splunk-idx1.internal.corp.example', 
+     'splunk-idx2.internal.corp.example',
+     'splunk-idx3.internal.corp.example' {
   class { 'splunk':
     admin        => {
       hash       => '$6$MR9IJFF7RBnVA.k1$/30EBSzy0EJKZ94SjHFIUHjQjO3/P/4tx0JmWCp/En47MJceaXsevhBLE2w/ibjHlAUkD6k0U.PmY/noe9Jok0',
@@ -353,10 +354,10 @@ node 'splunk-idx1.internal.corp.tld',
       email      => 'changemeagain@example.com',
     },
     inputport    => 9997,
-    lm           => 'splunk-cm.internal.corp.tld:8089',
+    lm           => 'splunk-cm.internal.corp.example:8089',
     clustering   => {
       mode       => 'slave',
-      cm         => 'splunk-cm.internal.corp.tld:8089',
+      cm         => 'splunk-cm.internal.corp.example:8089',
     }
   }
 }
@@ -367,13 +368,13 @@ node 'splunk-idx1.internal.corp.tld',
 This snippet enables Single Sign-On on the Search Head through Active Directory Federation Services (ADFS) as an Identity provider. See the chapter "Splunk with ADFS" for more details and troubleshooting.
 
 ```
-node 'splunk-sh.internal.corp.tld' {
+node 'splunk-sh.internal.corp.example' {
   class { 'splunk':
     ...
     auth           => { 
       authtype     => 'SAML',
       saml_idptype => 'ADFS',
-      saml_idpurl  => 'https://sso.internal.corp.tld/adfs/ls',
+      saml_idpurl  => 'https://sso.internal.corp.example/adfs/ls',
     },
     ...
   }
@@ -383,15 +384,15 @@ node 'splunk-sh.internal.corp.tld' {
 To enable ADFS SAML authentication in a Search Head Cluster, add fqdn and entityid parameters:
 
 ```
-node 'splunk-sh01.internal.corp.tld' {
+node 'splunk-sh01.internal.corp.example' {
   class { 'splunk':
     ...
     auth            => { 
       authtype      => 'SAML',
       saml_idptype  => 'ADFS',
-      saml_idpurl   => 'https://sso.internal.corp.tld/adfs/ls',
-      saml_fqdn     => 'https://splunk.internal.corp.tld:8000',
-      sqml_entityid => 'splunk.internal.corp.tld',
+      saml_idpurl   => 'https://sso.internal.corp.example/adfs/ls',
+      saml_fqdn     => 'https://splunk.internal.corp.example:8000',
+      sqml_entityid => 'splunk.internal.corp.example',
     },
     ...
   }
@@ -403,17 +404,17 @@ node 'splunk-sh01.internal.corp.tld' {
 This snippet enables LDAP authentication on a Search Head, e.g. with Active Directory. The example below also maps 2 groups in AD to Splunk admin, and 1 group to Splunk user.
 
 ```
-node 'splunk-sh.internal.corp.tld' {
+node 'splunk-sh.internal.corp.example' {
   class { 'splunk':
     ...
     auth           => { 
       authtype     => 'LDAP',
-      ldap_host                 => 'dc01.internal.corp.tld',
-      ldap_binddn               => 'CN=Splunk Service Account,CN=Users,DC=corp,DC=tld',
+      ldap_host                 => 'dc01.internal.corp.example',
+      ldap_binddn               => 'CN=Splunk Service Account,CN=Users,DC=corp,DC=example',
       ldap_binddnpassword       => 'changeme',
       ldap_sslenabled           => 0,
-      ldap_userbasedn           => 'CN=Users,DC=corp,DC=tld',
-      ldap_groupbasedn          => 'CN=Users,DC=corp,DC=tld;OU=Groups,DC=corp,DC=tld',
+      ldap_userbasedn           => 'CN=Users,DC=corp,DC=example',
+      ldap_groupbasedn          => 'CN=Users,DC=corp,DC=example;OU=Groups,DC=corp,DC=example',
     },
     rolemap     => {
       'admin'   => 'Splunk Admins;Domain Admins',
@@ -434,14 +435,14 @@ will have to take some extra steps in the right order to prevent Puppet and SH
 deployer from interferring with each other.
 
 ```
-node 'splunk-sh1.internal.corp.tld',
-     'splunk-sh2.internal.corp.tld', 
-     'splunk-sh3.internal.corp.tld'  {
+node 'splunk-sh1.internal.corp.example',
+     'splunk-sh2.internal.corp.example', 
+     'splunk-sh3.internal.corp.example'  {
   class { 'splunk':
     ...
     shclustering   => {
       mode         => 'searchhead',
-      shd          => 'splunk-shd.internal.corp.tld:8089',
+      shd          => 'splunk-shd.internal.corp.example:8089',
       pass4symmkey => 'SHCl33tsecret',
       label        => 'My First SHC',
     },
@@ -449,7 +450,7 @@ node 'splunk-sh1.internal.corp.tld',
   }
 }
 
-node 'splunk-shd.internal.corp.tld' {
+node 'splunk-shd.internal.corp.example' {
   class { 'splunk':
     ...
     shclustering   => {
@@ -468,7 +469,7 @@ Steps:
 3. Disable Puppet on the Search Head Cluster nodes to prevent Puppet from interfering with the configuration bundle pushes from the Search Head Deployer.
 3. Start the SH deployer and the SH cluster nodes
 4. Do an apply shcluster-bundle on the Search Head Deployer
-4. Perform a `splunk bootstrap shcluster-captain -servers_list "https://splunk-sh1.internal.corp.tld:8089,https://splunk-sh2.internal.corp.tld:8089,https://splunk-sh1.internal.corp.tld:8089" -auth admin:changemeagain
+4. Perform a `splunk bootstrap shcluster-captain -servers_list "https://splunk-sh1.internal.corp.example:8089,https://splunk-sh2.internal.corp.example:8089,https://splunk-sh1.internal.corp.example:8089" -auth admin:changemeagain
 
 ### Example 8
 
@@ -476,7 +477,7 @@ Configure a multisite cluster with 2 sites with 1 indexer each.
 Site 1 hosts splunk-cm and splunk-idx1. Site 2 hosts splunk-idx2.
 
 ```
-node 'splunk-cm.internal.corp.tld' {
+node 'splunk-cm.internal.corp.example' {
   class { 'splunk':
     admin        => {
       hash       => '$6$MR9IJFF7RBnVA.k1$/30EBSzy0EJKZ94SjHFIUHjQjO3/P/4tx0JmWCp/En47MJceaXsevhBLE2w/ibjHlAUkD6k0U.PmY/noe9Jok0',
@@ -484,7 +485,7 @@ node 'splunk-cm.internal.corp.tld' {
       email      => 'changemeagain@example.com',
     },
     httpport     => 8000,
-    tcpout       => [ 'splunk-idx1.internal.corp.tld:9997', 'splunk-idx2.internal.corp.tld:9997', ],
+    tcpout       => [ 'splunk-idx1.internal.corp.example:9997', 'splunk-idx2.internal.corp.example:9997', ],
     clustering   => {
       mode               => 'master',
       replication_factor => 2,
@@ -497,7 +498,7 @@ node 'splunk-cm.internal.corp.tld' {
   }
 }
 
-node 'splunk-idx1.internal.corp.tld' {
+node 'splunk-idx1.internal.corp.example' {
   class { 'splunk':
     admin        => {
       hash       => '$6$MR9IJFF7RBnVA.k1$/30EBSzy0EJKZ94SjHFIUHjQjO3/P/4tx0JmWCp/En47MJceaXsevhBLE2w/ibjHlAUkD6k0U.PmY/noe9Jok0',
@@ -505,16 +506,16 @@ node 'splunk-idx1.internal.corp.tld' {
       email      => 'changemeagain@example.com',
     },
     inputport    => 9997,
-    lm           => 'splunk-cm.internal.corp.tld:8089',
+    lm           => 'splunk-cm.internal.corp.example:8089',
     clustering   => {
       site       => 'site1',
       mode       => 'slave',
-      cm         => 'splunk-cm.internal.corp.tld:8089',
+      cm         => 'splunk-cm.internal.corp.example:8089',
     }
   }
 }
 
-node 'splunk-idx2.internal.corp.tld' {
+node 'splunk-idx2.internal.corp.example' {
   class { 'splunk':
     admin        => {
       hash       => '$6$MR9IJFF7RBnVA.k1$/30EBSzy0EJKZ94SjHFIUHjQjO3/P/4tx0JmWCp/En47MJceaXsevhBLE2w/ibjHlAUkD6k0U.PmY/noe9Jok0',
@@ -522,11 +523,11 @@ node 'splunk-idx2.internal.corp.tld' {
       email      => 'changemeagain@example.com',
     },
     inputport    => 9997,
-    lm           => 'splunk-cm.internal.corp.tld:8089',
+    lm           => 'splunk-cm.internal.corp.example:8089',
     clustering   => {
       site       => 'site2',
       mode       => 'slave',
-      cm         => 'splunk-cm.internal.corp.tld:8089',
+      cm         => 'splunk-cm.internal.corp.example:8089',
     }
   }
 }
@@ -538,7 +539,7 @@ node 'splunk-idx2.internal.corp.tld' {
 Configure an index cluster with indexer discovery 
 
 ```
-node 'splunk-cm.internal.corp.tld' {
+node 'splunk-cm.internal.corp.example' {
   class { 'splunk':
     admin        => {
       hash       => '$6$MR9IJFF7RBnVA.k1$/30EBSzy0EJKZ94SjHFIUHjQjO3/P/4tx0JmWCp/En47MJceaXsevhBLE2w/ibjHlAUkD6k0U.PmY/noe9Jok0',
@@ -556,7 +557,7 @@ node 'splunk-cm.internal.corp.tld' {
   }
 }
 
-node 'splunk-idx1.internal.corp.tld','splunk-idx2.internal.corp.tld' {
+node 'splunk-idx1.internal.corp.example','splunk-idx2.internal.corp.example' {
   class { 'splunk':
     admin        => {
       hash       => '$6$MR9IJFF7RBnVA.k1$/30EBSzy0EJKZ94SjHFIUHjQjO3/P/4tx0JmWCp/En47MJceaXsevhBLE2w/ibjHlAUkD6k0U.PmY/noe9Jok0',
@@ -564,20 +565,20 @@ node 'splunk-idx1.internal.corp.tld','splunk-idx2.internal.corp.tld' {
       email      => 'changemeagain@example.com',
     },
     inputport    => 9997,
-    lm           => 'splunk-cm.internal.corp.tld:8089',
+    lm           => 'splunk-cm.internal.corp.example:8089',
     clustering   => {
       mode       => 'slave',
-      cm         => 'splunk-cm.internal.corp.tld:8089',
+      cm         => 'splunk-cm.internal.corp.example:8089',
     }
   }
 }
 
-node 'some-server.internal.corp.tld' {
+node 'some-server.internal.corp.example' {
   class { 'splunk':
     type       => 'uf',
     tcpout     => 'indexer_discovery',
     clustering => {
-      cm       => 'host03.testlab.local:8089',
+      cm       => 'splunk-cm.internal.corp.example:8089',
     }
   }
 }
@@ -596,29 +597,29 @@ in the screenshot below:
 
 ### Setup
 
-1. Add a new Relying Party Trust in AD FS Management Console, by importing the XML from `https://splunk-sh.internal.corp.tld/saml/spmetadata`. Since this metadata is kept behind a Splunk login, you'll have to:
+1. Add a new Relying Party Trust in AD FS Management Console, by importing the XML from `https://splunk-sh.internal.corp.example/saml/spmetadata`. Since this metadata is kept behind a Splunk login, you'll have to:
 
-    - first browse to `https://splunk-sh.internal.corp.tld/account/login?loginType=Splunk`
-    - then browse to `https://splunk-sh.internal.corp.tld/saml/spmetadata`, and copy/paste the SAML metadata XML to the Windows server. 
+    - first browse to `https://splunk-sh.internal.corp.example/account/login?loginType=Splunk`
+    - then browse to `https://splunk-sh.internal.corp.example/saml/spmetadata`, and copy/paste the SAML metadata XML to the Windows server. 
     - import the SAML metadata XML from the relying party (Splunk) from a file
 
 1. Add a new claim rule to map Active Directory attributes to new claims
    
    ![ADFS get attributes claim rule for Splunk](https://raw.githubusercontent.com/jorritfolmer/puppet-splunk/master/adfs_claim_rules_get_attrs.png)
 
-1. Disable EncryptClaims on the ADFS side: Splunk only supports signed SAML responses: `Set-ADFSRelyingPartyTrust -TargetIdentifier splunk-sh1.internal.corp.tld -EncryptClaims $False`
-1. Disable SigningCertificateRevocationCheck on the ADFS side if you're using your own self signed certificates without CRL: `Set-ADFSRelyingPartyTrust -TargetIdentifier splunk-sh1.internal.corp.tld -SigningCertificateRevocationCheck none`
+1. Disable EncryptClaims on the ADFS side: Splunk only supports signed SAML responses: `Set-ADFSRelyingPartyTrust -TargetIdentifier splunk-sh1.internal.corp.example -EncryptClaims $False`
+1. Disable SigningCertificateRevocationCheck on the ADFS side if you're using your own self signed certificates without CRL: `Set-ADFSRelyingPartyTrust -TargetIdentifier splunk-sh1.internal.corp.example -SigningCertificateRevocationCheck none`
 
 You can use the SAML tracer Firefox plugin to see what gets posted to Splunk via ADFS after a succesful authentication. The relevant part should look something like this:
 
 ```
         ...
         <Subject>
-            <NameID>jfolmer@testlab.local</NameID>
+            <NameID>jfolmer@testlab.example</NameID>
             <SubjectConfirmation Method="urn:oasis:names:tc:SAML:2.0:cm:bearer">
-                <SubjectConfirmationData InResponseTo="host15.testlab.local.12.AF9F4C1A-EAEA-4EF5-A501-E57AB33D7776"
+                <SubjectConfirmationData InResponseTo="host15.testlab.example.12.AF9F4C1A-EAEA-4EF5-A501-E57AB33D7776"
                                          NotOnOrAfter="2016-11-04T21:23:34.597Z"
-                                         Recipient="https://host15.testlab.local:8000/saml/acs"
+                                         Recipient="https://host15.testlab.example:8000/saml/acs"
                                          />
             </SubjectConfirmation>
         </Subject>
@@ -626,7 +627,7 @@ You can use the SAML tracer Firefox plugin to see what gets posted to Splunk via
                     NotOnOrAfter="2016-11-04T22:18:34.581Z"
                     >
             <AudienceRestriction>
-                <Audience>host15.testlab.local</Audience>
+                <Audience>host15.testlab.example</Audience>
             </AudienceRestriction>
         </Conditions>
         <AttributeStatement>
@@ -634,7 +635,7 @@ You can use the SAML tracer Firefox plugin to see what gets posted to Splunk via
                 <AttributeValue>Jorrit Folmer</AttributeValue>
             </Attribute>
             <Attribute Name="http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress">
-                <AttributeValue>jfolmer@testlab.local</AttributeValue>
+                <AttributeValue>jfolmer@testlab.example</AttributeValue>
             </Attribute>
             <Attribute Name="http://schemas.microsoft.com/ws/2008/06/identity/claims/role">
                 <AttributeValue>Domain Users</AttributeValue>
@@ -648,7 +649,7 @@ You can use the SAML tracer Firefox plugin to see what gets posted to Splunk via
 
 Steps:
 
-1. Get the ADFS relaying party trust settings from the ADFS server, e.g. through powershell: `Get-AdfsRelyingPartyTrust -Identifier host11.testlab.local`. Configuration settings to check:
+1. Get the ADFS relaying party trust settings from the ADFS server, e.g. through powershell: `Get-AdfsRelyingPartyTrust -Identifier host11.testlab.example`. Configuration settings to check:
     - SigningCertificateRevocationCheck: should be None for self-signed certs
     - EncryptClaims: should be $false because Splunk only supports signed claims
     - Identifier: should match the entityId in Splunk's authentication.conf
@@ -667,7 +668,7 @@ Errors you may encounter with Splunk and ASFS 3.0 on Server 2012R2 or ADFS 4.0 o
 |       |   X   | SamlProtocolSignatureAlgorithmMismatchExeption: MSIS7093: The message is not signed with expected signature algorithm. Message is signed with signature algorithm http://www.w3.org/2000/09/xmldsig#rsa sha1. Expected signature algorithm http://www.w3.org/2001/04/xmldsig-more#rsa-sha256. | AD FS expects a SHA256 hash in the SAML request, but probably gets a SHA1 which is the Splunk default. Change the hash to SHA1 in the AD FS Relaying Trust properties -> Advanced. Or upgrade the `signatureAlgorithm` in Splunk's authentication.conf
 |        |  X   | "An error occurred"  with RequestFailedException: MSIS7065: There are no registered protocol handlers on path /adfs/ls to process the incoming request. | Don't use a private browser window
 |        |  X   |  "An error occurred" with AD FS / Admin / Event ID 364: Exception details: System.UriFormatException: Invalid URI: The format of the URI could not be determined. | There is a mismatch between the entityId as declared in Splunks authentication.conf and AD FS Relaying Party Identifier. They should be the same.
-|        |  X   | Exception details: System.ArgumentOutOfRangeException: Not a valid Win32 FileTime. Parameter name: fileTime | Although the error message suggests time issues, this appears to happen only in some environments when a user logs in with the canonical domain name e.g. ad\user, instead of user@ad.org.tld or ad.org.tld\user. Authentication succeeds in all 3 cases, but only 2 without error.
+|        |  X   | Exception details: System.ArgumentOutOfRangeException: Not a valid Win32 FileTime. Parameter name: fileTime | Although the error message suggests time issues, this appears to happen only in some environments when a user logs in with the canonical domain name e.g. ad\user, instead of user@ad.corp.example or ad.corp.example\user. Authentication succeeds in all 3 cases, but only 2 without error.
 |        |  X   | SamlProtocolSignatureVerificationException: MSIS7085: The server requires a signed SAML authentication request but no signature is present. | Splunk doesn't sign SAML requests but the IdP requires it.
 |        |  X   | On logout "An error occurred" with AD FS / Admin / Event ID 364:System.ArgumentNullException: Value cannot be null. Parameter name: collection | This happens on ADFS 4.0 servers and is supposed to be fixed with a june 2017 Microsoft KB
 |        |  X   | RevocationValidationException: MSIS3015: The signing certificate of the claims provider trust 'somehost' identified by thumbprint '33BC4ABFF11151559240DE9CA2C95C632C3E321B' is not valid | If you're using self-signed certificates disable signing certificate revocation checking
@@ -689,13 +690,13 @@ If you don't already have a local repository server, the quickest way is to inst
 6. download splunk-forwarder-x.y.x.rpm
 7. `createrepo .`
 8. make sure Apache allows directory index listing
-9. surf to http://your.repo.server/splunk and check if you get a directory listing
+9. surf to http://your.repo.server.example/splunk and check if you get a directory listing
 
 Then add something like this to every node definition in site.pp, and require it from the splunk class so it it evaluated before the splunk class.
 
 ```
 yumrepo { "splunk":
-  baseurl => "http://your.repo.server/splunk",
+  baseurl => "http://your.repo.server.example/splunk",
   descr => "Splunk repo",
   enabled => 1,
   gpgcheck => 0
@@ -714,7 +715,7 @@ If you don't already have a local repository server, the quickest way is to inst
 6. download splunk-forwarder-x.y.x.deb
 7. `dpkg-scanpackages . /dev/null |gzip -c > Packages.gz`
 8. make sure Apache allows directory index listing
-9. surf to http://your.rhel-repo.server/splunk and check if you get a directory listing
+9. surf to http://your.rhel-repo.server.example/splunk and check if you get a directory listing
 
 Then add something like this to every node definition in site.pp, and make sure to require these files from the splunk class so they are evaluated before the splunk class. Because the APT repository above isn't signed, puppet won't be able to install splunk or splunkforwarder, except when setting `APT::Get::AllowUnauthenticated` somewhere in `/etc/apt/apt.conf.d/`. You may have to run apt-get update before the Splunk repository is available in apt-get.
 
@@ -725,7 +726,7 @@ file { "/etc/apt/apt.conf.d/99allowunsigned":
 }
 file { "/etc/apt/sources.list.d/splunk.list":
   ensure => present,
-  content => "deb http://your.apt-repo.server/splunk ./\n",
+  content => "deb http://your.apt-repo.server.example/splunk ./\n",
 }
 ```
 
@@ -763,7 +764,7 @@ This is a hash with the following members:
 
 - `authtype` (can be one of `Splunk`,`LDAP`,`SAML`)
 - `saml_idptype` (specifies the SAML identity provider type to use, currently only supports `ADFS`)
-- `saml_idpurl` (specifies the base url for the identity provider, for ADFS IdP's this will be something like https://sso.corp.tld/adfs/ls )
+- `saml_idpurl` (specifies the base url for the identity provider, for ADFS IdP's this will be something like https://sso.corp.example/adfs/ls )
 - `saml_signauthnrequest` (sign outgoing SAML requests to ADFS: defaults to true)
 - `saml_signedassertion` (expect assertions from ADFS to be signed: defaults to true)
 - `saml_signaturealgorithm` (specifies the signature algorithm to hash requests to ADFS with, and support responses from ADFS.)
@@ -1026,13 +1027,13 @@ Use `type => "uf"` if you want to have a Splunk Universal Forwarder.
 
 Optional. When omitted, it will not forward events to a Splunk indexer.
 
-Set `tcpout => 'splunk-idx1.internal.corp.tld:9997'` if you do want to forward events to a Splunk indexer. 
+Set `tcpout => 'splunk-idx1.internal.corp.example:9997'` if you do want to forward events to a Splunk indexer. 
 
 Set `tcpout => 'indexer_discovery' if you want to use indexer discovery instead of specifying indexers manually. Requires specifying a cluster master through:
 
 ```
   clustering => {
-     cm      => 'splunk-cm.internal.corp.tld:8089'
+     cm      => 'splunk-cm.internal.corp.example:8089'
   }
 ```
 
