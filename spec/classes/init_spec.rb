@@ -124,6 +124,23 @@ describe 'splunk' do
     it { should contain_file('/opt/splunk/etc/apps/puppet_common_ssl_outputs/local/outputs.conf').with_content(/sslCertPath = \/opt\/splunk\/etc\/auth\/server.pem/) }
   end
 
+
+  context 'with reuse_puppet_certs_for_web' do
+    let(:params) { 
+      {
+        :httpport => 8000,
+        :admin => { 'hash' => 'zzzz', 'fn' => 'yyyy', 'email' => 'wwww', },
+        :reuse_puppet_certs_for_web => true,
+      }
+    }
+    it { should contain_class('splunk::installed') }
+    it { should contain_package('splunk') }
+    it { should contain_file('/opt/splunk/etc/auth/certs/webprivkey.pem') }
+    it { should contain_file('/opt/splunk/etc/auth/certs/webcert.pem') }
+    it { should contain_file('/opt/splunk/etc/apps/puppet_common_ssl_web_base/local/web.conf').with_content(/privKeyPath = \/opt\/splunk\/etc\/auth\/certs\/webprivkey.pem/) }
+    it { should contain_file('/opt/splunk/etc/apps/puppet_common_ssl_web_base/local/web.conf').with_content(/serverCert = \/opt\/splunk\/etc\/auth\/certs\/webcert.pem/) }
+  end
+
   context 'with tcpout as array' do
     let(:params) { 
       {

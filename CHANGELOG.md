@@ -1,3 +1,7 @@
+### 3.12.0
+
+- Added option to also use Puppet certs for Splunkweb
+
 ### 3.11.0
 
 - Added pool_suggestion parameter

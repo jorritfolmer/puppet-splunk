@@ -883,6 +883,14 @@ Optional. By default the certificates signed by the Puppet CA will be reused. Ho
 - `true` (default)
 - `false`
 
+### `reuse_puppet_certs_for_web`
+
+Optional. By default the certificates signed by the SplunkCommonCA will be used to secure the Splunkweb interface at 8000/tcp
+If you want to use the one signed by the Puppet CA, set this option to true.
+
+- `false` (default)
+- `true`
+
 ### `requireclientcert`
 
 Optional. Used on a server to require clients to present an SSL certificate.

@@ -46,14 +46,17 @@ class splunk (
   $pass4symmkey               = $splunk::params::pass4symmkey,
   $phonehomeintervalinsec     = $splunk::params::phonehomeintervalinsec,
   $pool_suggestion            = $splunk::params::pool_suggestion,
+  $privkeypath                = $splunk::params::privkeypath,
   $replication_port           = $splunk::params::replication_port,
   $repositorylocation         = $splunk::params::repositorylocation,
   $requireclientcert          = $splunk::params::requireclientcert,
   $reuse_puppet_certs         = $splunk::params::reuse_puppet_certs,
+  $reuse_puppet_certs_for_web = $splunk::params::reuse_puppet_certs_for_web,
   $rolemap                    = $splunk::params::rolemap,
   $searchpeers                = $splunk::params::searchpeers,
   $secret                     = $splunk::params::secret,
   $service                    = $splunk::params::service,
+  $servercert                 = $splunk::params::servercert,
   $shclustering               = $splunk::params::shclustering,
   $sslcompatibility           = $splunk::params::sslcompatibility,
   $sslversions_modern         = $splunk::params::sslversions_modern,
@@ -142,6 +145,7 @@ class splunk (
   include splunk::inputs
   include splunk::outputs
   include splunk::certs::s2s
+  include splunk::certs::web
   include splunk::web
   include splunk::server::general
   include splunk::server::ssl
@@ -168,6 +172,7 @@ class splunk (
   -> Class['splunk::inputs']
   -> Class['splunk::outputs']
   -> Class['splunk::certs::s2s']
+  -> Class['splunk::certs::web']
   -> Class['splunk::web']
   -> Class['splunk::server::general']
   -> Class['splunk::server::ssl']

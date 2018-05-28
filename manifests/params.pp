@@ -53,20 +53,23 @@ class splunk::params (
   $pass4symmkey = 'changeme'
   $phonehomeintervalinsec = 60
   $pool_suggestion = undef
+  $privkeypath                  = 'certs/webprivkey.pem'
   $outputs                      = undef
-  $replication_port = 9887
-  $repositorylocation = undef
+  $replication_port             = 9887
+  $repositorylocation           = undef
   $requireclientcert            = undef
   $reuse_puppet_certs           = true
+  $reuse_puppet_certs_for_web   = undef
   $rolemap = {
     'admin'     => 'Domain Admins',
     'power'     => 'Power Users',
     'user'      => 'Domain Users',
   }
   # set to some string instead of undef to prevent 'Missing title' errors in Puppet 4.x
-  $searchpeers  = 'empty'
-  $secret       = undef
-  $service      = {
+  $searchpeers                  = 'empty'
+  $secret                       = undef
+  $servercert                   = 'certs/webcert.pem'
+  $service                      = {
     enable => true,
     ensure => undef,
   }
@@ -84,8 +87,8 @@ class splunk::params (
   $sslverifyservercert          = undef
   $tcpout                       = undef
   $type                         = undef
-  $use_ack      = false
-  $version      = undef
+  $use_ack                      = false
+  $version                      = undef
   $webssl                       = true
 }
 
