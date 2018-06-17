@@ -4,6 +4,8 @@
 
 This Puppet module deploys Splunk instances on Windows and Linux in simple, distributed or (multisite) clustered topologies. It is used in production by organisations large and small, but can also be used to quickly validate solution architectures. For example on a 2016 MacBook Pro, setting up a multisite indexer cluster, a cluster master, a search head cluster, a search head deployer, LDAP authentication, etc, takes less than an hour.
 
+Splunk demoed this module at the [Splunk .conf2017 breakout session](https://conf.splunk.com/sessions/2017-sessions.html#types=Breakout%20Session&loadall=204) "Automate All the Things! Moving Faster With Puppet and Splunk" beginning at the 29:42 mark.
+
 Project homepage is at [https://github.com/jorritfolmer/puppet-splunk](https://github.com/jorritfolmer/puppet-splunk)
 
 ## Principles

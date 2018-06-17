@@ -2,7 +2,7 @@
   "name": "jorritfolmer-splunk",
   "version": "3.12.0",
   "author": "Jorrit Folmer",
-  "summary": "Deploy Splunk indexers, search heads and universal forwarders into any imaginable topology, distributed or (multisite) clustered.",
+  "summary": "Deploys Splunk instances on Windows and Linux in simple, distributed or (multisite) clustered topologies. Demoed by Splunk at .conf2017",
   "license": "MIT",
   "source": "https://github.com/jorritfolmer/puppet-splunk.git",
   "issues_url": "https://github.com/jorritfolmer/puppet-splunk/issues",
