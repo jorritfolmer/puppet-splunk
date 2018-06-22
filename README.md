@@ -580,6 +580,17 @@ Structured parameters like admin, clustering, auth need to be specified in valid
 
 One caveat: you cannot specify the admin hash in JSON due to the dollar signs in the SHA512 hash. Even though the PE docs mention you should escape $ to prevent variable interpolation, this doesn't seem to work for values in JSON.
 
+| Status | Statement | Reason
+|------|-----|-----
+| **Works** | `{"pass": "changemeagain"}` | Valid JSON
+| Doesn't work | `{'pass': 'changemeagain'}` | Invalid JSON
+| Doesn't work | `{pass: "changemeagain"}` | Invalid JSON
+| Doesn't work | `{pass= "changemeagain"}` | Invalid JSON
+| Doesn't work | `{"hash": "$6$MR9IJetc"}` | Valid JSON but $ causes variable interpolation
+| Doesn't work | `{"hash": "\$6\$MR9IJetc"}` | Valid JSON but escaped $ causes PE webgui to interfere
+
+If for one reason or another the PE web gui says "Converted to string" while you're entering JSON, you should assume your structured parameter to not be interpreted incorrectly.
+
 ## Splunk with ADFS 
 
 ### Setup
