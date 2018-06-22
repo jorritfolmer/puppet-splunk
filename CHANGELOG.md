@@ -1,3 +1,12 @@
+### 3.12.2
+
+- Fixed multisite examples
+- Updated docs: Puppet Enterprise JSON values in docs
+
+### 3.12.1
+
+- Updated docs: link to Splunk demo of this module on conf2017
+
 ### 3.12.0
 
 - Added option to also use Puppet certs for Splunkweb

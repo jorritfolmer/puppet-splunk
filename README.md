@@ -8,25 +8,16 @@ Splunk demoed this module at the [Splunk .conf2017 breakout session](https://con
 
 Project homepage is at [https://github.com/jorritfolmer/puppet-splunk](https://github.com/jorritfolmer/puppet-splunk)
 
-## Principles
-
-Development of this module is done with the following principles in mind:
-
-1. **Technical Management** Puppet is used to configure the technical infrastructure of a Splunk deployment. It tries to keep away from Splunk functional administration as much as possible. For example, deploying Splunk apps to forwarders is best left to Splunk's multi-platform deployment server.
-2. **Power to the Splunkers.** A Splunk installation used for security monitoring should typically not be administered by the same IT or IT-infra teams it's supposed to be monitoring. This Puppet module should smooth the path towards implementing segregation of duties between administrators and watch(wo)men (ISO 27002 12.4.3 or BIR 10.10.3).
-3. **Supports any topology.** Single server? Redundant multisite clustering? Heavy forwarder in a DMZ?
-4. **Secure by default**.
-  - Splunk runs as user splunk instead of root.
-  - No services are listening by default except the bare minimum (8089/tcp)
-  - TLSv1.1 and TLSv1.2 are enabled by default
-  - Perfect Forward Secrecy (PFS) using Elliptic curve Diffie-Hellman (ECDH)
-  - Ciphers are set to [modern compatibility](https://wiki.mozilla.org/Security/Server_Side_TLS)
-  - Admin password can be set using its SHA512 hash in the Puppet manifests instead of plain-text.
-
 ## Prerequisites
 
 1. A Puppet master
-2. A repository server with splunk and splunkforwarder packages. See "Setting up a Splunk repository" if you need help setting it up for Red Hat, Debian or Windows environments
+2. A repository with splunk and splunkforwarder packages. See "Setting up a Splunk repository" if you need help setting it up for Red Hat, Debian or Windows environments
+
+## Installation
+
+1. SSH to your Puppet master
+2. `puppet module install jorritfolmer-splunk`
+3. Create your Splunk topology, see below for examples.
 
 ## Quick-start
 
@@ -82,17 +73,7 @@ splunk::inputport:        9997
 splunk::package_source:   //dc01/Company/splunk-6.6.1-aeae3fe0c5af-x64-release.msi
 ```
 
-
 See the other examples below for more elaborate topologies.
-
-
-## Installation
-
-1. SSH to your Puppet master
-2. `cd /etc/puppet/modules` or `cd /etc/puppetlabs/code/environments/production/modules`, depending on your Puppet version
-3. `puppet module install jorritfolmer-splunk` or `git clone https://github.com/jorritfolmer/puppet-splunk.git; mv puppet-splunk splunk`
-4. Put the Splunk .rpm, .deb or .msi files in a repository, see "Setting up a Splunk repository"
-5. Create your Splunk topology, see below for examples.
 
 ## Usage
 
@@ -492,7 +473,7 @@ node 'splunk-cm.internal.corp.example' {
       mode               => 'master',
       replication_factor => 2,
       search_factor      => 2,
-      site               => 'site1',
+      thissite           => 'site1',
       available_sites    => 'site1,site2',
       site_replication_factor => 'origin:1, total:2',
       site_search_factor => 'origin:1, total:2',
@@ -510,7 +491,7 @@ node 'splunk-idx1.internal.corp.example' {
     inputport    => 9997,
     lm           => 'splunk-cm.internal.corp.example:8089',
     clustering   => {
-      site       => 'site1',
+      thissite   => 'site1',
       mode       => 'slave',
       cm         => 'splunk-cm.internal.corp.example:8089',
     }
@@ -527,7 +508,7 @@ node 'splunk-idx2.internal.corp.example' {
     inputport    => 9997,
     lm           => 'splunk-cm.internal.corp.example:8089',
     clustering   => {
-      site       => 'site2',
+      thissite   => 'site2',
       mode       => 'slave',
       cm         => 'splunk-cm.internal.corp.example:8089',
     }
@@ -594,6 +575,10 @@ new class input and configure the parameters like httpport, inputport etc like
 in the screenshot below:
 
 ![Using Puppet enterprise web interface to add Splunk class](https://raw.githubusercontent.com/jorritfolmer/puppet-splunk/master/puppet_enterprise_add_splunk_class.png)
+
+Structured parameters like admin, clustering, auth need to be specified in valid JSON. See the "Tips for specifying parameter and variable values" over at Puppet Enterprise docs: https://puppet.com/docs/pe/2018.1/managing_nodes/grouping_and_classifying_nodes.html#set-node-group-variables.
+
+One caveat: you cannot specify the admin hash in JSON due to the dollar signs in the SHA512 hash. Even though the PE docs mention you should escape $ to prevent variable interpolation, this doesn't seem to work for values in JSON.
 
 ## Splunk with ADFS 
 
@@ -1064,6 +1049,21 @@ Set sslcompatibility in these cases:
 * If you have older 6.0, 6.1, 6,2 or 6.3 releases that connect to Splunk 6.6 (see SPL-141961, SPL-141964)
 * If you have older 6.0, 6,1 releases that connect to Splunk 6.2, 6,3, 6,4 or 6,5
 * If you have 6.2, 6,3, 6.4 or 6.5 releases with default Splunk ssl settings that connect to Splunk managed by this module
+
+## Principles
+
+Development of this module is done with the following principles in mind:
+
+1. **Technical Management** Puppet is used to configure the technical infrastructure of a Splunk deployment. It tries to keep away from Splunk functional administration as much as possible. For example, deploying Splunk apps to forwarders is best left to Splunk's multi-platform deployment server.
+2. **Power to the Splunkers.** A Splunk installation used for security monitoring should typically not be administered by the same IT or IT-infra teams it's supposed to be monitoring. This Puppet module should smooth the path towards implementing segregation of duties between administrators and watch(wo)men (ISO 27002 12.4.3 or BIR 10.10.3).
+3. **Supports any topology.** Single server? Redundant multisite clustering? Heavy forwarder in a DMZ?
+4. **Secure by default**.
+  - Splunk runs as user splunk instead of root.
+  - No services are listening by default except the bare minimum (8089/tcp)
+  - TLSv1.1 and TLSv1.2 are enabled by default
+  - Perfect Forward Secrecy (PFS) using Elliptic curve Diffie-Hellman (ECDH)
+  - Ciphers are set to [modern compatibility](https://wiki.mozilla.org/Security/Server_Side_TLS)
+  - Admin password can be set using its SHA512 hash in the Puppet manifests instead of plain-text.
 
 ## Changelog
 
