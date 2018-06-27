@@ -103,9 +103,13 @@ class splunk (
       }
       if $splunk_os_user == undef {
         $real_splunk_os_user = 'splunk'
+      } else {
+        $real_splunk_os_user = $splunk_os_user
       }
       if $splunk_os_group == undef {
         $real_splunk_os_group = 'splunk'
+      } else {
+        $real_splunk_os_group = $splunk_os_group
       }
       $real_splunk_dir_mode = '0700'
       $real_splunk_file_mode = '0600'
