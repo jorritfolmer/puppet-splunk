@@ -1103,6 +1103,7 @@ These people haves contributed pull requests, issues, ideas or otherwise spent t
 - Dimitri Tischenko (timidri)
 - dkangel37
 - FlorinTar
+- Jason Spencer (jespencer)
 - jsushetski
 - Michael Fyffe (TraGicCode)
 - Miro (mirogta)
