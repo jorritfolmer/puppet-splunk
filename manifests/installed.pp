@@ -40,7 +40,7 @@ class splunk::installed (
           require     => Package[$package],
           refreshonly => true,
         }
-      } elsif $version == undef and package_source != undef {
+      } elsif $version == undef and $package_source != undef {
         package { $package:
           ensure => installed,
           name   => $package_source,
