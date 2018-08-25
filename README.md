@@ -1102,6 +1102,7 @@ These people haves contributed pull requests, issues, ideas or otherwise spent t
 - Chris Bowles (cbowlesUT)
 - Dimitri Tischenko (timidri)
 - dkangel37
+- Dustin Wheeler (mdwheele)
 - FlorinTar
 - Jason Spencer (jespencer)
 - jsushetski
