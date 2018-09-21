@@ -5,31 +5,47 @@
   "summary": "Deploys Splunk instances on Windows and Linux in simple, distributed or (multisite) clustered topologies. Demoed by Splunk at .conf2017",
   "license": "MIT",
   "source": "https://github.com/jorritfolmer/puppet-splunk.git",
-  "issues_url": "https://github.com/jorritfolmer/puppet-splunk/issues",
   "project_page": "https://github.com/jorritfolmer/puppet-splunk",
+  "issues_url": "https://github.com/jorritfolmer/puppet-splunk/issues",
   "dependencies": [
-    {"name":"puppetlabs/stdlib","version_requirement":">= 3.2.0 < 5.0.0"}
+    {
+      "name": "puppetlabs/stdlib",
+      "version_requirement": ">= 3.2.0 < 5.0.0"
+    }
   ],
   "operatingsystem_support": [
     {
-      "operatingsystem":"RedHat",
-      "operatingsystemrelease":[ "6", "7" ]
+      "operatingsystem": "RedHat",
+      "operatingsystemrelease": [
+        "6",
+        "7"
+      ]
     },
     {
-      "operatingsystem":"CentOS",
-      "operatingsystemrelease":[ "6", "7" ]
+      "operatingsystem": "CentOS",
+      "operatingsystemrelease": [
+        "6",
+        "7"
+      ]
     },
     {
-      "operatingsystem":"Ubuntu",
-      "operatingsystemrelease":[ "14.04" ]
+      "operatingsystem": "Ubuntu",
+      "operatingsystemrelease": [
+        "14.04"
+      ]
     },
     {
-      "operatingsystem":"Debian",
-      "operatingsystemrelease":[ "8" ]
+      "operatingsystem": "Debian",
+      "operatingsystemrelease": [
+        "8"
+      ]
     },
     {
-      "operatingsystem":"Windows",
-      "operatingsystemrelease":[ "2012 R2", "2016" ]
+      "operatingsystem": "Windows",
+      "operatingsystemrelease": [
+        "2012 R2",
+        "2016"
+      ]
     }
   ],
   "requirements": [
@@ -38,6 +54,11 @@
       "name": "puppet"
     }
   ],
-  "tags": ["splunk", "splunkuniversalforwarder"]
+  "tags": [
+    "splunk",
+    "splunkuniversalforwarder"
+  ],
+  "pdk-version": "1.7.0",
+  "template-url": "file://C:/Program Files/Puppet Labs/DevelopmentKit/share/cache/pdk-templates.git",
+  "template-ref": "1.7.0-0-g57412ed"
 }
-
