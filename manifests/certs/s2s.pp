@@ -44,7 +44,9 @@ class splunk::certs::s2s (
       if $reuse_puppet_certs {
         # reuse certs from open source Puppet
         exec { 'openssl s2s ca opensource puppet':
+          # lint:ignore:140chars
           command     => "powershell -command \"Copy-Item c:/ProgramData/PuppetLabs/puppet/etc/ssl/certs/ca.pem \'${splunk_home}/etc/auth/${sslrootcapath}\'\"",
+          # lint:endignore
           path        => ['c:/windows/system32/windowspowershell/v1.0', 'c:/windows/system32', "${splunk_home}/bin"],
           environment => "OPENSSL_CONF=${splunk_home}/openssl.cnf",
           creates     => [ "${splunk_home}/etc/auth/${sslrootcapath}", ],
@@ -57,7 +59,9 @@ class splunk::certs::s2s (
           mode  => $splunk_file_mode,
         }
         -> exec { 'openssl s2s 1 opensource puppet':
+          # lint:ignore:140chars
           command     => "powershell -command \"Get-Content C:/ProgramData/PuppetLabs/puppet/etc/ssl/private_keys/${::fqdn}.pem , C:/ProgramData/PuppetLabs/puppet/etc/ssl/certs/${::fqdn}.pem | Set-Content \'${splunk_home}/etc/auth/${sslcertpath}\'\"",
+          # lint:endignore
           path        => ['c:/windows/system32/windowspowershell/v1.0', 'c:/windows/system32', "${splunk_home}/bin"],
           environment => "OPENSSL_CONF=${splunk_home}/openssl.cnf",
           creates     => [ "${splunk_home}/etc/auth/${sslcertpath}", ],
@@ -102,7 +106,9 @@ class splunk::certs::s2s (
           onlyif  => '/usr/bin/test -e /etc/puppet/ssl/certs/ca.pem'
         }
         -> exec { 'openssl s2s 1 opensource puppet':
+          # lint:ignore:140chars
           command => "cat /etc/puppet/ssl/private_keys/${::fqdn}.pem /etc/puppet/ssl/certs/${::fqdn}.pem > ${splunk_home}/etc/auth/${sslcertpath}",
+          # lint:endignore
           path    => ['/bin', '/sbin', '/usr/bin', '/usr/sbin', "${splunk_home}/bin"],
           creates => [ "${splunk_home}/etc/auth/${sslcertpath}", ],
           onlyif  => "/usr/bin/test -e /etc/puppet/ssl/private_keys/${::fqdn}.pem"
@@ -117,7 +123,9 @@ class splunk::certs::s2s (
           onlyif  => '/usr/bin/test -e /etc/puppetlabs/puppet/ssl/certs/ca.pem'
         }
         -> exec { 'openssl s2s 1 commercial puppet':
+          # lint:ignore:140chars
           command => "cat /etc/puppetlabs/puppet/ssl/private_keys/${::fqdn}.pem /etc/puppetlabs/puppet/ssl/certs/${::fqdn}.pem > ${splunk_home}/etc/auth/${sslcertpath}",
+          # lint:endignore
           path    => ['/bin', '/sbin', '/usr/bin', '/usr/sbin', "${splunk_home}/bin"],
           creates => [ "${splunk_home}/etc/auth/certs/s2s.pem", ],
           onlyif  => "/usr/bin/test -e /etc/puppetlabs/puppet/ssl/private_keys/${::fqdn}.pem"
@@ -132,7 +140,9 @@ class splunk::certs::s2s (
           onlyif  => '/usr/bin/test -e /var/lib/puppet/ssl/certs/ca.pem'
         }
         -> exec { 'openssl s2s 1 redhat puppet':
+          # lint:ignore:140chars
           command => "cat /var/lib/puppet/ssl/private_keys/${::fqdn}.pem /var/lib/puppet/ssl/certs/${::fqdn}.pem > ${splunk_home}/etc/auth/${sslcertpath}",
+          # lint:endignore
           path    => ['/bin', '/sbin', '/usr/bin', '/usr/sbin', "${splunk_home}/bin"],
           creates => [ "${splunk_home}/etc/auth/certs/s2s.pem", ],
           onlyif  => "/usr/bin/test -e /var/lib/puppet/ssl/private_keys/${::fqdn}.pem"

@@ -17,7 +17,9 @@ define splunk::addsearchpeers {
     } else {
       $adminpass = $admin[pass]
       exec { "splunk add search-server ${title}":
+        # lint:ignore:140chars
         command     => "splunk add search-server -host ${title} -auth admin:${adminpass} -remoteUsername admin -remotePassword ${adminpass} && touch ${splunk_home}/etc/auth/distServerKeys/${title}.done",
+        # lint:endignore
         path        => ["${splunk_home}/bin", '/bin', '/sbin', '/usr/bin', '/usr/sbin'],
         environment => ["SPLUNK_HOME=${splunk_home}"],
         creates     => [

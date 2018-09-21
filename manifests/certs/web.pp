@@ -20,7 +20,9 @@ class splunk::certs::web (
       if $reuse_puppet_certs_for_web {
         # reuse certs from open source Puppet
         exec { 'openssl web privkey opensource puppet':
+          # lint:ignore:140chars
           command     => "powershell -command \"Copy-Item c:/ProgramData/PuppetLabs/puppet/etc/ssl/private_keys/${::fqdn}.pem \'${splunk_home}/etc/auth/${privkeypath}\'\"",
+          # lint:endignore
           path        => ['c:/windows/system32/windowspowershell/v1.0', 'c:/windows/system32', "${splunk_home}/bin"],
           environment => "OPENSSL_CONF=${splunk_home}/openssl.cnf",
           creates     => [ "${splunk_home}/etc/auth/${privkeypath}", ],
@@ -33,7 +35,9 @@ class splunk::certs::web (
           mode  => $splunk_file_mode,
         }
         -> exec { 'openssl web cert opensource puppet':
+          # lint:ignore:140chars
           command     => "powershell -command \"Copy-Item C:/ProgramData/PuppetLabs/puppet/etc/ssl/certs/${::fqdn}.pem \'${splunk_home}/etc/auth/${servercert}\'\"",
+          # lint:endignore
           path        => ['c:/windows/system32/windowspowershell/v1.0', 'c:/windows/system32', "${splunk_home}/bin"],
           environment => "OPENSSL_CONF=${splunk_home}/openssl.cnf",
           creates     => [ "${splunk_home}/etc/auth/${servercert}", ],
