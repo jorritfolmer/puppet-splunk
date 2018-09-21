@@ -130,9 +130,9 @@ describe 'splunk' do
 
     it { is_expected.to contain_class('splunk::installed') }
     it { is_expected.to contain_package('splunk') }
-    it { is_expected.to contain_file('/opt/splunk/etc/apps/puppet_common_ssl_base/local/server.conf').with_content(/sslRootCAPath = \/opt\/splunk\/etc\/auth\/cacert.pem/) }
+    it { is_expected.to contain_file('/opt/splunk/etc/apps/puppet_common_ssl_base/local/server.conf').with_content(%r{sslRootCAPath = /opt/splunk/etc/auth/cacert.pem}) }
     it { is_expected.to contain_file('/opt/splunk/etc/apps/puppet_common_ssl_outputs/local/outputs.conf').with_content(%r{server = splunk-idx.internal.corp.example:9997}) }
-    it { is_expected.to contain_file('/opt/splunk/etc/apps/puppet_common_ssl_outputs/local/outputs.conf').with_content(/sslCertPath = \/opt\/splunk\/etc\/auth\/server.pem/) }
+    it { is_expected.to contain_file('/opt/splunk/etc/apps/puppet_common_ssl_outputs/local/outputs.conf').with_content(%r{sslCertPath = /opt/splunk/etc/auth/server.pem}) }
   end
 
   context 'with reuse_puppet_certs_for_web' do
@@ -148,8 +148,8 @@ describe 'splunk' do
     it { is_expected.to contain_package('splunk') }
     it { is_expected.to contain_file('/opt/splunk/etc/auth/certs/webprivkey.pem') }
     it { is_expected.to contain_file('/opt/splunk/etc/auth/certs/webcert.pem') }
-    it { is_expected.to contain_file('/opt/splunk/etc/apps/puppet_common_ssl_web_base/local/web.conf').with_content(/privKeyPath = \/opt\/splunk\/etc\/auth\/certs\/webprivkey.pem/) }
-    it { is_expected.to contain_file('/opt/splunk/etc/apps/puppet_common_ssl_web_base/local/web.conf').with_content(/serverCert = \/opt\/splunk\/etc\/auth\/certs\/webcert.pem/) }
+    it { is_expected.to contain_file('/opt/splunk/etc/apps/puppet_common_ssl_web_base/local/web.conf').with_content(%r{privKeyPath = /opt/splunk/etc/auth/certs/webprivkey.pem}) }
+    it { is_expected.to contain_file('/opt/splunk/etc/apps/puppet_common_ssl_web_base/local/web.conf').with_content(%r{serverCert = /opt/splunk/etc/auth/certs/webcert.pem}) }
   end
 
   context 'with tcpout as array' do
@@ -162,7 +162,10 @@ describe 'splunk' do
 
     it { is_expected.to contain_class('splunk::installed') }
     it { is_expected.to contain_package('splunk') }
-    it { is_expected.to contain_file('/opt/splunk/etc/apps/puppet_common_ssl_outputs/local/outputs.conf').with_content(%r{server = splunk-idx1.internal.corp.example:9997, splunk-idx2.internal.corp.example:9997}) }
+    it {
+      is_expected.to contain_file('/opt/splunk/etc/apps/puppet_common_ssl_outputs/local/outputs.conf')
+        .with_content(%r{server = splunk-idx1.internal.corp.example:9997, splunk-idx2.internal.corp.example:9997})
+    }
   end
 
   context 'with tcpout == indexer_discovery' do
@@ -177,7 +180,7 @@ describe 'splunk' do
     it { is_expected.to contain_class('splunk::installed') }
     it { is_expected.to contain_package('splunk') }
     it { is_expected.to contain_file('/opt/splunk/etc/apps/puppet_common_ssl_outputs/local/outputs.conf').with_content(%r{indexerDiscovery = cluster}) }
-    it { is_expected.to contain_file('/opt/splunk/etc/apps/puppet_common_ssl_outputs/local/outputs.conf').with_content(/master_uri = https:\/\/splunk-cm.internal.corp.example:8089/) }
+    it { is_expected.to contain_file('/opt/splunk/etc/apps/puppet_common_ssl_outputs/local/outputs.conf').with_content(%r{master_uri = https://splunk-cm.internal.corp.example:8089}) }
     it { is_expected.not_to contain_file('/opt/splunk/etc/apps/puppet_indexer_cluster_pass4symmkey_base/local/server.conf') }
   end
 
@@ -207,7 +210,7 @@ describe 'splunk' do
     it { is_expected.to contain_class('splunk::installed') }
     it { is_expected.to contain_package('splunkforwarder') }
     it { is_expected.to contain_file('/opt/splunkforwarder/etc/apps/puppet_common_ssl_outputs/local/outputs.conf').with_content(%r{indexerDiscovery = cluster}) }
-    it { is_expected.to contain_file('/opt/splunkforwarder/etc/apps/puppet_common_ssl_outputs/local/outputs.conf').with_content(/master_uri = https:\/\/splunk-cm.internal.corp.example:8089/) }
+    it { is_expected.to contain_file('/opt/splunkforwarder/etc/apps/puppet_common_ssl_outputs/local/outputs.conf').with_content(%r{master_uri = https://splunk-cm.internal.corp.example:8089}) }
     it { is_expected.not_to contain_file('/opt/splunkforwarder/etc/apps/puppet_indexer_cluster_pass4symmkey_base/local/server.conf') }
   end
 
@@ -303,9 +306,9 @@ describe 'splunk' do
 
     it { is_expected.to contain_class('splunk::installed') }
     it { is_expected.to contain_package('splunk') }
-    it { is_expected.to contain_file('/opt/splunk/etc/apps/puppet_common_ssl_base/local/server.conf').with_content(/sslRootCAPath = \/opt\/splunk\/etc\/auth\/cacert.pem/) }
+    it { is_expected.to contain_file('/opt/splunk/etc/apps/puppet_common_ssl_base/local/server.conf').with_content(%r{sslRootCAPath = /opt/splunk/etc/auth/cacert.pem}) }
     it { is_expected.to contain_file('/opt/splunk/etc/apps/puppet_common_ssl_inputs/local/inputs.conf').with_content(%r{\[splunktcp-ssl:9997\]}) }
-    it { is_expected.to contain_file('/opt/splunk/etc/apps/puppet_common_ssl_inputs/local/inputs.conf').with_content(/serverCert = \/opt\/splunk\/etc\/auth\/server.pem/) }
+    it { is_expected.to contain_file('/opt/splunk/etc/apps/puppet_common_ssl_inputs/local/inputs.conf').with_content(%r{serverCert = /opt/splunk/etc/auth/server.pem}) }
   end
 
   context 'with web' do
@@ -415,8 +418,11 @@ describe 'splunk' do
 
     it { is_expected.to contain_class('splunk::installed') }
     it { is_expected.to contain_package('splunk') }
-    it { is_expected.to contain_file('/opt/splunk/etc/apps/puppet_common_auth_saml_base/local/authentication.conf').with_content(/idpSLOUrl = https:\/\/sso.internal.corp.example\/adfs\/ls\?wa=wsignout1.0/) }
-    it { is_expected.to contain_file('/opt/splunk/etc/apps/puppet_common_auth_saml_base/local/authentication.conf').with_content(/idpSSOUrl = https:\/\/sso.internal.corp.example\/adfs\/ls/) }
+    it {
+      is_expected.to contain_file('/opt/splunk/etc/apps/puppet_common_auth_saml_base/local/authentication.conf')
+        .with_content(%r{idpSLOUrl = https://sso.internal.corp.example/adfs/ls?wa=wsignout1.0})
+    }
+    it { is_expected.to contain_file('/opt/splunk/etc/apps/puppet_common_auth_saml_base/local/authentication.conf').with_content(%r{idpSSOUrl = https://sso.internal.corp.example/adfs/ls}) }
     it { is_expected.to contain_file('/opt/splunk/etc/apps/puppet_common_auth_saml_base/local/authentication.conf').with_content(%r{signatureAlgorithm = RSA-SHA256}) }
     it { is_expected.to contain_file('/opt/splunk/etc/apps/puppet_common_auth_saml_base/local/authentication.conf').with_content(%r{signAuthnRequest = true}) }
     it { is_expected.to contain_file('/opt/splunk/etc/apps/puppet_common_auth_saml_base/local/authentication.conf').with_content(%r{signedAssertion = true}) }
@@ -425,7 +431,12 @@ describe 'splunk' do
   context 'with ldap auth' do
     let(:params) do
       {
-        auth: { 'authtype' => 'LDAP', 'ldap_host' => 'dc01.internal.corp.example', 'ldap_binddn' => 'CN=sa_splunk,CN=Service Accounts,DC=internal,DC=corp,DC=tld', 'ldap_binddnpassword' => 'changeme' },
+        auth: {
+          'authtype' => 'LDAP',
+          'ldap_host' => 'dc01.internal.corp.example',
+          'ldap_binddn' => 'CN=sa_splunk,CN=Service Accounts,DC=internal,DC=corp,DC=tld',
+          'ldap_binddnpassword' => 'changeme',
+        },
         admin: { 'hash' => 'zzzz', 'fn' => 'yyyy', 'email' => 'wwww' },
         dontruncmds: true,
       }
@@ -433,13 +444,22 @@ describe 'splunk' do
 
     it { is_expected.to contain_class('splunk::installed') }
     it { is_expected.to contain_package('splunk') }
-    it { is_expected.to contain_file('/opt/splunk/etc/apps/puppet_common_auth_ldap_base/local/authentication.conf').with_content(%r{bindDN = CN=sa_splunk,CN=Service Accounts,DC=internal,DC=corp,DC=tld}) }
+    it {
+      is_expected.to contain_file('/opt/splunk/etc/apps/puppet_common_auth_ldap_base/local/authentication.conf')
+        .with_content(%r{bindDN = CN=sa_splunk,CN=Service Accounts,DC=internal,DC=corp,DC=tld})
+    }
   end
 
   context 'with ldap auth and nestedgroups enabled' do
     let(:params) do
       {
-        auth: { 'authtype' => 'LDAP', 'ldap_host' => 'dc01.internal.corp.example', 'ldap_binddn' => 'CN=sa_splunk,CN=Service Accounts,DC=internal,DC=corp,DC=tld', 'ldap_binddnpassword' => 'changeme', 'ldap_nestedgroups' => 1 },
+        auth: {
+          'authtype' => 'LDAP',
+          'ldap_host' => 'dc01.internal.corp.example',
+          'ldap_binddn' => 'CN=sa_splunk,CN=Service Accounts,DC=internal,DC=corp,DC=tld',
+          'ldap_binddnpassword' => 'changeme',
+          'ldap_nestedgroups' => 1,
+        },
         admin: { 'hash' => 'zzzz', 'fn' => 'yyyy', 'email' => 'wwww' },
         dontruncmds: true,
       }
@@ -461,7 +481,7 @@ describe 'splunk' do
 
     it { is_expected.to contain_class('splunk::installed') }
     it { is_expected.to contain_package('splunk') }
-    it { is_expected.to contain_file('/opt/splunk/etc/apps/puppet_common_license_client_base/local/server.conf').with_content(/master_uri = https:\/\/lm.internal.corp.example:8089/) }
+    it { is_expected.to contain_file('/opt/splunk/etc/apps/puppet_common_license_client_base/local/server.conf').with_content(%r{master_uri = https://lm.internal.corp.example:8089}) }
   end
 
   context 'with license server and pool suggestion' do
@@ -476,7 +496,10 @@ describe 'splunk' do
 
     it { is_expected.to contain_class('splunk::installed') }
     it { is_expected.to contain_package('splunk') }
-    it { is_expected.to contain_file('/opt/splunk/etc/apps/puppet_common_license_client_base/local/server.conf').with_content(/master_uri = https:\/\/lm.internal.corp.example:8089\npool_suggestion = prodpool/) }
+    it {
+      is_expected.to contain_file('/opt/splunk/etc/apps/puppet_common_license_client_base/local/server.conf')
+        .with_content(%r{master_uri = https://lm.internal.corp.example:8089\npool_suggestion = prodpool})
+    }
   end
 
   context 'with splunk secret' do
@@ -517,7 +540,12 @@ describe 'splunk' do
     it { is_expected.to contain_class('splunk::installed') }
     it { is_expected.to contain_package('splunk') }
     # the cipherSuite must be properly escaped, e.g. the + ! characters
-    it { is_expected.to contain_file('/opt/splunk/etc/apps/puppet_common_ssl_base/local/server.conf').with_content(%r{cipherSuite = ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH\+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:AES256-GCM-SHA384:\!aNULL:\!eNULL:\!EXPORT:\!DES:\!RC4:\!3DES:\!MD5:\!PSK}) }
+    # rubocop:disable Metrics/LineLength
+    it {
+      is_expected.to contain_file('/opt/splunk/etc/apps/puppet_common_ssl_base/local/server.conf')
+        .with_content(%r{cipherSuite = ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH\+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:AES256-GCM-SHA384:\!aNULL:\!eNULL:\!EXPORT:\!DES:\!RC4:\!3DES:\!MD5:\!PSK})
+    }
+    # rubocop:enable Metrics/LineLength
   end
 
   context 'with default splunk certs instead of puppet cert reuse' do
@@ -533,7 +561,7 @@ describe 'splunk' do
 
     it { is_expected.to contain_class('splunk::installed') }
     it { is_expected.to contain_package('splunk') }
-    it { is_expected.to contain_file('/opt/splunk/etc/apps/puppet_common_ssl_base/local/server.conf').with_content(/sslRootCAPath = \/opt\/splunk\/etc\/auth\/cacert.pem/) }
+    it { is_expected.to contain_file('/opt/splunk/etc/apps/puppet_common_ssl_base/local/server.conf').with_content(%r{sslRootCAPath = /opt/splunk/etc/auth/cacert.pem}) }
   end
 
   context 'with nonstandard mgmthostport' do
@@ -588,7 +616,7 @@ describe 'splunk' do
 
     it { is_expected.to contain_class('splunk::installed') }
     it { is_expected.to contain_package('splunk') }
-    it { is_expected.to contain_file('/opt/splunk/etc/apps/puppet_indexer_cluster_slave_base/local/server.conf').with_content(/master_uri = https:\/\/splunk-cm.internal.corp.example:8089/) }
+    it { is_expected.to contain_file('/opt/splunk/etc/apps/puppet_indexer_cluster_slave_base/local/server.conf').with_content(%r{master_uri = https://splunk-cm.internal.corp.example:8089}) }
     it { is_expected.to contain_file('/opt/splunk/etc/apps/puppet_indexer_cluster_pass4symmkey_base/local/server.conf').with_content(%r{pass4SymmKey = changeme}) }
   end
 
@@ -604,9 +632,9 @@ describe 'splunk' do
 
     it { is_expected.to contain_class('splunk::installed') }
     it { is_expected.to contain_package('splunk') }
-    it { is_expected.to contain_file('/opt/splunk/etc/apps/puppet_indexer_cluster_slave_base/local/server.conf').with_content(/master_uri = https:\/\/splunk-cm.internal.corp.example:8089/) }
+    it { is_expected.to contain_file('/opt/splunk/etc/apps/puppet_indexer_cluster_slave_base/local/server.conf').with_content(%r{master_uri = https://splunk-cm.internal.corp.example:8089}) }
     it { is_expected.to contain_file('/opt/splunk/etc/apps/puppet_indexer_cluster_pass4symmkey_base/local/server.conf').with_content(%r{pass4SymmKey = changeme}) }
-    it { is_expected.to contain_file('/opt/splunk/etc/apps/puppet_indexer_cluster_slave_base/local/server.conf').with_content(/\[replication_port:\/\/12345\]\ndisabled = false\n/) }
+    it { is_expected.to contain_file('/opt/splunk/etc/apps/puppet_indexer_cluster_slave_base/local/server.conf').with_content(%r{[replication_port://12345]\ndisabled = false\n}) }
   end
 
   context 'with cluster searchhead role' do
@@ -620,7 +648,7 @@ describe 'splunk' do
 
     it { is_expected.to contain_class('splunk::installed') }
     it { is_expected.to contain_package('splunk') }
-    it { is_expected.to contain_file('/opt/splunk/etc/apps/puppet_indexer_cluster_searchhead_base/local/server.conf').with_content(/master_uri = https:\/\/splunk-cm.internal.corp.example:8089/) }
+    it { is_expected.to contain_file('/opt/splunk/etc/apps/puppet_indexer_cluster_searchhead_base/local/server.conf').with_content(%r{master_uri = https://splunk-cm.internal.corp.example:8089}) }
     it { is_expected.to contain_file('/opt/splunk/etc/apps/puppet_indexer_cluster_pass4symmkey_base/local/server.conf').with_content(%r{pass4SymmKey = changeme}) }
   end
 
@@ -635,7 +663,7 @@ describe 'splunk' do
 
     it { is_expected.to contain_class('splunk::installed') }
     it { is_expected.to contain_package('splunk') }
-    it { is_expected.to contain_file('/opt/splunk/etc/apps/puppet_search_shcluster_base/default/server.conf').with_content(/conf_deploy_fetch_url = https:\/\/splunk-shd.internal.corp.example:8089/) }
+    it { is_expected.to contain_file('/opt/splunk/etc/apps/puppet_search_shcluster_base/default/server.conf').with_content(%r{conf_deploy_fetch_url = https://splunk-shd.internal.corp.example:8089}) }
     it { is_expected.to contain_file('/opt/splunk/etc/apps/puppet_search_shcluster_base/default/server.conf').with_content(%r{\[replication_port:}) }
     it { is_expected.to contain_file('/opt/splunk/etc/apps/puppet_search_shcluster_base/default/server.conf').with_content(%r{shcluster_label = SHC}) }
     it { is_expected.to contain_file('/opt/splunk/etc/apps/puppet_search_shcluster_pass4symmkey_base/default/server.conf').with_content(%r{pass4SymmKey = }) }
@@ -698,7 +726,7 @@ describe 'splunk' do
 
     it { is_expected.to contain_class('splunk::installed') }
     it { is_expected.to contain_package('splunk') }
-    it { is_expected.to contain_file('/opt/splunk/etc/apps/puppet_common_deploymentclient_base/local/deploymentclient.conf').with_content(/repositoryLocation = \/opt\/splunk\/etc\/master-apps/) }
+    it { is_expected.to contain_file('/opt/splunk/etc/apps/puppet_common_deploymentclient_base/local/deploymentclient.conf').with_content(%r{repositoryLocation = /opt/splunk/etc/master-apps}) }
   end
 
   context 'with ds_intermediate set' do
@@ -713,7 +741,7 @@ describe 'splunk' do
 
     it { is_expected.to contain_class('splunk::installed') }
     it { is_expected.to contain_package('splunk') }
-    it { is_expected.to contain_file('/opt/splunk/etc/apps/puppet_common_deploymentclient_base/local/deploymentclient.conf').with_content(/repositoryLocation = \/opt\/splunk\/etc\/deployment-apps/) }
+    it { is_expected.to contain_file('/opt/splunk/etc/apps/puppet_common_deploymentclient_base/local/deploymentclient.conf').with_content(%r{repositoryLocation = /opt/splunk/etc/deployment-apps}) }
   end
 
   context 'with maxkbps set' do
