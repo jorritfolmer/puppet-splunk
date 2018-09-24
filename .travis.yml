@@ -13,11 +13,7 @@ script:
   - 'bundle exec rake $CHECK'
 bundler_args: --without system_tests
 rvm:
-  - 1.8.7
-  - 1.9.3
-  - 2.0.0
-  - 2.1
-  - 2.4
+  - 2.4.4
 env:
   global:
     - CHECK=parallel_spec BEAKER_PUPPET_COLLECTION=puppet5
@@ -32,27 +28,6 @@ matrix:
     -
       env: CHECK="syntax lint metadata_lint check:symlinks check:git_ignore check:dot_underscore check:test_file rubocop"
       rvm: 2.4.4
-  exclude:
-    - rvm: 1.8.7
-      env: PDK_PUPPET_VERSION=4.8.2
-    - rvm: 1.8.7
-      env: PDK_PUPPET_VERSION=5.3.3
-    - rvm: 1.9.3
-      env: PDK_PUPPET_VERSION=4.8.2
-    - rvm: 1.9.3
-      env: PDK_PUPPET_VERSION=5.3.3
-    - rvm: 2.0.0
-      env: PDK_PUPPET_VERSION=2.7.14
-    - rvm: 2.0.0
-      env: PDK_PUPPET_VERSION=5.3.3
-    - rvm: 2.1
-      env: PDK_PUPPET_VERSION=2.7.14
-    - rvm: 2.1
-      env: PDK_PUPPET_VERSION=5.3.3
-    - rvm: 2.4
-      env: PDK_PUPPET_VERSION=2.7.14
-    - rvm: 2.4
-      env: PDK_PUPPET_VERSION=3.8.5
 branches:
   only:
     - master
