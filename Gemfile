@@ -57,3 +57,12 @@ if RUBY_VERSION > '2.1'
   gem 'puppet-lint'
   gem 'facter'
 end
+
+gem 'beaker'
+gem 'beaker-puppet'
+gem 'beaker-puppet_install_helper'
+gem 'beaker-module_install_helper'
+gem 'beaker-testmode_switcher'
+gem 'beaker-rspec'
+gem 'beaker-docker'
+gem 'serverspec'

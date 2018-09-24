@@ -14,7 +14,7 @@ class splunk::loglocal (
 ){
   file { "${splunk_home}/etc/log-local.cfg":
     ensure  => present,
-    content => template('splunk/log/log-local.cfg'),
+    content => template('splunk/log-local/log-local.cfg'),
     owner   => $splunk_os_user,
     group   => $splunk_os_group,
     mode    => $splunk_file_mode,
