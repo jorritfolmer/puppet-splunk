@@ -46,6 +46,18 @@ describe 'splunk' do
     }
   end
 
+  context 'with service managed set to false' do
+    let(:params) { 
+      {
+        :service => { 'managed' => false}
+      }
+    }
+    it { should contain_class('splunk::installed') }
+    it { should contain_package('splunk') }
+    it { should_not contain_file('/opt/splunk/etc/.ui_login') }
+    it { should_not contain_service('splunk') }
+  end
+
   context 'with service enable true' do
     let(:params) { 
       {

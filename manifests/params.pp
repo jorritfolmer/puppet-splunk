@@ -72,6 +72,7 @@ class splunk::params (
   $service                      = {
     enable => true,
     ensure => undef,
+    managed => undef,
   }
   $shclustering = { }
   $splunk_os_user               = undef

@@ -81,7 +81,7 @@ By default, this module uses the Puppet client SSL key (4096 bits) and client ce
 
 For quick testing in heterogeneous non-production environments you can revert to using the Splunk provides certs and CA with `reuse_puppet_certs => false`. Or you can point to your own key and certificates with `sslcertpath` and `sslrootcapath` if you are planning a zero-trust architecture.
 
-The Splunk module doesn't manage the state of the splunk service, except to configure Splunk or Splunkforwarder at boot time. However, if you do want Puppet to interfere while performing a cluster rolling restart or an indexer restart, have a look at the `service` parameter. 
+The Splunk module doesn't manage the state of the splunk service, except to configure Splunk or Splunkforwarder at boot time. Have a look at the `service` parameter if you want to do more or less management of the Splunk service by this module.
 
 ### Example 1: 
 
@@ -925,10 +925,11 @@ Defaults to:
 
 ### `service`
 
-Optional. Used to manage the running and startup state of the Splunk/Splunkforwarder service. This is a hash with 2 members: 
+Optional. Used to manage the running and startup state of the Splunk/Splunkforwarder service. This is a hash with 3 members: 
 
 - `ensure` (not enabled by default)
 - `enable` (defaults to true)
+- `managed` (default to undef): set this to `false` if you don't want the module to anything with the Splunk service at all. For example if you want to use systemd unit files instead of the SysV scripts provided by Splunk.
 
 ### `searchpeers`
 
@@ -1099,6 +1100,7 @@ Moved to TEST_COVERAGE.md
 
 These people haves contributed pull requests, issues, ideas or otherwise spent time improving this module:
 
+- Alexander M (Rathios)
 - Chris Bowles (cbowlesUT)
 - Dimitri Tischenko (timidri)
 - dkangel37
