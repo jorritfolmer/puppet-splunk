@@ -1,6 +1,6 @@
 {
   "name": "jorritfolmer-splunk",
-  "version": "3.12.4",
+  "version": "3.13.0",
   "author": "Jorrit Folmer",
   "summary": "Deploys Splunk instances on Windows and Linux in simple, distributed or (multisite) clustered topologies. Demoed by Splunk at .conf2017",
   "license": "MIT",
