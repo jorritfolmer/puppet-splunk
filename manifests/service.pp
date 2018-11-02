@@ -8,25 +8,25 @@ class splunk::service (
   $splunk_home = $splunk::splunk_home,
   $service = $splunk::service
 ) {
-  case $::osfamily {
-    /^[Ww]indows$/: {
-      case $type {
-        'uf':    { $windows_service = 'SplunkForwarder' }
-        default: { $windows_service = 'Splunkd' }
-      }
-      if $service[ensure] == undef {
-        service { $windows_service:
-          enable  => $service[enable],
+  if $service[managed] == undef or $service[managed] == true {
+    case $::osfamily {
+      /^[Ww]indows$/: {
+        case $type {
+          'uf':    { $windows_service = 'SplunkForwarder' }
+          default: { $windows_service = 'Splunkd' }
         }
-      } else {
-        service { $windows_service:
-          ensure => $service[ensure],
-          enable => $service[enable],
+        if $service[ensure] == undef {
+          service { $windows_service:
+            enable  => $service[enable],
+          }
+        } else {
+          service { $windows_service:
+            ensure => $service[ensure],
+            enable => $service[enable],
+          }
         }
       }
-    }
-    default: {
-      if $service[managed] == undef {
+      default: {
         if $service[ensure] == undef {
           service { 'splunk':
             enable => $service[enable],
