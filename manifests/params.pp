@@ -23,6 +23,7 @@ class splunk::params (
     'ldap_groupbasedn'          => undef,
     'ldap_groupbasefilter'      => '(objectclass=group)',
     'ldap_host'                 => undef,
+    'ldap_port'                 => undef,
     'ldap_nestedgroups'         => undef,
     'ldap_realnameattribute'    => 'cn',
     'ldap_sslenabled'           => 1,
