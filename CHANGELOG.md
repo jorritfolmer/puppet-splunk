@@ -1,3 +1,8 @@
+### 3.13.0
+
+- Add service[managed] option to disable managing of the Splunk service
+- Add ldap_port option
+
 ### 3.12.4
 
 - Fix missing $ in $package_source variable

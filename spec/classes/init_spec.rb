@@ -417,6 +417,21 @@ describe 'splunk' do
     it { should contain_class('splunk::installed') }
     it { should contain_package('splunk') }
     it { should contain_file('/opt/splunk/etc/apps/puppet_common_auth_ldap_base/local/authentication.conf').with_content(/bindDN = CN=sa_splunk,CN=Service Accounts,DC=internal,DC=corp,DC=tld/) }
+    it { should_not contain_file('/opt/splunk/etc/apps/puppet_common_auth_ldap_base/local/authentication.conf').with_content(/port = /) }
+  end
+
+  context 'with ldap auth on different port' do
+    let(:params) { 
+      {
+        :auth  => { 'authtype' => 'LDAP', 'ldap_host' => 'dc01.internal.corp.example', 'ldap_binddn' => 'CN=sa_splunk,CN=Service Accounts,DC=internal,DC=corp,DC=tld', 'ldap_binddnpassword' => 'changeme', 'ldap_port' => 12345},
+        :admin => { 'hash' => 'zzzz', 'fn' => 'yyyy', 'email' => 'wwww', },
+        :dontruncmds => true,
+      }
+    }
+    it { should contain_class('splunk::installed') }
+    it { should contain_package('splunk') }
+    it { should contain_file('/opt/splunk/etc/apps/puppet_common_auth_ldap_base/local/authentication.conf').with_content(/bindDN = CN=sa_splunk,CN=Service Accounts,DC=internal,DC=corp,DC=tld/) }
+    it { should contain_file('/opt/splunk/etc/apps/puppet_common_auth_ldap_base/local/authentication.conf').with_content(/port = 12345/) }
   end
 
   context 'with ldap auth and nestedgroups enabled' do

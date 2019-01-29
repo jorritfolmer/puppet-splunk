@@ -769,11 +769,12 @@ This is a hash with the following members:
 - `saml_entityid` (defaults to $fqdn, override in search head clustering setups to make every search head use the same Relaying Party Trust in ADFS)
 - `saml_fqdn` (not present by default, override in search head clustering setups to have ADFS redirect to this URL which should normally be the URL handled by a load balancer. If you omit this, ADFS will redirect to the individual search head that make de SAML request which isn't what you want in SHC)
 - `ldap_host`
+- `ldap_port`: optional if you use a non-standard port
 - `ldap_binddn`
 - `ldap_binddnpassword`
 - `ldap_userbasedn`
 - `ldap_groupbasedn`
-- `ldap_sslenabled`
+- `ldap_sslenabled`: default
 - `ldap_usernameattribute`
 - `ldap_groupmemberattribute`
 - `ldap_groupnameattribute`
