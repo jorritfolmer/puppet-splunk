@@ -11,7 +11,7 @@ env:
   - PUPPET_GEM_VERSION=3.8.5
   - PUPPET_GEM_VERSION=4.8.2
   - PUPPET_GEM_VERSION=5.3.3
-  - PUPPET_GEM_VERSION=6.10.0 RSPEC_PUPPET_VERSION=2.7.8
+  - PUPPET_GEM_VERSION=6.14.0 RSPEC_PUPPET_VERSION=2.7.8
 # Augeas got moved around so some magic in .fixtures and spec/spec_helper.rb is need to get the tests working again
 #  - PUPPET_GEM_VERSION=6.0.3 RSPEC_PUPPET_VERSION=2.7.1
 matrix:
@@ -25,25 +25,25 @@ matrix:
     - rvm: 1.9.3
       env: PUPPET_GEM_VERSION=5.3.3
     - rvm: 1.9.3
-      env: PUPPET_GEM_VERSION=6.10.0 RSPEC_PUPPET_VERSION=2.7.8
+      env: PUPPET_GEM_VERSION=6.14.0 RSPEC_PUPPET_VERSION=2.7.8
     - rvm: 2.0.0
       env: PUPPET_GEM_VERSION=2.7.14
     - rvm: 2.0.0
       env: PUPPET_GEM_VERSION=5.3.3
     - rvm: 2.0.0
-      env: PUPPET_GEM_VERSION=6.10.0 RSPEC_PUPPET_VERSION=2.7.8
+      env: PUPPET_GEM_VERSION=6.14.0 RSPEC_PUPPET_VERSION=2.7.8
     - rvm: 2.1
       env: PUPPET_GEM_VERSION=2.7.14
     - rvm: 2.1
       env: PUPPET_GEM_VERSION=5.3.3
     - rvm: 2.1
-      env: PUPPET_GEM_VERSION=6.10.0 RSPEC_PUPPET_VERSION=2.7.8
+      env: PUPPET_GEM_VERSION=6.14.0 RSPEC_PUPPET_VERSION=2.7.8
     - rvm: 2.4
       env: PUPPET_GEM_VERSION=2.7.14
     - rvm: 2.4
       env: PUPPET_GEM_VERSION=3.8.5
     - rvm: 2.4
-      env: PUPPET_GEM_VERSION=6.10.0 RSPEC_PUPPET_VERSION=2.7.8
+      env: PUPPET_GEM_VERSION=6.14.0 RSPEC_PUPPET_VERSION=2.7.8
     - rvm: 2.5
       env: PUPPET_GEM_VERSION=2.7.14
     - rvm: 2.5
