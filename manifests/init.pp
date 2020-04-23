@@ -45,6 +45,7 @@ class splunk (
   $package_source             = $splunk::params::package_source,
   $pass4symmkey               = $splunk::params::pass4symmkey,
   $phonehomeintervalinsec     = $splunk::params::phonehomeintervalinsec,
+  $pipelines                  = $splunk::params::pipelines,
   $pool_suggestion            = $splunk::params::pool_suggestion,
   $privkeypath                = $splunk::params::privkeypath,
   $replication_port           = $splunk::params::replication_port,

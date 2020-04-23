@@ -52,6 +52,7 @@ class splunk::params (
   $minfreespace = undef
   $package_source               = undef
   $pass4symmkey = 'changeme'
+  $pipelines                    = 1
   $phonehomeintervalinsec = 60
   $pool_suggestion = undef
   $privkeypath                  = 'certs/webprivkey.pem'
