@@ -13,6 +13,7 @@ class splunk::server::forwarder (
   $splunk_app_replace = $splunk::splunk_app_replace,
   $splunk_app_precedence_dir = $splunk::splunk_app_precedence_dir,
   $clustering = $splunk::clustering,
+  $pipelines = $splunk::pipelines,
 ){
   $splunk_app_name = 'puppet_forwarder'
   $thissite = $clustering[thissite]
