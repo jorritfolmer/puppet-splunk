@@ -1,0 +1,4 @@
+---
+lookup_options:
+  splunk::admin: 
+    merge: hash
