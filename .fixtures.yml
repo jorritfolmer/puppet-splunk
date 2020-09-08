@@ -1,5 +1,10 @@
+---
 fixtures:
     forge_modules:
         stdlib:
             repo: "puppetlabs/stdlib"
             ref: "3.2.0"
+        augeas_core:
+            repo: "puppetlabs/augeas_core"
+            ref: "1.0.5"
+
