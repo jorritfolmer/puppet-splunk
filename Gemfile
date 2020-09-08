@@ -24,6 +24,7 @@ if RUBY_VERSION >= '1.9' and RUBY_VERSION < '2.0'
   gem 'puppetlabs_spec_helper', '~> 1.0.0'
   gem 'json', '~> 1.8.3'
   gem 'json_pure', '~> 1.8.3'
+  gem 'rspec-puppet', '2.5.0' 
 end
 
 if RUBY_VERSION >= '2.0' and RUBY_VERSION < '2.1'
@@ -33,12 +34,24 @@ if RUBY_VERSION >= '2.0' and RUBY_VERSION < '2.1'
   gem 'puppetlabs_spec_helper'
   gem 'puppet-lint'
   gem 'facter'
+  gem 'rspec-puppet', '2.5.0' 
 end
 
-if RUBY_VERSION > '2.1'
+if RUBY_VERSION >= '2.1' and RUBY_VERSION < '2.5'
   gem 'metadata-json-lint'
   gem 'puppet-syntax'
   gem 'puppetlabs_spec_helper'
   gem 'puppet-lint'
   gem 'facter'
+  gem 'rspec-puppet', '2.5.0' 
 end
+
+if RUBY_VERSION >= '2.5'
+  gem 'metadata-json-lint'
+  gem 'puppet-syntax'
+  gem 'puppetlabs_spec_helper'
+  gem 'puppet-lint'
+  gem 'facter'
+  gem 'rspec-puppet', '2.7.10' 
+end
+
