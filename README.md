@@ -1108,6 +1108,7 @@ These people haves contributed pull requests, issues, ideas or otherwise spent t
 - Dustin Wheeler (mdwheele)
 - FlorinTar
 - Jason Spencer (jespencer)
+- Joachim la Poutré(sickbock)
 - jsushetski
 - Michael Fyffe (TraGicCode)
 - Miro (mirogta)

@@ -1,3 +1,8 @@
+### 3.13.1
+
+- Set hiera merge behaviour for splunk::admin
+- Update testing to verify Puppet 6.x compatibility
+
 ### 3.13.0
 
 - Add service[managed] option to disable managing of the Splunk service
