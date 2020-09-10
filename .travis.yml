@@ -9,7 +9,6 @@ rvm:
   - 2.6
 # -2.7 there still seems to be an issue in rspec-puppet 2.7.10 that prevents the use of ruby 2.7 https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=952024
 env:
-  - PUPPET_GEM_VERSION=2.7.14
   - PUPPET_GEM_VERSION=3.8.5
   - PUPPET_GEM_VERSION=4.8.2
   - PUPPET_GEM_VERSION=5.5.21
@@ -27,31 +26,21 @@ matrix:
     - rvm: 1.9
       env: PUPPET_GEM_VERSION=6.18.0
     - rvm: 2.0
-      env: PUPPET_GEM_VERSION=2.7.14
-    - rvm: 2.0
       env: PUPPET_GEM_VERSION=5.5.21
     - rvm: 2.0
       env: PUPPET_GEM_VERSION=6.18.0
     - rvm: 2.1
-      env: PUPPET_GEM_VERSION=2.7.14
-    - rvm: 2.1
       env: PUPPET_GEM_VERSION=5.5.21
     - rvm: 2.1
       env: PUPPET_GEM_VERSION=6.18.0
-    - rvm: 2.4
-      env: PUPPET_GEM_VERSION=2.7.14
     - rvm: 2.4
       env: PUPPET_GEM_VERSION=3.8.5
     - rvm: 2.4
       env: PUPPET_GEM_VERSION=6.18.0
-    - rvm: 2.5
-      env: PUPPET_GEM_VERSION=2.7.14
     - rvm: 2.5
       env: PUPPET_GEM_VERSION=3.8.5
     - rvm: 2.5
       env: PUPPET_GEM_VERSION=4.8.2
-    - rvm: 2.6
-      env: PUPPET_GEM_VERSION=2.7.14
     - rvm: 2.6
       env: PUPPET_GEM_VERSION=3.8.5
     - rvm: 2.6
