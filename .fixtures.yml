@@ -7,4 +7,5 @@ fixtures:
         augeas_core:
             repo: "puppetlabs/augeas_core"
             ref: "1.0.5"
+            puppet_version: ">= 3.0.0"
 
