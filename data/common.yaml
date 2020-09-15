@@ -2,3 +2,5 @@
 lookup_options:
   splunk::admin: 
     merge: hash
+  splunk::auth:
+    merge: hash
