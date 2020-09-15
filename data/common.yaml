@@ -2,5 +2,8 @@
 lookup_options:
   splunk::admin: 
     merge: hash
+<<<<<<< HEAD
   splunk::auth:
     merge: hash
+=======
+>>>>>>> a95510302920c9b4417654ab74b55c925fa68ce3

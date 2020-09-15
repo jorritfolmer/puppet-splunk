@@ -1,6 +1,6 @@
 {
   "name": "jorritfolmer-splunk",
-  "version": "3.13.0",
+  "version": "3.13.1",
   "author": "Jorrit Folmer",
   "summary": "Deploys Splunk instances on Windows and Linux in simple, distributed or (multisite) clustered topologies. Demoed by Splunk at .conf2017",
   "license": "MIT",
@@ -13,28 +13,28 @@
   "operatingsystem_support": [
     {
       "operatingsystem":"RedHat",
-      "operatingsystemrelease":[ "6", "7" ]
+      "operatingsystemrelease":[ "6", "7", "8" ]
     },
     {
       "operatingsystem":"CentOS",
-      "operatingsystemrelease":[ "6", "7" ]
+      "operatingsystemrelease":[ "6", "7", "8" ]
     },
     {
       "operatingsystem":"Ubuntu",
-      "operatingsystemrelease":[ "14.04" ]
+      "operatingsystemrelease":[ "14.04", "16.04", "18.04"]
     },
     {
       "operatingsystem":"Debian",
-      "operatingsystemrelease":[ "8" ]
+      "operatingsystemrelease":[ "8", "10" ]
     },
     {
       "operatingsystem":"Windows",
-      "operatingsystemrelease":[ "2012 R2", "2016" ]
+      "operatingsystemrelease":[ "2012 R2", "2016", "2019" ]
     }
   ],
   "requirements": [
     {
-      "version_requirement": ">= 2.7.14 < 6.0.0",
+      "version_requirement": ">= 2.7.14 < 7.0.0",
       "name": "puppet"
     }
   ],
