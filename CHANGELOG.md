@@ -1,3 +1,7 @@
+### 3.13.2
+
+- Set hiera merge behaviour for splunk::auth 
+
 ### 3.13.1
 
 - Set hiera merge behaviour for splunk::admin
