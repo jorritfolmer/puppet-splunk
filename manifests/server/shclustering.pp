@@ -61,10 +61,10 @@ class splunk::server::shclustering (
           # to prevent the SH Deployer from overwriting server specific config
           # directives like mgmt_uri 
           -> augeas { "${splunk_home}/etc/system/local/server.conf/shclustering":
-            lens    => 'Puppet.lns',
+            lens    => 'Splunk.lns',
             incl    => "${splunk_home}/etc/system/local/server.conf",
             changes => [
-              "set shclustering/mgmt_uri https://${::fqdn}:8089",
+              "set target[. = 'shclustering']/mgmt_uri https://${::fqdn}:8089",
             ],
           }
         }
