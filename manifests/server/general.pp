@@ -23,10 +23,10 @@ class splunk::server::general (
       # delete pass4SymmKey from [general] in etc/system/local/server.conf,
       # otherwise our pass4SymmKey in the app below will be overruled
       augeas { "${splunk_home}/etc/system/local/server.conf pass4symmkey":
-        lens    => 'Puppet.lns',
+        lens    => 'Splunk.lns',
         incl    => "${splunk_home}/etc/system/local/server.conf",
         changes => [
-          'rm general/pass4SymmKey',
+          'rm target[. = "general"]/pass4SymmKey',
         ],
       }
     }
