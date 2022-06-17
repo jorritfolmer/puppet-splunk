@@ -158,6 +158,7 @@ class splunk (
   include splunk::server::clustering
   include splunk::server::shclustering
   include splunk::server::diskusage
+  include splunk::server::forwarder
   include splunk::splunk_launch
   include splunk::deploymentclient
   include splunk::distsearch
@@ -185,6 +186,7 @@ class splunk (
   -> Class['splunk::server::clustering']
   -> Class['splunk::server::shclustering']
   -> Class['splunk::server::diskusage']
+  -> Class['splunk::server::forwarder']
   -> Class['splunk::splunk_launch']
   -> Class['splunk::deploymentclient']
   -> Class['splunk::distsearch']
