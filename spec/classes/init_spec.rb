@@ -210,6 +210,36 @@ describe 'splunk' do
     it { should_not contain_file('/opt/splunkforwarder/etc/apps/puppet_indexer_cluster_pass4symmkey_base/local/server.conf') }
   end
 
+  context 'with universalforwarder, indexer_discovery and cluster site affinity' do
+    let(:params) { 
+      {
+        :type => 'uf',
+        :tcpout => 'indexer_discovery',
+        :clustering  => { 'pass4symmkey' => 'changeme', 'mode' => 'forwarder', 'cm' => 'splunk-cm.internal.corp.example:8089', 'thissite' => 'site1'},
+        :admin => { 'hash' => 'zzzz', 'fn' => 'yyyy', 'email' => 'wwww', },
+      }
+    }
+    it { should contain_class('splunk::installed') }
+    it { should contain_package('splunkforwarder') }
+    it { should contain_file('/opt/splunkforwarder/etc/apps/puppet_common_ssl_outputs/local/outputs.conf').with_content(/indexerDiscovery = cluster/) }
+    it { should contain_file('/opt/splunkforwarder/etc/apps/puppet_common_ssl_outputs/local/outputs.conf').with_content(/master_uri = https:\/\/splunk-cm.internal.corp.example:8089/) }
+    it { should contain_file('/opt/splunkforwarder/etc/apps/puppet_indexer_cluster_forwarder_base/local/server.conf').with_content(/site = site1/) }
+    it { should_not contain_file('/opt/splunkforwarder/etc/apps/puppet_indexer_cluster_pass4symmkey_base/local/server.conf') }
+  end
+
+  context 'with universalforwarder and parallelIngestionPipelines=2' do
+    let(:params) { 
+      {
+        :type => 'uf',
+        :pipelines => 2,
+        :admin => { 'hash' => 'zzzz', 'fn' => 'yyyy', 'email' => 'wwww', },
+      }
+    }
+    it { should contain_class('splunk::installed') }
+    it { should contain_package('splunkforwarder') }
+    it { should contain_file('/opt/splunkforwarder/etc/apps/puppet_forwarder_base/local/server.conf').with_content(/parallelIngestionPipelines = 2/) }
+  end
+
   context 'with universalforwarder, tcpout == indexer_discovery but without cm' do
     let(:params) { 
       {

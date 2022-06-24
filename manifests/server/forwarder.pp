@@ -12,12 +12,10 @@ class splunk::server::forwarder (
   $splunk_type = $splunk::type,
   $splunk_app_replace = $splunk::splunk_app_replace,
   $splunk_app_precedence_dir = $splunk::splunk_app_precedence_dir,
-  $clustering = $splunk::clustering,
   $pipelines = $splunk::pipelines,
 ){
   $splunk_app_name = 'puppet_forwarder'
-  $thissite = $clustering[thissite]
-  if $splunk_type == 'uf' {
+  if $splunk_type == 'uf' and $pipelines != undef {
     file { ["${splunk_home}/etc/apps/${splunk_app_name}_base",
             "${splunk_home}/etc/apps/${splunk_app_name}_base/${splunk_app_precedence_dir}",
             "${splunk_home}/etc/apps/${splunk_app_name}_base/metadata",]:
