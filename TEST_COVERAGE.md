@@ -14,13 +14,14 @@
 | v3.8.0  |   30   |  50   |
 | v3.9.0  |   33   |  53   |
 | v3.11.0 |   34   |  54   |
+| v3.14.0 |   36   |  56   |
 
 ## By operating system:
 
 | os      | tested | total |
 |---------|--------|-------|
-| linux   |   34   |  54   |
-| windows |   0    |  54   |
+| linux   |   36   |  56   |
+| windows |   0    |  56   |
 
 ## By parameter:
 
@@ -35,6 +36,7 @@
 | `clustering => { mode => 'searchhead'` | Y |
 | `clustering => { mode => 'slave'` | Y |
 | `clustering => { indexer_discovery => true` | Y |
+| `clustering => { mode => forwarder` | Y |
 | `dhparamsize_intermediate` | no |
 | `dhparamsize_modern` | no |
 | `ds_intermediate` | Y |
@@ -45,14 +47,15 @@
 | `inputport`| Y |
 | `kvstoreport`| Y |
 | `lm`| Y |
-| `maxbackupindex`| n |
-| `maxfilesize`| n |
-| `maxkbps`| y |
+| `maxbackupindex`| no |
+| `maxfilesize`| no |
+| `maxkbps`| Y |
 | `mgmthostport` | Y |
 | `minfreespace` | no |
-| `package_source` | yes |
+| `package_source` | Y |
 | `pass4symmkey` | no |
 | `phonehomeintervalinsec` | no |
+| `pipelines` | Y |
 | `pool_suggestion` | Y |
 | `replication_port`| Y |
 | `repositorylocation`| Y |
@@ -78,5 +81,5 @@
 | `tcpout` | Y |
 | `tcpout` => 'indexer_discovery'`| Y |
 | `type => 'uf'` | Y |
-| `use_ack` | yes |
+| `use_ack` | Y |
 | `version` | no | 
