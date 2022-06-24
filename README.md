@@ -565,8 +565,84 @@ node 'some-server.internal.corp.example' {
     }
   }
 }
+```
+
+### Example 10
+
+Configure a multisite cluster with 2 sites each containing 1 indexer and indexer discovery.
+Site 1 hosts splunk-cm and splunk-idx1. Site 2 hosts splunk-idx2.
+Site 1 hosts a Universal Forwarder.
 
 ```
+node 'splunk-cm.internal.corp.example' {
+  class { 'splunk':
+    admin        => {
+      hash       => '$6$MR9IJFF7RBnVA.k1$/30EBSzy0EJKZ94SjHFIUHjQjO3/P/4tx0JmWCp/En47MJceaXsevhBLE2w/ibjHlAUkD6k0U.PmY/noe9Jok0',
+      fn         => 'Cluster Master Administrator',
+      email      => 'changemeagain@example.com',
+    },
+    httpport     => 8000,
+    tcpout       => 'indexer_discovery',
+    clustering   => {
+      mode               => 'master',
+      replication_factor => 2,
+      search_factor      => 2,
+      thissite           => 'site1',
+      available_sites    => 'site1,site2',
+      site_replication_factor => 'origin:1, total:2',
+      site_search_factor => 'origin:1, total:2',
+      indexer_discovery  => true,
+    }
+  }
+}
+
+node 'splunk-idx1.internal.corp.example' {
+  class { 'splunk':
+    admin        => {
+      hash       => '$6$MR9IJFF7RBnVA.k1$/30EBSzy0EJKZ94SjHFIUHjQjO3/P/4tx0JmWCp/En47MJceaXsevhBLE2w/ibjHlAUkD6k0U.PmY/noe9Jok0',
+      fn         => 'Cluster Peer Administrator',
+      email      => 'changemeagain@example.com',
+    },
+    inputport    => 9997,
+    lm           => 'splunk-cm.internal.corp.example:8089',
+    clustering   => {
+      thissite   => 'site1',
+      mode       => 'slave',
+      cm         => 'splunk-cm.internal.corp.example:8089',
+    }
+  }
+}
+
+node 'splunk-idx2.internal.corp.example' {
+  class { 'splunk':
+    admin        => {
+      hash       => '$6$MR9IJFF7RBnVA.k1$/30EBSzy0EJKZ94SjHFIUHjQjO3/P/4tx0JmWCp/En47MJceaXsevhBLE2w/ibjHlAUkD6k0U.PmY/noe9Jok0',
+      fn         => 'Cluster Peer Administrator',
+      email      => 'changemeagain@example.com',
+    },
+    inputport    => 9997,
+    lm           => 'splunk-cm.internal.corp.example:8089',
+    clustering   => {
+      thissite   => 'site2',
+      mode       => 'slave',
+      cm         => 'splunk-cm.internal.corp.example:8089',
+    }
+  }
+}
+
+node 'some-server.internal.corp.example' {
+  class { 'splunk':
+    type       => 'uf',
+    tcpout     => 'indexer_discovery',
+    clustering => {
+      cm       => 'splunk-cm.internal.corp.example:8089',
+      mode     => 'forwarder'
+      thissite => 'site1'
+    }
+  }
+}
+```
+
 
 ## Puppet Enterprise
 
@@ -1106,7 +1182,9 @@ These people haves contributed pull requests, issues, ideas or otherwise spent t
 - Dimitri Tischenko (timidri)
 - dkangel37
 - Dustin Wheeler (mdwheele)
+- Florian Dematraz (Nemega)
 - FlorinTar
+- Georgi Georgiev (chutzimir)
 - Jason Spencer (jespencer)
 - Joachim la Poutré (sickbock)
 - jsushetski
@@ -1121,7 +1199,7 @@ These people haves contributed pull requests, issues, ideas or otherwise spent t
 
 ## License
 
-Copyright (c) 2016-2018 Jorrit Folmer
+Copyright (c) 2016-2022 Jorrit Folmer
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
