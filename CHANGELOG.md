@@ -1,3 +1,9 @@
+### 3.14.0
+
+- Added support for parallelIngestionPipelines
+- Clarified use of UF site affinity in documentation example 10
+- Updated testing to verify Puppet 7.x compatibility
+
 ### 3.13.2
 
 - Set hiera merge behaviour for splunk::auth 
