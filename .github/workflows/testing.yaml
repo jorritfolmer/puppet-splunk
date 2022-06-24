@@ -1,0 +1,42 @@
+name: Puppet-Splunk
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: "*"
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: ["ubuntu-20.04"]
+        puppet_version: ["3.8.7", "4.10.12", "5.5.22", "6.27.0", "7.17.0"]
+        include:
+          - puppet_version: "3.8.7"
+            ruby: "1.9"
+          - puppet_version: "4.10.12"
+            ruby: "2.1"
+          - puppet_version: "5.5.22"
+            ruby: "2.4"
+          - puppet_version: "6.27.0"
+            ruby: "2.5"
+          - puppet_version: "7.17.0"
+            ruby: "2.7"
+
+    runs-on: ${{ matrix.os }}
+    env:
+      PUPPET_GEM_VERSION: ~> ${{ matrix.puppet_version}}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+      - name: Bundle
+        run: |
+          bundle config set system 'true'
+          bundle update --jobs 4 --retry 3
+      - name: Unit tests
+        run: bundle exec rake test
