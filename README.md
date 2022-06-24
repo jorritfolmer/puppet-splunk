@@ -1,6 +1,6 @@
 # Splunk deployments with Puppet
 
-[![Travis CI build status](https://travis-ci.org/jorritfolmer/puppet-splunk.svg?branch=master)](https://travis-ci.org/jorritfolmer/puppet-splunk)
+![Testing workflow status](https://github.com/jorritfolmer/puppet-splunk/actions/workflows/testing.yaml/badge.svg)
 
 This Puppet module deploys Splunk instances on Windows and Linux in simple, distributed or (multisite) clustered topologies. It is used in production by organisations large and small, but can also be used to quickly validate solution architectures. For example on a 2016 MacBook Pro, setting up a multisite indexer cluster, a cluster master, a search head cluster, a search head deployer, LDAP authentication, etc, takes less than an hour.
 
