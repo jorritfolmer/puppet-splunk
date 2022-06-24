@@ -160,6 +160,7 @@ class splunk::server::clustering (
 
     }
     'forwarder': {
+      $cm = $clustering[cm]
       $thissite = $clustering[thissite]
       file { [
         "${splunk_home}/etc/apps/${splunk_app_name}_master_base",
