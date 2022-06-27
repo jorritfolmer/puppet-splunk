@@ -64,6 +64,7 @@ class splunk::server::shclustering (
             lens    => 'Splunk.lns',
             incl    => "${splunk_home}/etc/system/local/server.conf",
             changes => [
+              "set target[. = 'shclustering'] shclustering",
               "set target[. = 'shclustering']/mgmt_uri https://${::fqdn}:8089",
             ],
           }
