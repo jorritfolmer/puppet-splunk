@@ -36,6 +36,7 @@ jobs:
           ruby-version: ${{ matrix.ruby }}
       - name: Bundle
         run: |
+          sudo apt-get install -qq augeas-tools augeas-lenses libaugeas-dev
           bundle config set system 'true'
           bundle update --jobs 4 --retry 3
       - name: Unit tests
