@@ -49,3 +49,4 @@ if RUBY_VERSION >= '2.5' and RUBY_VERSION < '2.8'
   gem 'rspec-puppet', '~> 2.8.0'
 end
 
+gem 'rspec-puppet-augeas'

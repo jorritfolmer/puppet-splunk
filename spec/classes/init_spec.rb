@@ -6,6 +6,13 @@ describe 'splunk' do
     it { should contain_class('splunk::installed') }
     it { should contain_package('splunk') }
     it { should_not contain_file('/opt/splunk/etc/.ui_login') }
+    describe_augeas '/opt/splunk/etc/system/local/server.conf pass4symmkey', target: 'opt/splunk/etc/system/local/server.conf' do
+      it {
+        should execute.with_change
+        aug_get('target[. = "general"]/pass4SymmKey').should.nil?
+        should execute.idempotently
+      }
+    end
   end
 
   context 'with admin hash ' do
@@ -82,6 +89,14 @@ describe 'splunk' do
     }
     it do
       should contain_package('splunkforwarder')
+      should contain_augeas('/opt/splunkforwarder/etc/system/local/server.conf pass4symmkey')
+    end
+    describe_augeas '/opt/splunkforwarder/etc/system/local/server.conf pass4symmkey', target: 'opt/splunkforwarder/etc/system/local/server.conf' do
+      it {
+        should execute.with_change
+        aug_get('target[. = "general"]/pass4SymmKey').should.nil?
+        should execute.idempotently
+      }
     end
   end
 
@@ -647,12 +662,26 @@ describe 'splunk' do
         :dontruncmds => true,
       }
     }
+    let(:facts) {
+      {
+        :fqdn => 'splunk-localhost.internal.corp.example'
+      }
+    }
     it { should contain_class('splunk::installed') }
     it { should contain_package('splunk') }
     it { should contain_file('/opt/splunk/etc/apps/puppet_search_shcluster_base/default/server.conf').with_content(/conf_deploy_fetch_url = https:\/\/splunk-shd.internal.corp.example:8089/) }
     it { should contain_file('/opt/splunk/etc/apps/puppet_search_shcluster_base/default/server.conf').with_content(/\[replication_port:/) }
     it { should contain_file('/opt/splunk/etc/apps/puppet_search_shcluster_base/default/server.conf').with_content(/shcluster_label = SHC/) }
     it { should contain_file('/opt/splunk/etc/apps/puppet_search_shcluster_pass4symmkey_base/default/server.conf').with_content(/pass4SymmKey = /) }
+    it { should contain_augeas('/opt/splunk/etc/system/local/server.conf/shclustering') }
+    describe_augeas '/opt/splunk/etc/system/local/server.conf/shclustering', target: 'opt/splunk/etc/system/local/server.conf' do
+      it {
+        aug_get('target[. = "shclustering"]').should.nil?
+        should execute.with_change
+        aug_get('target[. = "shclustering"]/mgmt_uri').should == 'https://splunk-localhost.internal.corp.example:8089'
+        should execute.idempotently
+      }
+    end
   end
 
   context 'with search head deployer role' do
